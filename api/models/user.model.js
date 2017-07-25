@@ -4,7 +4,7 @@ module.exports = function(sequelize, DataType){
 		email_user: { type: DataType.STRING, unique: true, isEmail: true },
 		password_user: DataType.STRING,
 		role_user: DataType.ENUM('superadmin', 'admin'),
-		forgot_pass_user: { type: DataType.BOOLEAN, defaultValue: false }
+		forgot_pass_user: { type: DataType.BOOLEAN, defaultValue: false },
 		token_forgot_pass_user: { type: DataType.TEXT, defaultValue: null }
 	}, {
 		getterMethode: {

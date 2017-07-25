@@ -44,33 +44,40 @@ function UserControllers() {
 		var email = req.body.email_user,
 			password = crypto.createHash('sha256').update(req.body.password_user).digest('hex'),
 			remember_me = req.body.remember_me;
-		
-		User
-			.findAll({
-				where: {
-					email_user: email,
-					password_user: password
-				}
-			})
-			.then(function(user) {
-		      	if (!user.length) {
-			        res.json({status: false, message:'User tidak ditemukan! Email atau password salah!', err_code: 406});
-		      	} else {
-		        	var signInTime = Math.floor(Date.now()/1000);
-		        	var expired;
-		        	if (remember_me == true) {
-		          		expireTime = 99999999999;
-		        	} else {
-		          		expireTime = signInTime + (2 * 60 * 60);
-		        	}
-		        	var data = { id: user[0].id_user, role: user[0].role_user, email_user: user[0].email_user, iat: signInTime, expired: expireTime };
-		        	var token = jwt.createToken(data);
-		        	res.json({status: true, message: "Login berhasil!", token: token});
-		      	}
-	    	})
-	    	.catch(function(err) {
-	    		res.json({status: false, message: 'Login gagal! User tidak ditemukan!', err_code: 404, err: err});
-	    	})
+		if (!email || !password ) {
+			res.json({status: false, message: 'Email atau password masih kosong!', err_code: 400, err: err});
+		} else {
+			User
+				.findAll({
+					where: {
+						email_user: email,
+						password_user: password
+					}
+				})
+				.then(function(user) {
+			      	if (!user.length) {
+				        res.json({status: false, message:'User tidak ditemukan!', err_code: 404});
+			      	} else {
+			        	var signInTime = Math.floor(Date.now() / 1000);
+			        	var expired;
+			        	if (remember_me == true) {
+			          		expireTime = 99999999999;
+			        	} else {
+			          		expireTime = signInTime + (2 * 60 * 60);
+			        	}
+			        	var data = { id: user[0].id_user, role: user[0].role_user, email: user[0].email_user, iat: signInTime, expired: expireTime };
+			        	var token = jwt.createToken(data);
+			        	res.json({status: true, message: 'Login berhasil!', token: token});
+			      	}
+		    	})
+		    	.catch(function(err) {
+		    		res.json({status: false, message: 'Login gagal!', err_code: 404, err: err});
+		    	})
+		}
+	}
+
+	this.checkSession = function(req, res) {
+		jwt.checkToken(req, res);
 	}
 
 	this.addOne = function(req, res) {

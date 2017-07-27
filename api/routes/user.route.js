@@ -31,8 +31,12 @@ router.post('/delete', function(req, res) {
 	user.delete(req, res);
 });
 
-router.post('/inactivate', function(req, res) {
-	user.inactivate(req, res);
+router.post('/edit', function(req, res) {
+	user.update(req, res);
+});
+
+router.post('/edit/status', function(req, res) {
+	user.update(req, res);
 });
 
 router.post('/reset', function(req, res) {

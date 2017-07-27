@@ -4,8 +4,8 @@ module.exports = function(sequelize, DataType){
 		email_user: { type: DataType.STRING, unique: true, isEmail: true },
 		password_user: DataType.STRING,
 		role_user: DataType.ENUM('superadmin', 'admin'),
-		forgot_pass_user: { type: DataType.BOOLEAN, defaultValue: false },
-		token_forgot_pass_user: { type: DataType.TEXT, defaultValue: null },
+		lupa_pass_user: { type: DataType.BOOLEAN, defaultValue: false },
+		token_lupa_pass_user: { type: DataType.TEXT, defaultValue: null },
 		status_user: { type:DataType.BOOLEAN, defaultValue: true }
 	}, {
 		getterMethode: {
@@ -21,11 +21,14 @@ module.exports = function(sequelize, DataType){
 			getRole: function() {
 				return this.getDataValue('role_user');
 			},
-			getForgotPass: function() {
-				return this.getDataValue('forgot_pass_user');
+			getLupaPass: function() {
+				return this.getDataValue('lupa_pass_user');
 			},
-			getTokenForgotPass: function() {
-				return this.getDataValue('token_forgot_pass_user');
+			getTokenLupaPass: function() {
+				return this.getDataValue('token_lupa_pass_user');
+			},
+			getStatus: function() {
+				return this.getDataValue('status_user');
 			}
 		},
 		setterMethode: {
@@ -41,11 +44,14 @@ module.exports = function(sequelize, DataType){
 			setRole: function(role) {
 				return this.getDataValue('role_user', role);
 			},
-			setForgotPass: function(forgot_pass) {
-				return this.getDataValue('forgot_pass_user', forgot_pass);
+			setLupaPass: function(lupa_pass) {
+				return this.getDataValue('lupa_pass_user', lupa_pass);
 			},
-			setTokenForgotPass: function(token_forgot_pass) {
-				return this.getDataValue('token_forgot_pass_user', token_forgot_pass);
+			setTokenLupaPass: function(token_lupa_pass) {
+				return this.getDataValue('token_lupa_pass_user', token_lupa_pass);
+			},
+			setStatus: function(status) {
+				return this.setDataValue('status_user', status);
 			}
 		}
 	});

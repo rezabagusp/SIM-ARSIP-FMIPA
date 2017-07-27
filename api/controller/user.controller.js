@@ -12,8 +12,16 @@ var validateEmail = function(email) {
 	return email.match(regexMail);
 }
 
-var randomString = function(lenth) {
-	
+var generateToken = function() {
+	var char = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+		time = toString(getTime());
+		token = "";
+
+		for (var i = 0; i < 9; i++) {
+			token += possible.charAt(Math.floor(Math.random() * possible.length));
+		}
+
+		return crypto.createHash('sha256').update(token).digest('hex');
 }
 
 function UserControllers() {
@@ -33,7 +41,7 @@ function UserControllers() {
 	}
 
 	this.getOne = function(req, res) {
-		var id = req.body.id;
+		var id = req.body.id_user;
 		User
 			.findOne({
 				where: {
@@ -54,16 +62,19 @@ function UserControllers() {
 
 	this.login = function(req, res){
 		var email = req.body.email_user,
-			password = crypto.createHash('sha256').update(req.body.password_user).digest('hex'),
+			password = req.body.password_user,
 			remember_me = req.body.remember_me;
+
 		if (!email || !password ) {
-			res.json({status: false, message: 'Email atau password masih kosong!', err_code: 400, err: err});
+			res.json({status: false, message: 'Email atau password masih kosong!', err_code: 400});
+		} else if (!validateEmail(email)) {
+			res.json({status: false, message: "Format email salah!", err_code: 400});
 		} else {
 			User
 				.findAll({
 					where: {
 						email_user: email,
-						password_user: password
+						password_user: crypto.createHash('sha256').update(password).digest('hex')
 					}
 				})
 				.then(function(user) {
@@ -88,62 +99,153 @@ function UserControllers() {
 		}
 	}
 
-	this.checkSession = function(req, res) {
-		jwt.checkToken(req, res);
-	}
-
 	this.addOne = function(req, res) {
-		User
-			.create({
-				nama_user: nama,
-				email_user: email,
-				password_user: password,
-				role_user: role
-			})
-			.then(function(result) {
-				res.json({status: true, message: 'Tambah user berhasil!'});
-			})
-			.catch(function(err) {
-				res.json({status: false, message: 'Tambah user gagal!', err_code: 400, err: err});
-			})
-	}
+		var nama = req.body.nama_user,
+			email = req.body.email_user,
+			password = req.body.password_user,
+			password_konfirmasi = req.body.password_konfirmasi_user,
+			role = req.body.role_user;
 
-	this.session = function(req, res){
-		var token = req.body.token;
-		jwt.checkToken(token, res);
+		if (!nama || !email || !password || !role) {
+			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
+		} else if (password !== password_konfirmasi) {
+			res.json({status: false, message: "Password berbeda dengan password konfirmasi!", err_code: 400});
+		} else if (!validateEmail(email)) {
+			res.json({status: false, message: "Format email salah!", err_code: 400});
+		} else {
+			User
+				.create({
+					nama_user: nama,
+					email_user: email,
+					password_user: crypto.createHash('sha256').update(password).digest('hex'),
+					role_user: role
+				})
+				.then(function(result) {
+					res.json({status: true, message: 'Tambah user berhasil!'});
+				})
+				.catch(function(err) {
+					res.json({status: false, message: 'Tambah user gagal!', err_code: 400, err: err});
+				})
+		}
 	}
 
 	this.resetPassword = function(req, res) {
-		var email = req.body.email_user;
+		var email = req.body.email_user,
+			token = generateToken();
 
+		if (!email) {
+			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
+		} else if (!validateEmail(email)) {
+			res.json({status: false, message: "Format email salah!", err_code: 400});
+		} else {
+			User
+				.update({
+					lupa_pass_user: false,
+					token_lupa_pass_user: token,
+
+				}, {
+					where: {
+						email_user: email
+					}
+				})
+				.then(function(result) {
+					res.json({status: true, message: "Ubah password berhasil!"});
+				})
+				.catch(function(err) {
+					res.json({status: false, message: "Ubah password gagal!", err_code: 400, err: err});
+				})
+		}
+		
 	}
 
 	this.confirmResetPassword = function(req, res) {
 		var nama = nama_user,
-			token = req.body.token_forgot_pass;
-			password = crypto.createHash('sha256').update(data.password_baru).digest('hex');
+			token = req.body.token_lupa_pass,
+			password = req.body.password_baru,
+			password_konfirmasi = req.body.password_konfirmasi_user;
 
-		User
-			.update({
-				password_user: password
-			},
-			{
-				where: {
-					nama_user: nama,
-					forgot_pass_user: true,
-					token_forgot_pass_user: token
-				}
-			})
-			.then(function(result) {
-				res.json({status: true, message: "Ubah password berhasil!"});
-			})
-			.catch(function(err){
-				res.json({status: false, message: "Ubah password gagal!", err_code: 400, err: err});
-			})
+		if (!nama || !token || !password) {
+			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
+		} else if (password !== password_konfirmasi) {
+			res.json({status: false, message: "Password tidak sama dengan password konfirmasi!", err_code: 400});
+		} else if(password.length < 6) {
+			res.json({status: false, message: "Password kurang panjang (minimal 6 karakter)!", err_code: 400});
+		} else {
+			User
+				.update({
+					password_user: crypto.createHash('sha256').update(password).digest('hex')
+				}, {
+					where: {
+						nama_user: nama,
+						lupa_pass_user: true,
+						token_lupa_pass_user: token
+					}
+				})
+				.then(function(result) {
+					res.json({status: true, message: "Ubah password berhasil!"});
+				})
+				.catch(function(err){
+					res.json({status: false, message: "Ubah password gagal!", err_code: 400, err: err});
+				})
+		}
+		
 	}
 
-	this.inactivate = function(req, res) {
-		
+	this.update = function(req, res) {
+		var id = req.body.id_user,
+			email =  req.body.id_user,
+			password = req.body.password_user,
+			password_konfirmasi = req.body.password_konfirmasi_user,
+			role: req.body.role_user;
+
+		if (!id || !email || !password || !role) {
+			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
+		} else if (password !== password_konfirmasi) {
+			res.json({status: false, message: "Password berbeda dengan password konfirmasi!", err_code: 400});
+		} else if(!validateEmail(email)) {
+			res.json({status: false, message: "Format email salah!", err_code: 400});
+		} else {
+			User
+				.update({
+					email_user: email,
+					password_user: password,
+					role_user: role
+				}, {
+					where: {
+						id: id
+					}
+				})
+				.then(function(result) {
+					res.json({status: true, message: "Update user berhasil!"});
+				})
+				.catch(function(err) {
+					res.json({status: false, message: "Update user gagal!", err_code: 404, err: err});
+				})
+		}
+	}
+
+	this.changeStatus = function(req, res) {
+		var id = req.body.id_user,
+			status = req.body.status;
+
+		if (!id) {
+			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
+		} else {
+			User
+				.update({
+					status_user: status
+				}, {
+					where: {
+						id: id
+					}
+				})
+				.then(function(result) {
+					res.json({status: true, message: "Ubah status user berhasil!"});
+				})
+				.catch(function(err) {
+					res.json({status: false, message: "Ubah status user gagal!", err_code: 400, err: err});
+				})
+		}
 	}
 }
 

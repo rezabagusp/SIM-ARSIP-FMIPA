@@ -9,6 +9,9 @@ export class FullLayoutComponent implements OnInit {
   public disabled = false;
   public status: {isopen: boolean} = {isopen: false};
 
+  constructor(){
+    console.log("layout dasar")
+  }
   public toggled(open: boolean): void {
     console.log('Dropdown is now: ', open);
   }

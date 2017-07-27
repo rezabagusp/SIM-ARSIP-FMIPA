@@ -9,15 +9,15 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/Rx';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+  selector: 'app-auth',
+  templateUrl: './auth.component.html',
+  styleUrls: ['./auth.component.scss'],
   providers: [AuthenticationService]
   })
 
-export class LoginComponent implements OnInit {
+export class Auth implements OnInit {
   returnUrl: string;
-  // atribut2 login
+  // atribut2 auth
   private username;
   private password;
   private datalist;
@@ -33,17 +33,18 @@ export class LoginComponent implements OnInit {
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     console.log(this.returnUrl);
+    console.log(this.route)
   }
 
 
-  login() {
+  auth() {
     const send = {username: this.username, password: this.password }; // bikin data inputan lu jadi string json
     console.log(send);
 
     const header = new Headers();
     header.append('Content-type', 'application/json' );
 
-    // this.authenticationService.login(this.username, this.password)
+    // this.authenticationService.auth(this.username, this.password)
     // .subscribe(
     //   result => {
     //     if (result) {
@@ -64,8 +65,9 @@ export class LoginComponent implements OnInit {
     // );
   }
 
-  cek(){
-    this.toastrService.success('Menambah peserta berhasil!', 'Success!');
+  submit(){
+    this.router.navigate(['/admin'])
+
   }
 
 }

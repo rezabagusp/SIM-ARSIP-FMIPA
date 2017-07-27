@@ -27,7 +27,14 @@ var generateToken = function() {
 function UserControllers() {
 	this.getAll = function(req, res) {
 		User
-			.findAll()
+			.findAll({
+				attributes: [
+					'nama_user',
+					'email_user',
+					'role_user',
+					'status_user'
+				]
+			})
 			.then(function(result) {
 				if (!result.length) {
 					res.json({status: false, message: 'Cari semua user gagal!', err_code: 400});
@@ -46,6 +53,13 @@ function UserControllers() {
 			.findOne({
 				where: {
 					id: id
+				}, {
+					attributes: [
+						'nama_user',
+						'email_user',
+						'role_user',
+						'status_user'
+					]
 				}
 			})
 			.then(function(result) {
@@ -141,7 +155,7 @@ function UserControllers() {
 			User
 				.update({
 					lupa_pass_user: false,
-					token_lupa_pass_user: token,
+					token_lupa_pass_user: token
 
 				}, {
 					where: {
@@ -173,7 +187,8 @@ function UserControllers() {
 		} else {
 			User
 				.update({
-					password_user: crypto.createHash('sha256').update(password).digest('hex')
+					password_user: crypto.createHash('sha256').update(password).digest('hex'),
+					lupa_pass_user: false
 				}, {
 					where: {
 						nama_user: nama,

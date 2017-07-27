@@ -38,8 +38,8 @@ var User = sequelize.import(__dirname + "/models/user.model"),
 
 // routing
 var index = require('./routes/index')
-/*    user = require('./routes/user.route'),
-    surat = require('./routes/surat.route'),
+    user = require('./routes/user.route'),
+/*    surat = require('./routes/surat.route'),
     lampiran = require('./routes/lampiran.route'),
     penerima = require('./routes/penerima.route')*/
 
@@ -56,9 +56,9 @@ app.use(cookieParser());
 
 // routes handler
 app.use('/api', index);
-/*app.use('/api/user', user);
+app.use('/api/user', user);
 app.use('/api/user/*', user);
-app.use('/api/surat', surat);
+/* app.use('/api/surat', surat);
 app.use('/api/surat/*', surat);
 app.use('/api/lampiran', lampiran);
 app.use('/api/lampiran/*', lampiran);*/

@@ -1,15 +1,16 @@
 module.exports = function(sequelize, DataType){
-	return sequelize.define('surat',{
+	return sequelize.define('surat', {
 		nomor_surat: DataType.STRING,
         perihal_surat: DataType.INTEGER,
         pengirim_surat: DataType.STRING,
         tanggal_surat: DataType.DATE,
         tanggal_terima_surat: DataType.DATE,
         tanggal_entri_surat: DataType.DATE,
-        jenis_surat: DataType.INTEGER,
-        isi_surat: DataType.TEXT,  
+        tipe_surat: DataType.ENUM('masuk', 'keluar'),
         file_surat: DataType.STRING,
-        status_surat: DataType.ENUM('aktif', 'inaktif')                                              
+        isi_surat: DataType.TEXT,
+        status_surat: { type: DataType.ENUM('aktif', 'inaktif'), defaultValue: 'aktif' },
+        sub_sub_jenis_surat_id: DataType.INTEGER,                                              
 	 },{
 	 	getterMethode: {
 	 		getNomor: function() {
@@ -30,9 +31,6 @@ module.exports = function(sequelize, DataType){
             getTanggalEntri: function() {
 	 			return this.getDataValue('tanggal_entri_surat');
             },
-            getJenis: function() {
-	 			return this.getDataValue('jenis_surat');
-            },
             getIsi: function() {
                 return this.getDataValue('isi_surat');
             },
@@ -41,6 +39,9 @@ module.exports = function(sequelize, DataType){
             },
             getStatus: function() {
                 return this.getDataValue('status_surat');
+            },
+            getSubSubJenis: function() {
+                return this.getDataValue('sub_sub_jenis_surat_id');
             }
          }, 
          setterMethode: {

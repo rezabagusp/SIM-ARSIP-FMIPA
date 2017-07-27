@@ -11,12 +11,24 @@ router.post('/get', function(req, res) {
 	user.getOne(req, res);
 });
 
-router.post('/get/all', function(req, res) {
-	user.getAll(req, res);
+router.post('/get/kode', function(req, res) {
+	user.getOne(req, res);
 });
 
-router.post('/login', function(req, res) {
-	user.login(req, res);
+router.post('/get/jenis', function(req, res) {
+	user.getOne(req, res);
+});
+
+router.post('/get/sub-jenis', function(req, res) {
+	user.getOne(req, res);
+});
+
+router.post('/get/sub-sub-jenis', function(req, res) {
+	user.getOne(req, res);
+});
+
+router.post('/get/all', function(req, res) {
+	user.getAll(req, res);
 });
 
 router.post('/add', function(req, res) {

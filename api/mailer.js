@@ -7,18 +7,18 @@ let transporter = nodemailer.createTransport({
     port: 465,
     secure: true, // secure:true for port 465, secure:false for port 587
     auth: {
-        user: 'username@example.com',
-        pass: 'userpass'
+        user: '',   // put your email here
+        pass: ''    // put your email password here
     }
 });
 
 // setup email data with unicode symbols
 let mailOptions = {
-    from: '"Fred Foo 👻" <foo@blurdybloop.com>', // sender address
-    to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
-    subject: 'Hello ✔', // Subject line
-    text: 'Hello world ?', // plain text body
-    html: '<b>Hello world ?</b>' // html body
+    from: '"SIMARSIP FMIPA" <foo@blurdybloop.com>', // sender address
+    to: 'aslamabdurrohim@gmail.com, m.aslam.abdurrohim@gmail.com', // list of receivers
+    subject: 'Lupa Password | SIMARSIP FMIPA', // Subject line
+    text: 'Halo! Kami menerima permintaan penggantian password akun SIMARSIP Anda. Silahkan kunjungi link berikut () untuk mengganti password Anda. Catatan: Mohon abaikan e-mail ini jika Anda tidak meminta melakukan reset password', // plain text body
+    html: '<p>Halo! Kami menerima permintaan <b>penggantian password</b> akun SIMARSIP Anda. Silahkan klik <a href="">disini</a> atau kunjungi link berikut () untuk mengganti password Anda. Catatan: Mohon abaikan e-mail ini jika Anda tidak meminta melakukan reset password</p>' // html body
 };
 
 // send mail with defined transport object

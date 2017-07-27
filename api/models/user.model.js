@@ -5,7 +5,8 @@ module.exports = function(sequelize, DataType){
 		password_user: DataType.STRING,
 		role_user: DataType.ENUM('superadmin', 'admin'),
 		forgot_pass_user: { type: DataType.BOOLEAN, defaultValue: false },
-		token_forgot_pass_user: { type: DataType.TEXT, defaultValue: null }
+		token_forgot_pass_user: { type: DataType.TEXT, defaultValue: null },
+		status_user: { type:DataType.BOOLEAN, defaultValue: true }
 	}, {
 		getterMethode: {
 			getNama: function() {

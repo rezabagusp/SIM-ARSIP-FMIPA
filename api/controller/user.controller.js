@@ -7,9 +7,13 @@ var sequelize = require('../connection');
 
 var User = sequelize.import(__dirname + "/../models/user.models");
 
-var validateEmail = function(mail) {
+var validateEmail = function(email) {
 	var regexMail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-	return mail.match(regexMail);
+	return email.match(regexMail);
+}
+
+var randomString = function(lenth) {
+	
 }
 
 function UserControllers() {
@@ -17,7 +21,11 @@ function UserControllers() {
 		User
 			.findAll()
 			.then(function(result) {
-				res.json({status: true, message: 'Cari semua user berhasil!', data: result});
+				if (!result.length) {
+					res.json({status: false, message: 'Cari semua user gagal!', err_code: 400});
+				} else {
+					res.json({status: true, message: 'Cari semua user berhasil!', data: result});
+				}
 			})
 			.catch(function(err) {
 				res.json({status: false, message: 'Cari semua user gagal!', err_code: 400, err: err});
@@ -27,16 +35,20 @@ function UserControllers() {
 	this.getOne = function(req, res) {
 		var id = req.body.id;
 		User
-			.findAll({
+			.findOne({
 				where: {
 					id: id
 				}
 			})
 			.then(function(result) {
-				res.json({status: true, message: 'Cari user berhasil!', data: result});
+				if (!result.length) {
+					res.json({status: false, message: 'Cari user gagal!', err_code: 400});
+				} else {
+					res.json({status: true, message: 'Cari user berhasil!', data: result});
+				}
 			})
 			.catch(function(err)) {
-				res.json({status: false, message: 'Cari user gagal!', err_code: 401, err: err})
+				res.json({status: false, message: 'Cari user gagal!', err_code: 400, err: err});
 			}
 	}
 
@@ -56,7 +68,7 @@ function UserControllers() {
 				})
 				.then(function(user) {
 			      	if (!user.length) {
-				        res.json({status: false, message:'User tidak ditemukan!', err_code: 404});
+				        res.json({status: false, message:'User tidak ditemukan!', err_code: 400});
 			      	} else {
 			        	var signInTime = Math.floor(Date.now() / 1000);
 			        	var expired;
@@ -71,7 +83,7 @@ function UserControllers() {
 			      	}
 		    	})
 		    	.catch(function(err) {
-		    		res.json({status: false, message: 'Login gagal!', err_code: 404, err: err});
+		    		res.json({status: false, message: 'Login gagal!', err_code: 400, err: err});
 		    	})
 		}
 	}
@@ -101,21 +113,36 @@ function UserControllers() {
 		jwt.checkToken(token, res);
 	}
 
-	this.resetpass = function(req, res) {
+	this.resetPassword = function(req, res) {
 		var email = req.body.email_user;
 
-		if (!validateEmail(email)) {
-			res.json({status: false, message: 'Format email salah!', err_code: 406})
-		} else {
-			var token = 
-		}
 	}
 
-	this.confirmresetpass = function(req, res){
-		
+	this.confirmResetPassword = function(req, res) {
+		var nama = nama_user,
+			token = req.body.token_forgot_pass;
+			password = crypto.createHash('sha256').update(data.password_baru).digest('hex');
+
+		User
+			.update({
+				password_user: password
+			},
+			{
+				where: {
+					nama_user: nama,
+					forgot_pass_user: true,
+					token_forgot_pass_user: token
+				}
+			})
+			.then(function(result) {
+				res.json({status: true, message: "Ubah password berhasil!"});
+			})
+			.catch(function(err){
+				res.json({status: false, message: "Ubah password gagal!", err_code: 400, err: err});
+			})
 	}
 
-	this.inactivateUser = function(req, res){
+	this.inactivate = function(req, res) {
 		
 	}
 }

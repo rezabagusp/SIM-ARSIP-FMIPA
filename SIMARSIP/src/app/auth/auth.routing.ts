@@ -1,13 +1,17 @@
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { Auth } from './auth.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+
 
 const routes: Routes = [
   {
     path: 'auth',
     component: Auth,
-    children: [
-    ]
+  },
+  {
+    path:'forgotpassword',
+    component: ForgotPasswordComponent,
   }
 ];
 

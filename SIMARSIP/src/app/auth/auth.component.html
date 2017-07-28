@@ -9,24 +9,24 @@
               <h1 style="text-align :center;">SIM-ARSIP</h1>
               <p class="text-muted">Sign In to your account</p>
 
-              <form>
+              <form (ngSubmit)="login()">
                 <div class="input-group mb-3 form-group">
                   <span class="input-group-addon"><i class="icon-user"></i></span>
-                  <input type="text" class="form-control" placeholder="Username" name="username" [(ngModel)]="username">
+                  <input type="text" class="form-control" placeholder="Username" name="username" [(ngModel)]="nama_user">
                 </div>
 
                 <div class="input-group mb-4 form-grouup">
                   <span class="input-group-addon"><i class="icon-lock"></i></span>
-                  <input type="password" class="form-control" placeholder="Password" name="password" [(ngModel)]="password">
+                  <input type="password" class="form-control" placeholder="Password" name="password" [(ngModel)]="password_user">
                 </div>
 
                 <div class="row">
                   <div class="col-6">
-                    <button type="submit" class="btn btn-primary" (click)="submit()" >Login</button>
+                    <button type="submit" [disabled]="!nama_usar && !password_user" class="btn btn-primary" >Login</button>
                   </div>
 
                   <div class="col-6 text-right">
-                    <a href="#"class="btn btn-link px-0" routerLinkActive="active">Bantuan</a>
+                    <a href="#"class="btn btn-link px-0" routerLinkActive="active" [routerLink]="['/forgotpassword']">Forgot Password</a>
                   </div>
                 </div>
               </form>

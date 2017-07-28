@@ -2,13 +2,19 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { FullLayoutComponent } from '../layouts/full-layout.component';
 
+import { AuthGuard } from '../_guards/auth.guard';
+
 const routes: Routes = [
   //ADMIN
   {
     path: 'admin',
     component: FullLayoutComponent,
+    canActivate: [AuthGuard],
     children: [
-{ path: '', redirectTo: 'dashboard', pathMatch: 'full' }  ,      
+      { path: '', 
+        redirectTo: 'dashboard', 
+        pathMatch: 'full' 
+      },
       {
         path: 'dashboard',
         loadChildren: './dashboard/dashboard.module#DashboardModule'

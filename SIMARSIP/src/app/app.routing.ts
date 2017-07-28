@@ -54,20 +54,6 @@ export const routes: Routes = [
   //   ]
   // },
 
-  //ADMIN
-  {
-    path: 'superadmin',
-    component: FullLayoutComponent,
-    data: {
-      title: 'Super Admin'
-    },
-    children: [
-      {
-        path: 'dashboard',
-        loadChildren: './dashboard/dashboard.module#DashboardModule'
-      }               
-    ]
-  }
 ];
 
 @NgModule({

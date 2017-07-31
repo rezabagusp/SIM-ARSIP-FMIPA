@@ -15,30 +15,28 @@ var User = sequelize.import(__dirname + "/models/user.model"),
     Perihal = sequelize.import(__dirname + "/models/perihal.model"),
     Staff = sequelize.import(__dirname + "/models/staff.model"),
 
-    kode_surat = sequelize.import(__dirname + "/models/kode_surat.model"),
-    jenis_surat = sequelize.import(__dirname + "/models/jenis_surat.model"),
-    sub_jenis_surat = sequelize.import(__dirname + "/models/sub_jenis_surat.model"),
-    sub_sub_jenis_surat = sequelize.import(__dirname + "/models/sub_sub_jenis_surat.model"),
-    surat_penerima = sequelize.import(__dirname + "/models/surat_penerima.model")
-    //surat_lampiran = sequelize.import(__dirname + "/models/surat_lampiran.model");
+    Kode_surat = sequelize.import(__dirname + "/models/kode_surat.model"),
+    Jenis_surat = sequelize.import(__dirname + "/models/jenis_surat.model"),
+    Sub_jenis_surat = sequelize.import(__dirname + "/models/sub_jenis_surat.model"),
+    Sub_sub_jenis_surat = sequelize.import(__dirname + "/models/sub_sub_jenis_surat.model"),
+    Surat_penerima = sequelize.import(__dirname + "/models/surat_penerima.model");
 
-    User.sync();
-    Surat.sync();
-    Lampiran.sync();
-    Jabatan.sync();
-    Penerima.sync();
-    Perihal.sync();
-    Staff.sync();
-    kode_surat.sync();
-    jenis_surat.sync();
-    sub_jenis_surat.sync();
-    sub_sub_jenis_surat.sync();
-    surat_penerima.sync();
-   //surat_lampiran.sync();
+User.sync();
+Surat.sync();
+Lampiran.sync();
+Jabatan.sync();
+Penerima.sync();
+Perihal.sync();
+Staff.sync();
+Kode_surat.sync();
+Jenis_surat.sync();
+Sub_jenis_surat.sync();
+Sub_sub_jenis_surat.sync();
+Surat_penerima.sync();
 
 // routing
 var index = require('./routes/index')
-    user = require('./routes/user.route'),
+    user = require('./routes/user.route');
 /*    surat = require('./routes/surat.route'),
     lampiran = require('./routes/lampiran.route'),
     penerima = require('./routes/penerima.route')*/

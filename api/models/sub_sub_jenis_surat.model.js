@@ -6,6 +6,6 @@ module.exports = function(sequelize, DataType){
         retensi_inaktif_sub_sub_jenis_surat: DataType.INTEGER,
         perlakuan_sub_sub_jenis_surat: DataType.ENUM('Musnah', 'Permanen', 'Ditinjau Kembali'),
         nilai_sub_sub_jenis_surat: DataType.STRING,
-        sub_jenis_surat_id: DataType.INTEGER
+        sub_jenis_surat_id: { type: DataType.INTEGER, references: { model: Sub_jenis_surat, key: 'id' } }
 	});
 }

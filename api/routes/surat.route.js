@@ -1,25 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
-var user = require('../controllers/user.controller');
+var surat = require('../controllers/surat.controller');
 
 router.get('/', function(req, res) {
   res.json({status: false, message: 'None API Implemented'});
 });
 
 router.post('/get', function(req, res) {
-	user.getOne(req, res);
-});
-
-router.post('/get/kode', function(req, res) {
-	user.getOne(req, res);
-});
-
-router.post('/get/jenis', function(req, res) {
-	user.getOne(req, res);
-});
-
-router.post('/get/sub-jenis', function(req, res) {
 	user.getOne(req, res);
 });
 

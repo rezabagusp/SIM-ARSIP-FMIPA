@@ -1,3 +1,4 @@
+import { ToastrService } from 'toastr-ng2';
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -24,14 +25,15 @@ export class LoginComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private router: Router,
               private http: Http,
-              private authenticationService: AuthenticationService) { }
+              private authenticationService: AuthenticationService,
+              private toastrService: ToastrService
+              ) { }
 
   ngOnInit() {
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     console.log(this.returnUrl);
   }
-
 
 
   login() {
@@ -62,11 +64,8 @@ export class LoginComponent implements OnInit {
     // );
   }
 
-  test() {
-    swal(
-      'Failed',
-      'wrong Username or Password',
-      'info'
-    )
+  cek(){
+    this.toastrService.success('Menambah peserta berhasil!', 'Success!');
   }
+
 }

@@ -1,0 +1,137 @@
+<div class="animated fadeIn">
+
+  <div class="row">
+  <!-- datatables for list suratmasuk -->
+    <div class="col-sm-6 col-md-12">
+      <div class="card card-accent-primary">
+        <div class="card-header">
+          <b>Daftar Surat Inaktif</b>
+        </div>
+        <div class="card-block">
+          <div class="col-lg-12">
+            <table datatable class="row-border hover" [dtOptions]="dtOptions"  [dtTrigger]="dtTrigger" (click)="large2Modal.show()">
+              <thead>
+                <tr>
+                  <th>Nomor</th>       
+                  <th>Tgl surat</th>
+                  <th>Tgl entri</th>
+                  <th>Perihal</th>
+                  <th>Jenis surat</th>
+                  <th>Status</th>            
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of datalist">
+                  <td>{{data.id}}</td>
+                  <td>17/8/1945</td>
+                  <td>27/8/1945</td>
+                  <td>{{data.completed}}</td>
+                  <td>Jenis surat</td>
+                  <td>
+                      <span class="badge badge-danger">INAKTIF</span>                      
+                  </td>                 
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div><!--/.col-->
+  
+  </div>
+</div>
+
+
+<!-- row preview surat -->
+<div bsModal #large2Modal="bs-modal" class="modal fade" style="" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" style="width: 1024" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 style="text-align:center;" >Preview Surat</h4>
+         <button type="button" class="close" (click)="large2Modal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> 
+      </div>
+      <div class="modal-body">
+        <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="garis">
+                <p> <span style="font-size:17px">Informasi Surat</span></p>
+              </div>             
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label"><strong>Nomor</strong></label>
+                <div class="col-md-8 push-1">
+                    nomor suratnya
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input"><strong>Tanggal surat</strong></label>
+                <div class="col-md-8 push-1">
+                    20/08/1995
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input"><strong>Tanggal entri</strong></label>
+                <div class="col-md-8 push-1">
+                    30/08/1998
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="text-input"><strong>Perihal</strong></label>
+                <div class="col-md-8 push-1">
+                    Undangan pernikahan
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="email-input"><strong>Pengirim</strong></label>
+                <div class="col-md-8 push-1">
+                    Reza Bagus Permana
+                </div>
+              </div>                  
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input"><strong>Jenis surat</strong></label>
+                  <div class="col-md-8 push-1">
+                    KK
+                  </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="garis">
+                <p><span style="font-size:17px">Relasi Surat</span></p>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input"><strong>Tujuan</strong></label>
+                <div class="col-md-8 push-1">
+                    list tujuan
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input"><strong>Tujuan disposisi</strong></label>                
+                <div class="col-md-8 push-1">
+                    list tujuan disposisi            
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input"><strong>Tujuan disposisi</strong></label>                
+                <div class="col-md-8 push-1">
+                    Aktif/Inaktif            
+                </div>
+              </div>              
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="lampiran"><strong>surat</strong></label>
+                <div class="col-md-8 push-1">
+                    link to view surat at new tab 
+                    <a href="assets/fourier1d.pdf" target="_blank">Read more</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="large2Modal.hide()">Tutup</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

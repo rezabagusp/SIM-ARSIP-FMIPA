@@ -6,75 +6,54 @@ import { FullLayoutComponent } from './layouts/full-layout.component';
 import { LoginComponent } from './login/login.component';
 
 import { PrestasiComponent } from './prestasi/prestasi.component';
-import { SuratMasukComponent } from './surat-masuk/surat-masuk.component';
-import { SuratKeluarComponent } from './surat-keluar/surat-keluar.component';
-import { LampiranComponent } from './lampiran/lampiran.component';
-import { SasaranMutuComponent } from './sasaran-mutu/sasaran-mutu.component';
-import { RetensiSuratComponent } from './retensi-surat/retensi-surat.component';
-
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'auth',
     pathMatch: 'full',
   },
   {
-    path: 'login',
-    component: LoginComponent
+    path:'admin',
+    redirectTo:'admin/dashboard'
   },
-  {
-    path: '',
-    component: FullLayoutComponent,
-    data: {
-      title: 'Home'
-    },
-    children: [
-      {
-        path: 'dashboard',
-        loadChildren: './dashboard/dashboard.module#DashboardModule'
-      },
-      {
-        path: 'prestasi',
-        component: PrestasiComponent
-      },
-      {
-        path: 'suratmasuk',
-        component: SuratMasukComponent,
-        data:{
-          title:"Surat Masuk"
-        }
-      },
-      {
-        path: 'lampiran',
-        component: LampiranComponent,
-        data:{
-          title:"Lampiran"
-        }
-      },
-      {
-        path: 'suratkeluar',
-        component: SuratKeluarComponent,
-        data:{
-          title:"Surat Keluar"
-        }
-      },
-      {
-        path: 'sasaranmutu',
-        component: SasaranMutuComponent,
-        data:{
-          title:"Sasaran Mutu"
-        }
-      },
-      {
-        path: 'retensisurat',
-        component: RetensiSuratComponent,
-        data:{
-          title:"Retensi Surat"
-        }
-      }                  
-    ]
-  }
+
+  // //ADMIN
+  // {
+  //   path: 'admin',
+  //   component: FullLayoutComponent,
+  //   data: {
+  //     title: 'admin'
+  //   },
+  //   children: [
+  //     {
+  //       path: 'dashboard',
+  //       loadChildren: './dashboard/dashboard.module#DashboardModule'
+  //     },
+  //     {
+  //       path: 'suratmasuk',
+  //       loadChildren: './surat-masuk/surat-masuk.module#SuratMasukModule'
+  //     },
+  //     {
+  //       path: 'suratkeluar',
+  //       loadChildren: './surat-keluar/surat-keluar.module#SuratKeluarModule'
+  //     },
+  //     {
+  //       path: 'lampiran',
+  //       loadChildren: './lampiran/lampiran.module#LampiranModule'
+  //     },
+  //     {
+  //       path: 'retensisurat',
+  //       loadChildren: './retensi-surat/retensi-surat.module#RetensiSuratModule'
+  //     },
+  //     {
+  //       path: 'sasaranmutu',
+  //       loadChildren: './sasaran-mutu/sasaran-mutu.module#SasaranMutuModule'
+  //     },
+                 
+  //   ]
+  // },
+
 ];
 
 @NgModule({

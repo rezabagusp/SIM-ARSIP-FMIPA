@@ -2,9 +2,9 @@ var express = require('express');
 var crypto = require('crypto');
 var multer = require('multer');
 var path = require('path');
+var fs = require('fs');
 
 var sequelize = require('../connection');
-var fs = require('fs');
 
 var Surat = sequelize.import(__dirname + "/../models/surat.model");
 var Penerima = sequelize.import(__dirname + "/../models/surat.model");
@@ -359,7 +359,16 @@ function SuratControllers() {
 
 	this.upload = function(req, res) {
 		var destination = "assets/uploads/surat",
-			dir = "/../";
+			dir = "/../",
+			filename = "";
+
+		checkFileSignature = function(signature) {
+			if (signature !== "25504446") {
+				return false;
+			} else {
+				return true;
+			}
+		}
 
 		var upload = multer({
 			storage: multer.diskStorage({
@@ -367,25 +376,26 @@ function SuratControllers() {
 			    	cb(null, __dirname + dir + destination);
 			  	},
 				filename: function (req, file, cb) {
-			      	filename = file.fieldname + '-' + Date.now();
+			      	filename = file.fieldname + '-' + Date.now() + ".pdf";
 			      	cb(null, filename);
 			  	}
 			}),
-			fileFilter: function(req, file, cb) {
-				if (file.mimetype !== "application/pdf") {
-					cb(new Error('Hanya file pdf yang diizinkan!'));
-				} else {
-					cb(null, true);
-				}
-			},
 			limits: {
 				fileSize: 1 * 1024 * 1024
 			}
-		}).single('file');
+		}).single('surat');
 
 		upload(req, res, function(err) {
-			console.log(req.file);
-		})
+			var bitmap = fs.readFileSync(__dirname + dir + destination + "/" + filename).toString('hex', 0, 4);
+			if (!checkFileSignature(bitmap)) {
+				fs.unlinkSync(__dirname + dir + destination + "/" + filename);
+				res.json({status: false, message: "File bukan pdf!", err_code: 400});
+			} else if (err) {
+				res.json({status: false, message: "Upload surat gagal!", err_code: 400, err: err});
+			} else {
+				res.json({status: true, message: "Upload surat berhasil!", data: filename});
+			}
+		});
 	}
 
 	this.add = function(req, res) {

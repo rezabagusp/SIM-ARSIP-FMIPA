@@ -8,39 +8,31 @@ router.get('/', function(req, res) {
 });
 
 router.post('/get', function(req, res) {
-	user.getOne(req, res);
+	surat.getOne(req, res);
 });
 
 router.post('/get/sub-sub-jenis', function(req, res) {
-	user.getOne(req, res);
+	surat.getOne(req, res);
 });
 
 router.post('/get/all', function(req, res) {
-	user.getAll(req, res);
+	surat.getAll(req, res);
 });
 
 router.post('/add', function(req, res) {
-	user.addOne(req, res);
+	surat.add(req, res);
 });
 
 router.post('/delete', function(req, res) {
-	user.delete(req, res);
+	surat.delete(req, res);
 });
 
 router.post('/edit', function(req, res) {
-	user.update(req, res);
+	surat.update(req, res);
 });
 
-router.post('/edit/status', function(req, res) {
-	user.update(req, res);
-});
-
-router.post('/reset', function(req, res) {
-	user.resetPassword(req, res);
-});
-
-router.post('/reset/confirm', function(req, res) {
-	user.confirmResetPassword(req, res);
+router.post('/upload', function(req, res) {
+	surat.upload(req, res);
 });
 
 module.exports = router;

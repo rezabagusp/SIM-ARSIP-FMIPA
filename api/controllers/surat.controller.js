@@ -3,18 +3,16 @@ var crypto = require('crypto');
 var multer = require('multer');
 var path = require('path');
 
-var sequelize = require('./connection');
+var sequelize = require('../connection');
 var fs = require('fs');
 
 var Surat = sequelize.import(__dirname + "/../models/surat.model");
-var kode_surat = sequelize.import(__dirname + "/../models/kode_surat.model");
-var jenis_surat = sequelize.import(__dirname + "/../models/jenis_surat.model");
-var sub_jenis_surat = sequelize.import(__dirname + "/../models/sub_jenis_surat.model");
-var sub_sub_jenis_surat = sequelize.import(__dirname + "/../models/sub_sub_jenis_surat.model");
-var Penerima
-var Pengirim
-
-Surat.hasOne(Pengirim, { foreignKey:  });
+var Penerima = sequelize.import(__dirname + "/../models/surat.model");
+var Pengirim = sequelize.import(__dirname + "/../models/surat.model");
+var Kode_surat = sequelize.import(__dirname + "/../models/kode_surat.model");
+var Jenis_surat = sequelize.import(__dirname + "/../models/jenis_surat.model");
+var Sub_jenis_surat = sequelize.import(__dirname + "/../models/sub_jenis_surat.model");
+var Sub_sub_jenis_surat = sequelize.import(__dirname + "/../models/sub_sub_jenis_surat.model");
 
 function SuratControllers() {
 	this.countAll = function(req, res) {
@@ -91,7 +89,7 @@ function SuratControllers() {
 		}
 	}
 
-	thsi.countBySubJenis = function(req, res) {
+	this.countBySubJenis = function(req, res) {
 		var sub_jenis = req.body.sub_jenis_surat_id;
 
 		if (!sub_sub_jenis) {
@@ -148,9 +146,9 @@ function SuratControllers() {
 			.then(function(result) {
 				res.json({status: true, message: 'Ambil semua surat berhasil!', data: result});
 			})
-			.catch(function(err)) {
+			.catch(function(err) {
 				res.json({status: false, message: 'Ambil semua surat gagal!', err_code: 400, err: err});
-			}
+			})
 	}
 
 	this.getOne = function(req, res) {
@@ -169,7 +167,7 @@ function SuratControllers() {
 					res.json({status: true, message: 'Ambil satu surat berhasil!', data: result});
 				})
 				.catch(function(err) {
-					res.json({status: false, message 'Ambil satu surat gagal!', err_code: 400, err: err});
+					res.json({status: false, message: 'Ambil satu surat gagal!', err_code: 400, err: err});
 				})
 		}
 	}
@@ -308,7 +306,7 @@ function SuratControllers() {
 		}
 	}
 
-	thsi.getBySubJenis = function(req, res) {
+	this.getBySubJenis = function(req, res) {
 		var sub_jenis = req.body.sub_jenis_surat;
 
 		if (!sub_sub_jenis) {
@@ -360,25 +358,58 @@ function SuratControllers() {
 	}
 
 	this.upload = function(req, res) {
-		
+		var destination = "assets/uploads/surat",
+			dir = "/../";
+
+		var upload = multer({
+			storage: multer.diskStorage({
+				destination: function (req, file, cb) {
+			    	cb(null, __dirname + dir + destination);
+			  	},
+				filename: function (req, file, cb) {
+			      	filename = file.fieldname + '-' + Date.now();
+			      	cb(null, filename);
+			  	}
+			}),
+			fileFilter: function(req, file, cb) {
+				if (file.mimetype !== "application/pdf") {
+					cb(new Error('Hanya file pdf yang diizinkan!'));
+				} else {
+					cb(null, true);
+				}
+			},
+			limits: {
+				fileSize: 1 * 1024 * 1024
+			}
+		}).single('file');
+
+		upload(req, res, function(err) {
+			console.log(req.file);
+		})
 	}
 
-	this.addOne = function(req, res) {
+	this.add = function(req, res) {
 		var nomor = req.body.nomor_surat,
+			unit_kerja = req.body.unit_kerja_surat,
+			hal = req.body.hal_surat,
+			tahun = req.body.tahun_surat,
 			perihal = req.body.perihal_surat,
 			pengirim = req.body.pengirim_surat,
 			tanggal = req.body.tanggal_surat,
 			tanggal_terima = req.body.tanggal_terima_surat,
 			tanggal_entri = req.body.tanggal_entri_surat,
-			jenis = req.body. = req.body.jenis_surat,
+			jenis = req.body.jenis_surat,
 			file = req.body.file_surat;
 
-		if (!nomor || !perihal || !pengirim || !tanggal || !tanggal_terima || !tanggal_entri_surat || !jenis || !file) {
+		if (!nomor || !unit_kerja || !hal || !tahun || !perihal || !pengirim || !tanggal || !tanggal_terima || !tanggal_entri_surat || !jenis || !file) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
 			Surat
 				.create({
 					nomor_surat: nomor,
+					unit_kerja_surat: unit_kerja,
+					hal_surat: hal,
+					tahun_surat: tahun,
 			        perihal_surat: perihal,
 			        pengirim_surat: pengirim,
 			        tanggal_surat: tanggal,
@@ -387,7 +418,7 @@ function SuratControllers() {
 			        jenis_surat: jenis, 
 			        file_surat: file
 				})
-				.then(function(result){
+				.then(function(result) {
 					res.json({status: true, message: "Surat berhasil ditambahkan!"});
 				})
 				.catch(function(err) {

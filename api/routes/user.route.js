@@ -20,7 +20,7 @@ router.post('/login', function(req, res) {
 });
 
 router.post('/add', function(req, res) {
-	user.addOne(req, res);
+	user.add(req, res);
 });
 
 router.post('/delete', function(req, res) {

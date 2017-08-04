@@ -100,7 +100,7 @@ function UserControllers() {
 		}
 	}
 
-	this.addOne = function(req, res) {
+	this.add = function(req, res) {
 		var nama = req.body.nama_user,
 			email = req.body.email_user,
 			password = req.body.password_user,

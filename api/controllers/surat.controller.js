@@ -462,6 +462,55 @@ function SuratControllers() {
 				})
 		}
 	}
+
+	this.update = function(req, res) {
+		var nomor = req.body.nomor_surat,
+			unit_kerja = req.body.unit_kerja_surat,
+			hal = req.body.hal_surat,
+			tahun = req.body.tahun_surat,
+			perihal = req.body.perihal_surat,
+			pengirim = req.body.pengirim_surat,
+			tanggal = req.body.tanggal_surat,
+			tanggal_terima = req.body.tanggal_terima_surat,
+			tanggal_entri = req.body.tanggal_entri_surat,
+			sub_sub_jenis = req.body.sub_sub_jenis_surat,
+			tipe = req.body.tipe_surat,
+			status = req.body.status_surat,
+			file = req.body.file_surat;
+
+		if (nomor == undefined || unit_kerja  == undefined || hal  == undefined || tahun  == undefined || perihal  == undefined || pengirim  == undefined || tanggal  == undefined || tanggal_terima  == undefined || !tanggal_entri  == undefined || sub_sub_jenis  == undefined || tipe  == undefined || file  == undefined || status  == undefined) {
+			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
+		} else {
+			console.log(req.body)
+			Surat
+				.update({
+					nomor_surat: nomor,
+					unit_kerja_surat: unit_kerja,
+					hal_surat: hal,
+					tahun_surat: tahun,
+			        perihal_surat: perihal,
+			        pengirim_surat: pengirim,
+			        tanggal_surat: tanggal,
+			        tanggal_terima_surat: tanggal_terima,
+			        tanggal_entri_surat: tanggal_entri,
+			        sub_sub_jenis_surat_id: sub_sub_jenis,
+			        status_surat: status,
+			        tipe_surat: tipe, 
+			        file_surat: file
+				}, {
+					where: {
+						id: id
+					}
+				})
+				.then(function(result) {
+					res.json({status: true, message: "Surat berhasil diupdate!"});
+				})
+				.catch(function(err) {
+					res.json({status: false, message: "Surat gagal diupdate!", err_code: 404, err: err});
+				})
+		}
+		
+	}
 }
 
 module.exports = new SuratControllers();

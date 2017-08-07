@@ -456,7 +456,7 @@ function SuratControllers() {
 				})
 				.then(function(result) {
 					if (result == null) {
-						res.json({status: false, message: "Surat tidak ditemukan!", err_code: 400, err: err});
+						res.json({status: false, message: "Surat tidak ditemukan!", err_code: 400});
 					} else {
 						Surat
 							.destroy({
@@ -506,7 +506,7 @@ function SuratControllers() {
 				})
 				.then(function(result) {
 					if (result == null) {
-						res.json({status: false, message: "Surat tidak ditemukan!", err_code: 400, err: err});
+						res.json({status: false, message: "Surat tidak ditemukan!", err_code: 400});
 					} else {
 						Surat
 							.update({

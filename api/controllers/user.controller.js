@@ -133,6 +133,42 @@ function UserControllers() {
 		}
 	}
 
+	this.delete = function(req, res) {
+		var id = req.body.id;
+
+		if (id == undefined) {
+			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
+		} else {
+			User
+				.findOne({
+					where: {
+						id: id
+					}
+				})
+				.then(function(result) {
+					if (result == null) {
+						res.json({status: false, message: "User tidak ditemukan!", err_code: 400});
+					} else {
+						User
+							.destroy({
+								where: {
+									id: id
+								}
+							})
+							.then(function(result) {
+								res.json({status: true, message: "User berhasil dihapus!"});
+							})
+							.catch(function(err) {
+								res.json({status: false, message: "User gagal dihapus!", err_code: 400, err: err});
+							})
+					}
+				})
+				.catch(function(err) {
+					res.json({status: false, message: "User tidak ditemukan!", err_code: 400, err: err});
+				})
+		}
+	}
+
 	this.resetPassword = function(req, res) {
 		var email = req.body.email_user,
 			token = jwt.sign({
@@ -146,14 +182,14 @@ function UserControllers() {
 			res.json({status: false, message: "Format email salah!", err_code: 400});
 		} else {
 			User
-				.findAll({
+				.findOne({
 					where: {
 						email_user: email,
 						status_user: true
 					}
 				})
 				.then(function(result){
-					if (!result == null) {
+					if (result == null) {
 						res.json({status: false, message: "Email tidak ditemukan!", err_code: 400});
 					} else {
 						User
@@ -200,7 +236,7 @@ function UserControllers() {
 			res.json({status: false, message: "Token salah atau kedaluarsa!", err_code: 400});
 		} else {
 			User
-				.findAll({
+				.findOne({
 					where: {
 						nama_user: nama,
 						status_user: true
@@ -208,7 +244,7 @@ function UserControllers() {
 				})
 				.then(function(result) {
 					if (result == null) {
-						res.json({status: false, message: "Nama user tidak ditemukan!", err_code: 400});
+						res.json({status: false, message: "User tidak ditemukan!", err_code: 400});
 					} else {
 						User
 							.update({
@@ -229,6 +265,9 @@ function UserControllers() {
 								res.json({status: false, message: "Ubah password gagal!", err_code: 400, err: err});
 							})
 					}
+				})
+				.catch(function(err) {
+					res.json({status: false, message: "User tidak ditemukan!", err_code: 400, err: err});
 				})	
 		}
 		
@@ -246,22 +285,38 @@ function UserControllers() {
 			res.json({status: false, message: "Format email salah!", err_code: 400});
 		} else {
 			User
-				.update({
-					nama_user: nama,
-					email_user: email,
-					role_user: role
-				}, {
+				.findOne({
 					where: {
-						id: id,
-						status_user: true
+						id: id
 					}
 				})
 				.then(function(result) {
-					res.json({status: true, message: "Update user berhasil!"});
+					if (result == null) {
+						res.json({status: false, message: "User tidak ditemukan!", err_code: 400});
+					} else {
+						User
+							.update({
+								nama_user: nama,
+								email_user: email,
+								role_user: role
+							}, {
+								where: {
+									id: id,
+									status_user: true
+								}
+							})
+							.then(function(result) {
+								res.json({status: true, message: "Update user berhasil!"});
+							})
+							.catch(function(err) {
+								res.json({status: false, message: "Update user gagal!", err_code: 404, err: err});
+							})
+					}
 				})
 				.catch(function(err) {
-					res.json({status: false, message: "Update user gagal!", err_code: 404, err: err});
+					res.json({status: false, message: "User tidak ditemukan!", err_code: 400});
 				})
+			
 		}
 	}
 
@@ -276,20 +331,37 @@ function UserControllers() {
 			res.json({status: false, message: "Password berbeda dengan password konfirmasi!", err_code: 400});
 		} else {
 			User
-				.update({
-					password_user: crypto.createHash('sha256').update(password).digest('hex')
-				}, {
+				.findOne({
 					where: {
 						id: id,
 						status_user: true
 					}
 				})
 				.then(function(result) {
-					res.json({status: true, message: "Update password user berhasil!"});
+					if(result == null) {
+						res.json({status: false, message: "User tidak ditemukan!", err_code: 400});
+					} else {
+						User
+							.update({
+								password_user: crypto.createHash('sha256').update(password).digest('hex')
+							}, {
+								where: {
+									id: id,
+									status_user: true
+								}
+							})
+							.then(function(result) {
+								res.json({status: true, message: "Update password user berhasil!"});
+							})
+							.catch(function(err) {
+								res.json({status: false, message: "Update password user gagal!", err_code: 404, err: err});
+							})
+					}
 				})
 				.catch(function(err) {
-					res.json({status: false, message: "Update password user gagal!", err_code: 404, err: err});
+					res.json({status: false, message: "User tidak ditemukan!", err_code: 400});
 				})
+			
 		}
 	}
 
@@ -301,18 +373,33 @@ function UserControllers() {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
 			User
-				.update({
-					status_user: status
-				}, {
+				.findOne({
 					where: {
 						id: id
 					}
 				})
 				.then(function(result) {
-					res.json({status: true, message: "Ubah status user berhasil!"});
+					if (result == null) {
+						res.json({status: false, message: "User tidak ditemukan!", err_code: 400});
+					} else {
+						User
+							.update({
+								status_user: status
+							}, {
+								where: {
+									id: id
+								}
+							})
+							.then(function(result) {
+								res.json({status: true, message: "Ubah status user berhasil!"});
+							})
+							.catch(function(err) {
+								res.json({status: false, message: "Ubah status user gagal!", err_code: 400, err: err});
+							})
+					}
 				})
 				.catch(function(err) {
-					res.json({status: false, message: "Ubah status user gagal!", err_code: 400, err: err});
+					res.json({status: false, message: "User tidak ditemukan!", err_code: 400, err: err});
 				})
 		}
 	}

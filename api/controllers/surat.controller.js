@@ -449,22 +449,39 @@ function SuratControllers() {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
 			Surat
-				.destroy({
+				.findOne({
 					where: {
 						id: id
 					}
 				})
 				.then(function(result) {
-					res.json({status: true, message: "Surat berhasil dihapus!"});
+					if (result == null) {
+						res.json({status: false, message: "Surat tidak ditemukan!", err_code: 400, err: err});
+					} else {
+						Surat
+							.destroy({
+								where: {
+									id: id
+								}
+							})
+							.then(function(result) {
+								res.json({status: true, message: "Surat berhasil dihapus!"});
+							})
+							.catch(function(err) {
+								res.json({status: false, message: "Surat gagal dihapus!", err_code: 400, err: err});
+							})
+					}
 				})
-				.catch(function(err) {
-					res.json({status: false, message: "Surat gagal dihapus!", err_code: 400, err: err});
+				.then(function(err) {
+					res.json({status: false, message: "Surat tidak ditemukan!", err_code: 400, err: err});
 				})
+			
 		}
 	}
 
 	this.update = function(req, res) {
-		var nomor = req.body.nomor_surat,
+		var id = req.body.id_surat,
+			nomor = req.body.nomor_surat,
 			unit_kerja = req.body.unit_kerja_surat,
 			hal = req.body.hal_surat,
 			tahun = req.body.tahun_surat,
@@ -481,33 +498,48 @@ function SuratControllers() {
 		if (nomor == undefined || unit_kerja  == undefined || hal  == undefined || tahun  == undefined || perihal  == undefined || pengirim  == undefined || tanggal  == undefined || tanggal_terima  == undefined || !tanggal_entri  == undefined || sub_sub_jenis  == undefined || tipe  == undefined || file  == undefined || status  == undefined) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
-			console.log(req.body)
 			Surat
-				.update({
-					nomor_surat: nomor,
-					unit_kerja_surat: unit_kerja,
-					hal_surat: hal,
-					tahun_surat: tahun,
-			        perihal_surat: perihal,
-			        pengirim_surat: pengirim,
-			        tanggal_surat: tanggal,
-			        tanggal_terima_surat: tanggal_terima,
-			        tanggal_entri_surat: tanggal_entri,
-			        sub_sub_jenis_surat_id: sub_sub_jenis,
-			        status_surat: status,
-			        tipe_surat: tipe, 
-			        file_surat: file
-				}, {
+				.findOne({
 					where: {
 						id: id
 					}
 				})
 				.then(function(result) {
-					res.json({status: true, message: "Surat berhasil diupdate!"});
+					if (result == null) {
+						res.json({status: false, message: "Surat tidak ditemukan!", err_code: 400, err: err});
+					} else {
+						Surat
+							.update({
+								nomor_surat: nomor,
+								unit_kerja_surat: unit_kerja,
+								hal_surat: hal,
+								tahun_surat: tahun,
+						        perihal_surat: perihal,
+						        pengirim_surat: pengirim,
+						        tanggal_surat: tanggal,
+						        tanggal_terima_surat: tanggal_terima,
+						        tanggal_entri_surat: tanggal_entri,
+						        sub_sub_jenis_surat_id: sub_sub_jenis,
+						        status_surat: status,
+						        tipe_surat: tipe, 
+						        file_surat: file
+							}, {
+								where: {
+									id: id
+								}
+							})
+							.then(function(result) {
+								res.json({status: true, message: "Surat berhasil diupdate!"});
+							})
+							.catch(function(err) {
+								res.json({status: false, message: "Surat gagal diupdate!", err_code: 400, err: err});
+							})
+					}
 				})
 				.catch(function(err) {
-					res.json({status: false, message: "Surat gagal diupdate!", err_code: 404, err: err});
+					res.json({status: false, message: "Surat tidak ditemukan!", err_code: 400, err: err});
 				})
+			
 		}
 		
 	}

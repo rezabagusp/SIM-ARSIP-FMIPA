@@ -106,6 +106,7 @@ function UserControllers() {
 			password = req.body.password_user,
 			password_konfirmasi = req.body.password_konfirmasi_user,
 			role = req.body.role_user;
+			console.log(req.body)
 
 		if (!nama || !email || !password || !password_konfirmasi || !role) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});

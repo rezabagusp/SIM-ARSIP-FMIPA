@@ -1,14 +1,13 @@
-var express = require('express');
-var crypto = require('crypto');
-var multer = require('multer');
-var path = require('path');
-var fs = require('fs');
+var express = require('express'),
+	multer = require('multer'),
+	path = require('path'),
+	fs = require('fs');
 
 var sequelize = require('../connection');
 
 var Surat = sequelize.import(__dirname + "/../models/surat.model");
-var Penerima = sequelize.import(__dirname + "/../models/surat.model");
-var Pengirim = sequelize.import(__dirname + "/../models/surat.model");
+var Penerima = sequelize.import(__dirname + "/../models/penerima.model");
+var Pengirim = sequelize.import(__dirname + "/../models/pengirim.model");
 var Kode_surat = sequelize.import(__dirname + "/../models/kode_surat.model");
 var Jenis_surat = sequelize.import(__dirname + "/../models/jenis_surat.model");
 var Sub_jenis_surat = sequelize.import(__dirname + "/../models/sub_jenis_surat.model");
@@ -408,12 +407,15 @@ function SuratControllers() {
 			tanggal = req.body.tanggal_surat,
 			tanggal_terima = req.body.tanggal_terima_surat,
 			tanggal_entri = req.body.tanggal_entri_surat,
-			jenis = req.body.jenis_surat,
+			sub_sub_jenis = req.body.sub_sub_jenis_surat,
+			tipe = req.body.tipe_surat,
+			status = req.body.status_surat,
 			file = req.body.file_surat;
 
-		if (!nomor || !unit_kerja || !hal || !tahun || !perihal || !pengirim || !tanggal || !tanggal_terima || !tanggal_entri_surat || !jenis || !file) {
+		if (nomor == undefined || unit_kerja  == undefined || hal  == undefined || tahun  == undefined || perihal  == undefined || pengirim  == undefined || tanggal  == undefined || tanggal_terima  == undefined || !tanggal_entri  == undefined || sub_sub_jenis  == undefined || tipe  == undefined || file  == undefined || status  == undefined) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
+			console.log(req.body)
 			Surat
 				.create({
 					nomor_surat: nomor,
@@ -425,7 +427,9 @@ function SuratControllers() {
 			        tanggal_surat: tanggal,
 			        tanggal_terima_surat: tanggal_terima,
 			        tanggal_entri_surat: tanggal_entri,
-			        jenis_surat: jenis, 
+			        sub_sub_jenis_surat_id: sub_sub_jenis,
+			        status_surat: status,
+			        tipe_surat: tipe, 
 			        file_surat: file
 				})
 				.then(function(result) {
@@ -436,6 +440,27 @@ function SuratControllers() {
 				})
 		}
 		
+	}
+
+	this.delete = function(req, res) {
+		var id = req.body.id_surat;
+
+		if (id == undefined) {
+			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
+		} else {
+			Surat
+				.destroy({
+					where: {
+						id: id
+					}
+				})
+				.then(function(result) {
+					res.json({status: true, message: "Surat berhasil dihapus!"});
+				})
+				.catch(function(err) {
+					res.json({status: false, message: "Surat gagal dihapus!", err_code: 400, err: err});
+				})
+		}
 	}
 }
 

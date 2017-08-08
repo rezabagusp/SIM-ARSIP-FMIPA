@@ -1,18 +1,39 @@
 <button type="button" class="btn btn-large btn-block btn-default" (click)="cek()">cek</button>
 
 
+ <select (change)="onChange($event.target.value)">
+  <option value=""></option>  
+  <option value="himpro">Himpro</option>
+  <option value="kepanitiaan">Kepanitiaan</option>
+ </select>
 
-    <div style="width: 300px; margin-bottom: 20px;">
-      <h3>Select multiple cities</h3>
-      <ng-select  [multiple]="true"
-                  [items]="items"
-                  [disabled]="disabled"
-                  (data)="refreshValue($event)"
-                  (selected)="selected($event)"
-                  (removed)="removed($event)"
-                  placeholder="No city selected"></ng-select>
-      <pre>{{itemsToString(value)}}</pre>
+ <select [hidden] ="!terpilih" (change)="onChange($event.target.value)">
+  <option value=""></option>    
+  <option value="himpro">isi himpro</option>
+  <option value="kepanitiaan">Kepanitiaan</option>
+ </select> 
+
+ <select [hidden] ="terpilih" (change)="onChange($event.target.value)">
+  <option value=""></option>    
+  <option value="himpro">isi kepanitian</option>
+  <option value="kepanitiaan">Kepanitiaan</option>
+ </select> 
+
+    <div class="selectivity-input example-input"
+         style="width: 300px; margin-bottom: 20px;">
+      <h3>Select a city by country</h3>
+      <ng-select [allowClear]="true"
+                 [items]="items"
+                 (data)="refreshValue($event)"
+                 placeholder="No city selected"></ng-select>
+      <p></p>
+      <div>
+        <button (click)="cek()"> cek
+        </button>
+      </div>
     </div>
+
+
 
     auto complete
     <input auto-complete [(ngModel)]="myData" [source]="items" [max-num-list]=10 />
@@ -25,4 +46,5 @@
     <p>With JSON pipe:</p>
     <pre>{{object | json}}</pre>
   </div>`
+
 

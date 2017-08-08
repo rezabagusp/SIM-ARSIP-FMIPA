@@ -18,7 +18,7 @@
         </div>
         <div class="card-block">
           <div class="col-lg-12">
-            <table datatable class="row-border hover" [dtOptions]="dtOptions"  [dtTrigger]="dtTrigger">
+            <table datatable class="row-border hover" [dtOptions]="dtOptions"  [dtTrigger]="dtTrigger" (click)="large2Modal.show()">
               <thead>
                 <tr>
                   <th>Nomor</th>       
@@ -27,7 +27,7 @@
                   <th>Perihal</th>
                   <th>Pengirim</th>
                   <th>Tujuan</th>
-                  <th>Jenis surat</th>
+                  <th>Status simpan</th>
                   <th></th>
                 </tr>
               </thead>
@@ -39,9 +39,9 @@
                   <td>{{data.completed}}</td>
                   <td>Nama pengirim</td>
                   <td>list nama tujuan</td>
-                  <td>Jenis surat</td>
+                  <td>gudang arsip</td>
                   <td>
-                    <span><a href="javascript:void(0)" (click)="large2Modal.show()" ><i class="fa fa-file-text-o" aria-hidden="true" title="preview"></i></a> </span> &nbsp;
+                    <span><a href="javascript:void(0)" (click)="large2Modal.show()" ><i class="fa fa-file-text-o" aria-hidden="true" title="Preview"></i></a> </span> &nbsp;
                     <span><a href="javascript:void(0)" (click)="deleteConfirm()" ><i class="fa fa-trash-o" aria-hidden="true" title="Hapus"></i></a> </span> &nbsp;
                     <span><a href="javascript:void(0)" (click)="largeModal.show()" ><i class="fa fa-pencil-square-o" aria-hidden="true" title="Edit"></i></a> </span>                    
                     

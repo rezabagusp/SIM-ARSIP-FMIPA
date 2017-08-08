@@ -9,16 +9,23 @@ import { JsonPipe } from '@angular/common';
 export class SasaranMutuComponent implements OnInit {
   date: DateModel;
   options: DatePickerOptions;
-
+  terpilih=false;
   object: Object = {foo: 'bar', baz: 'qux', nested: {xyz: 3, numbers: [1, 2, 3, 4, 5]}};
   constructor() { this.options = new DatePickerOptions();}
 
   ngOnInit() {
   }
 
+  onChange(deviceValue){
+    console.log(deviceValue);
+    if(deviceValue=='himpro') this.terpilih=true; 
+    else this.terpilih=false;
+  }
+
   cek(){
     console.log("datanya : ", this.value)
     console.log("ngmodel datepicker: ", this.date);
+    this.value=[];
   }
   public items:Array<string> = ['Amsterdam', 'Antwerp', 'Athens', 'Barcelona',
     'Berlin', 'Birmingham', 'Bradford', 'Bremen', 'Brussels', 'Bucharest',

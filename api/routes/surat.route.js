@@ -11,6 +11,26 @@ router.post('/add', function(req, res) {
 	surat.add(req, res);
 });
 
+router.post('/get', function(req, res) {
+	surat.getAll(req, res);
+});
+
+router.post('/get/kode', function(req, res) {
+	surat.getByKode(req, res);
+});
+
+router.post('/get/jenis', function(req, res) {
+	surat.getByJenis(req, res);
+});
+
+router.post('/get/subjenis', function(req, res) {
+	surat.getBySubJenis(req, res);
+});
+
+router.post('/get/subsubjenis', function(req, res) {
+	surat.getBySubSubJenis(req, res);
+});
+
 router.post('/delete', function(req, res) {
 	surat.delete(req, res);
 });

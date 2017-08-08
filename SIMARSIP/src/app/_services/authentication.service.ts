@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http'; // add http module
 import { Observable } from 'rxjs/Observable';
-// jwt helper
 import { AuthHttp, JwtHelper, tokenNotExpired } from 'angular2-jwt';
 
 @Injectable()
@@ -16,7 +15,7 @@ export class AuthenticationService {
   }
 
   login(nama_user: string, password_user: string) {
-    let send = JSON.stringify({nama_user: nama_user, password_user:password_user });//bikin data inputan lu jadi string json
+    let send = JSON.stringify({nama_user: nama_user, password_user:password_user });
     console.log("yang akan dikirim vias service: ", send, this.url_login);    
     let header= new Headers();
     header.append('Content-type', 'application/json' );

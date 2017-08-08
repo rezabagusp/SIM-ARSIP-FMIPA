@@ -8,10 +8,20 @@ var sequelize = require('../connection');
 var Surat = sequelize.import(__dirname + "/../models/surat.model");
 var Penerima = sequelize.import(__dirname + "/../models/penerima.model");
 var Pengirim = sequelize.import(__dirname + "/../models/pengirim.model");
+var Surat_penerima = sequelize.import(__dirname + "/../models/surat_penerima.model");
 var Kode_surat = sequelize.import(__dirname + "/../models/kode_surat.model");
 var Jenis_surat = sequelize.import(__dirname + "/../models/jenis_surat.model");
 var Sub_jenis_surat = sequelize.import(__dirname + "/../models/sub_jenis_surat.model");
 var Sub_sub_jenis_surat = sequelize.import(__dirname + "/../models/sub_sub_jenis_surat.model");
+
+Jenis_surat.belongsTo(Kode_surat, {foreignKey: "kode_surat_id"});
+Sub_jenis_surat.belongsTo(Jenis_surat, {foreignKey: "jenis_surat_id"});
+Sub_sub_jenis_surat.belongsTo(Sub_jenis_surat, {foreignKey: "sub_jenis_surat_id"});
+Surat.belongsTo(Sub_sub_jenis_surat, {foreignKey: "sub_sub_jenis_surat_id"});
+
+Surat_penerima.belongsTo(Surat, {foreignKey: "surat_id"});
+Surat_penerima.belongsTo(Penerima, {foreignKey: "penerima_id"});
+Surat.belongsTo(Pengirim, {foreignKey: "pengirim_surat"});
 
 function SuratControllers() {
 	this.countAll = function(req, res) {
@@ -28,7 +38,7 @@ function SuratControllers() {
 	this.countByKode = function(req, res) {
 		var kode = req.body.kode_surat;
 
-		if (!kode) {
+		if (kode == undefined) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
 			Surat
@@ -61,7 +71,7 @@ function SuratControllers() {
 	this.countByJenis = function(req, res) {
 		var jenis = req.body.jenis_surat;
 
-		if (!jenis) {
+		if (jenis == undefined) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
 			Surat
@@ -91,7 +101,7 @@ function SuratControllers() {
 	this.countBySubJenis = function(req, res) {
 		var sub_jenis = req.body.sub_jenis_surat_id;
 
-		if (!sub_sub_jenis) {
+		if (sub_sub_jenis == undefined) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
 			Surat
@@ -118,7 +128,7 @@ function SuratControllers() {
 	this.countBySubSubJenis = function(req, res) {
 		var sub_sub_jenis = req.body.sub_sub_jenis_surat;
 
-		if (!sub_sub_jenis) {
+		if (sub_sub_jenis == undefined) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
 			Surat
@@ -143,17 +153,21 @@ function SuratControllers() {
 		Surat
 			.findAll()
 			.then(function(result) {
-				res.json({status: true, message: 'Ambil semua surat berhasil!', data: result});
+				if (result == null) {
+					res.json({status: false, message: "Semua surat gagal ditemukan!", err_code: 400});
+				} else {
+					res.json({status: true, message: "Ambil semua surat berhasil!", data: result});
+				}
 			})
 			.catch(function(err) {
-				res.json({status: false, message: 'Ambil semua surat gagal!', err_code: 400, err: err});
+				res.json({status: false, message: "Ambil semua surat gagal!", err_code: 400, err: err});
 			})
 	}
 
 	this.getOne = function(req, res) {
 		var id = req.body.id_surat;
 
-		if (!id) {
+		if (id == undefined) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
 			Surat
@@ -163,7 +177,11 @@ function SuratControllers() {
 					}
 				})
 				.then(function(result) {
-					res.json({status: true, message: 'Ambil satu surat berhasil!', data: result});
+					if (result == null) {
+						res.json({status: false, message: "Surat gagal ditemukan!", err_code: 400});
+					} else {
+						res.json({status: true, message: 'Ambil satu surat berhasil!', data: result});
+					}
 				})
 				.catch(function(err) {
 					res.json({status: false, message: 'Ambil satu surat gagal!', err_code: 400, err: err});
@@ -174,7 +192,7 @@ function SuratControllers() {
 	this.getByTipe = function(req, res) {
 		var tipe = req.body.tipe_surat;
 
-		if (!tipe) {
+		if (tipe == undefined) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
 			Surat
@@ -199,7 +217,7 @@ function SuratControllers() {
 	this.getByNomor = function(req, res) {
 		var nomor = req.body.nomor_surat;
 
-		if (!nomor) {
+		if (nomor == undefined) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
 			Surat
@@ -224,7 +242,7 @@ function SuratControllers() {
 	this.getByPengirim = function(req, res) {
 		var pengirim = req.body.id_pengirim;
 
-		if (!pengirim) {
+		if (pengirim == undefined) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
 			Surat
@@ -234,7 +252,11 @@ function SuratControllers() {
 					}
 				})
 				.then(function(result) {
-					res.json({status: true, message: 'Ambil satu surat dari penerima berhasil!', data: result});
+					if (result == null) {
+						res.json({status: false, message: "Surat tidak ditemukan!", err_code: 400});
+					} else {
+						res.json({status: true, message: 'Ambil satu surat dari penerima berhasil!', data: result});
+					}
 				})
 				.catch(function(err) {
 					res.json({status: false, message: 'Ambil satu surat dari penerima gagal!', err_code: 400, err: err});
@@ -245,7 +267,7 @@ function SuratControllers() {
 	this.getByKode = function(req, res) {
 		var kode = req.body.kode_surat;
 
-		if (!kode) {
+		if (kode == undefined) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
 			Surat
@@ -267,10 +289,14 @@ function SuratControllers() {
 					}]
 				})
 				.then(function(result) {
-					res.json({status: true, message: "Hitung surat dengan kode berhasil!", data: result});
+					if (result == null) {
+						res.json({status: false, message: "Surat tidak ditemukan!", err_code: 400});
+					} else {
+						res.json({status: true, message: "Ambil surat dengan kode berhasil!", data: result});
+					}	
 				})
 				.catch(function(err) {
-					res.json({status: false, message: "Hitung surat dengan kode gagal!", err_code: 400, err: err});
+					res.json({status: false, message: "Ambil surat dengan kode gagal!", err_code: 400, err: err});
 				})
 		}
 	}
@@ -278,7 +304,7 @@ function SuratControllers() {
 	this.getByJenis = function(req, res) {
 		var jenis = req.body.jenis_surat;
 
-		if (!jenis) {
+		if (jenis == undefined) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
 			Surat
@@ -297,10 +323,14 @@ function SuratControllers() {
 					}]
 				})
 				.then(function(result) {
-					res.json({status: true, message: "Hitung surat dengan jenis berhasil!", data: result});
+					if (result == null) {
+						res.json({status: false, message: "Surat tidak ditemukan!", err_code: 400});
+					} else {
+						res.json({status: true, message: "Ambil surat dengan jenis berhasil!", data: result});
+					}
 				})
 				.catch(function(err) {
-					res.json({status: false, message: "Hitung surat dengan jenis gagal!", err_code: 400, err: err});
+					res.json({status: false, message: "Ambil surat dengan jenis gagal!", err_code: 400, err: err});
 				})
 		}
 	}
@@ -308,7 +338,7 @@ function SuratControllers() {
 	this.getBySubJenis = function(req, res) {
 		var sub_jenis = req.body.sub_jenis_surat;
 
-		if (!sub_sub_jenis) {
+		if (sub_jenis == undefined) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
 			Surat
@@ -324,10 +354,14 @@ function SuratControllers() {
 					}]
 				})
 				.then(function(result) {
-					res.json({status: true, message: "Hitung surat dengan subjenis berhasil!", data: result});
+					if (result == null) {
+						res.json({status: false, message: "Surat tidak ditemukan!", err_code: 400});
+					} else {
+						res.json({status: true, message: "Ambil surat dengan subjenis berhasil!", data: result});
+					}
 				})
 				.catch(function(err) {
-					res.json({status: false, message: "Hitung surat dengan subjenis gagal!", err_code: 400, err: err});
+					res.json({status: false, message: "Ambil surat dengan subjenis gagal!", err_code: 400, err: err});
 				})
 		}
 	}
@@ -335,7 +369,7 @@ function SuratControllers() {
 	this.getBySubSubJenis = function(req, res) {
 		var sub_sub_jenis = req.body.sub_sub_jenis_surat;
 
-		if (!sub_sub_jenis) {
+		if (sub_sub_jenis == undefined) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else {
 			Surat
@@ -348,10 +382,14 @@ function SuratControllers() {
 					}]
 				})
 				.then(function(result) {
-					res.json({status: true, message: "Hitung surat dengan subsubjenis berhasil!", data: result});
+					if (result == null) {
+						res.json({status: false, message: "Surat tidak ditemukan!", err_code: 400});
+					} else {
+						res.json({status: true, message: "Ambil surat dengan subsubjenis berhasil!", data: result});
+					}
 				})
 				.catch(function(err) {
-					res.json({status: false, message: "Hitung surat dengan subsubjenis gagal!", err_code: 400, err: err});
+					res.json({status: false, message: "Ambil surat dengan subsubjenis gagal!", err_code: 400, err: err});
 				})
 		}
 	}
@@ -539,9 +577,7 @@ function SuratControllers() {
 				.catch(function(err) {
 					res.json({status: false, message: "Surat tidak ditemukan!", err_code: 400, err: err});
 				})
-			
 		}
-		
 	}
 }
 

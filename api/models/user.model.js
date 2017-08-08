@@ -1,5 +1,5 @@
-module.exports = function(sequelize, DataType){
-	return sequelize.define('user',{
+module.exports = function(sequelize, DataType) {
+	return sequelize.define('user', {
 		nama_user: DataType.STRING,
 		email_user: { type: DataType.STRING, unique: true, isEmail: true },
 		password_user: DataType.STRING,

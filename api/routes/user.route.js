@@ -20,7 +20,7 @@ router.post('/login', function(req, res) {
 });
 
 router.post('/add', function(req, res) {
-	user.addOne(req, res);
+	user.add(req, res);
 });
 
 router.post('/delete', function(req, res) {
@@ -28,11 +28,15 @@ router.post('/delete', function(req, res) {
 });
 
 router.post('/edit', function(req, res) {
-	user.update(req, res);
+	user.updateProfil(req, res);
+});
+
+router.post('/edit/password', function(req, res) {
+	user.updatePassword(req, res);
 });
 
 router.post('/edit/status', function(req, res) {
-	user.update(req, res);
+	user.updateStatus(req, res);
 });
 
 router.post('/reset', function(req, res) {

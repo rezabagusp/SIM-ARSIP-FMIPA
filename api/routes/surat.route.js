@@ -1,58 +1,26 @@
 var express = require('express');
 var router = express.Router();
 
-var user = require('../controllers/user.controller');
+var surat = require('../controllers/surat.controller');
 
 router.get('/', function(req, res) {
   res.json({status: false, message: 'None API Implemented'});
 });
 
-router.post('/get', function(req, res) {
-	user.getOne(req, res);
-});
-
-router.post('/get/kode', function(req, res) {
-	user.getOne(req, res);
-});
-
-router.post('/get/jenis', function(req, res) {
-	user.getOne(req, res);
-});
-
-router.post('/get/sub-jenis', function(req, res) {
-	user.getOne(req, res);
-});
-
-router.post('/get/sub-sub-jenis', function(req, res) {
-	user.getOne(req, res);
-});
-
-router.post('/get/all', function(req, res) {
-	user.getAll(req, res);
-});
-
 router.post('/add', function(req, res) {
-	user.addOne(req, res);
+	surat.add(req, res);
 });
 
 router.post('/delete', function(req, res) {
-	user.delete(req, res);
+	surat.delete(req, res);
 });
 
 router.post('/edit', function(req, res) {
-	user.update(req, res);
+	surat.update(req, res);
 });
 
-router.post('/edit/status', function(req, res) {
-	user.update(req, res);
-});
-
-router.post('/reset', function(req, res) {
-	user.resetPassword(req, res);
-});
-
-router.post('/reset/confirm', function(req, res) {
-	user.confirmResetPassword(req, res);
+router.post('/upload', function(req, res) {
+	surat.upload(req, res);
 });
 
 module.exports = router;

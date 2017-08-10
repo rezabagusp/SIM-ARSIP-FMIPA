@@ -2,16 +2,14 @@ var express = require('express');
 var crypto = require('crypto');
 var multer = require('multer');
 var path = require('path');
-var pdfjs = require('pdfjs');
-
-var sequelize = require('./connection');
 var fs = require('fs');
+
+var sequelize = require('../connection');
 
 var Lampiran = sequelize.import(__dirname + '/../models/lampiran.model');
 
 function LampiranControllers() {
 	this.countAll = function(req, res) {
-	//	var auth = jwt.validateToken(req.headers, res);
 		Lampiran
 			.count()
 			.then(function(result) {
@@ -108,7 +106,7 @@ function LampiranControllers() {
 	this.upload = function(req, res) {
 		var destination = 'public/uploads/lampiran',
 			dir = '/../',
-			filename = '';
+			filename = 'lampiran';
 
 		checkFileSignature = function(signature) {
 			if (signature !== '25504446') {
@@ -124,24 +122,25 @@ function LampiranControllers() {
 			    	cb(null, __dirname + dir + destination);
 			  	},
 				filename: function (req, file, cb) {
-			      	filename = file.fieldname + '-' + Date.now() + '.pdf';
+			      	filename = filename + '-' + Date.now() + '.pdf';
 			      	cb(null, filename);
 			  	}
 			}),
 			limits: {
 				fileSize: 1 * 1024 * 1024
 			}
-		}).single('lampiran');
+		}).any();
 
 		upload(req, res, function(err) {
+			console.log(filename);
 			var bitmap = fs.readFileSync(__dirname + dir + destination + '/' + filename).toString('hex', 0, 4);
 			if (!checkFileSignature(bitmap)) {
 				fs.unlinkSync(__dirname + dir + destination + '/' + filename);
 				res.json({status: false, message: 'File bukan pdf!', err_code: 400});
 			} else if (err) {
-				res.json({status: false, message: 'Upload surat gagal!', err_code: 400, err: err});
+				res.json({status: false, message: 'Upload lampiran gagal!', err_code: 400, err: err});
 			} else {
-				res.json({status: true, message: 'Upload surat berhasil!', data: filename});
+				res.json({status: true, message: 'Upload lampiran berhasil!', data: filename});
 			}
 		});
 	}

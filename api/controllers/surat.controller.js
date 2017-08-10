@@ -419,7 +419,7 @@ function SuratControllers() {
 	this.upload = function(req, res) {
 		var destination = 'public/uploads/surat',
 			dir = '/../',
-			filename = '';
+			filename = 'surat';
 
 		checkFileSignature = function(signature) {
 			if (signature !== '25504446') {
@@ -435,18 +435,16 @@ function SuratControllers() {
 			    	cb(null, __dirname + dir + destination);
 			  	},
 				filename: function (req, file, cb) {
-			      	filename = file.fieldname + '-' + Date.now() + '.pdf';
+			      	filename = filename + '-' + Date.now() + '.pdf';
 			      	cb(null, filename);
 			  	}
 			}),
 			limits: {
 				fileSize: 1 * 1024 * 1024
 			}
-		}).single('surat');
+		}).any();
 
 		upload(req, res, function(err) {
-			var result  = {};
-
 			var bitmap = fs.readFileSync(__dirname + dir + destination + '/' + filename).toString('hex', 0, 4);
 			if (!checkFileSignature(bitmap)) {
 				fs.unlinkSync(__dirname + dir + destination + '/' + filename);
@@ -454,7 +452,7 @@ function SuratControllers() {
 			} else if (err) {
 				res.json({status: false, message: 'Upload surat gagal!', err_code: 400, err: err});
 			} else {
-				res.json({status: true, message: 'Upload surat berhasil!', data: result});
+				res.json({status: true, message: 'Upload surat berhasil!', data: filename});
 			}
 		});
 	}

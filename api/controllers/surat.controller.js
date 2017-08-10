@@ -1,9 +1,7 @@
 var express = require('express'),
 	multer = require('multer'),
 	path = require('path'),
-	fs = require('fs'),
-	pdf2img = require('pdf2img'),
-	tesseract = require('tesseract.js');
+	fs = require('fs');
 
 var sequelize = require('../connection');
 

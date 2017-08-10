@@ -49,7 +49,8 @@ Kode_surat.sync().then(function(result) {
 // routing
 var index = require('./routes/index'),
     user = require('./routes/user.route'),
-    surat = require('./routes/surat.route');
+    surat = require('./routes/surat.route'),
+    lampiran = require('./routes/lampiran.route');
 
 var app = express();
 
@@ -65,6 +66,8 @@ app.use('/api/user', user);
 app.use('/api/user/*', user);
 app.use('/api/surat', surat);
 app.use('/api/surat/*', surat);
+app.use('/api/lampiran', lampiran);
+app.use('/api/lampiran/*', lampiran);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

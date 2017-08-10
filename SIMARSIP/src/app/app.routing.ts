@@ -5,8 +5,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { FullLayoutComponent } from './layouts/full-layout.component';
 import { LoginComponent } from './login/login.component';
 
-import { PrestasiComponent } from './prestasi/prestasi.component';
-
 export const routes: Routes = [
   {
     path: '',

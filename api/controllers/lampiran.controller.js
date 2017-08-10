@@ -100,6 +100,12 @@ function LampiranControllers() {
         			tanggal_entri_lampiran: tanggal_entri,
         			file_lampiran: file
         		})
+        		.then(function(result) {
+        			res.json({status: true, message: 'Tambah lampiran berhasil!'});
+        		})
+        		.catch(function(err) {
+        			res.json({status: false, message: 'Tambah lampiran gagal!', err_code: 400, err: err});
+        		})
         }
 	}
 

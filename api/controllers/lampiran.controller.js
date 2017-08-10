@@ -9,7 +9,7 @@ var fs = require('fs');
 
 var Lampiran = sequelize.import(__dirname + '/../models/lampiran.model');
 
-function LampiranControllers(){
+function LampiranControllers() {
 	this.countAll = function(req, res) {
 	//	var auth = jwt.validateToken(req.headers, res);
 		Lampiran
@@ -106,7 +106,7 @@ function LampiranControllers(){
 	}
 
 	this.upload = function(req, res) {
-		var destination = 'assets/uploads/lampiran',
+		var destination = 'public/uploads/lampiran',
 			dir = '/../',
 			filename = '';
 

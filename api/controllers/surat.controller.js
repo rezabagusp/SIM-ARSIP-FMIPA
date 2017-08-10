@@ -8,6 +8,7 @@ var express = require('express'),
 var sequelize = require('../connection');
 
 var Surat = sequelize.import(__dirname + '/../models/surat.model');
+var Lampiran = sequelize.import(__dirname + '/../models/lampiran.model');
 var Penerima = sequelize.import(__dirname + '/../models/penerima.model');
 var Pengirim = sequelize.import(__dirname + '/../models/pengirim.model');
 var Surat_penerima = sequelize.import(__dirname + '/../models/surat_penerima.model');
@@ -418,7 +419,7 @@ function SuratControllers() {
 	}
 
 	this.upload = function(req, res) {
-		var destination = 'assets/uploads/surat',
+		var destination = 'public/uploads/surat',
 			dir = '/../',
 			filename = '';
 
@@ -455,21 +456,6 @@ function SuratControllers() {
 			} else if (err) {
 				res.json({status: false, message: 'Upload surat gagal!', err_code: 400, err: err});
 			} else {
-				pdf2img.setOptions({
-					type: 'png',                                // png or jpg, default jpg 
-					size: 1024,                                 // default 1024 
-					density: 600,                               // default 600 
-					outputdir: __dirname + path.sep + 'output', // output folder, default null (if null given, then it will create folder name same as file name) 
-					outputname: 'test',                         // output file name, dafault null (if null given, then it will create image name same as input name) 
-					page: 1                                  	// convert selected page, default null (if null given, then it will convert all pages) 
-				});
-				pdf2img.(__dirname + dir + destination + '/' + filename, function(err, info) {
-					if (err) {
-						fs.unlinkSync(__dirname + dir + destination + '/' + filename);
-					} else {
-						var Tesseract
-					}
-				});
 				res.json({status: true, message: 'Upload surat berhasil!', data: result});
 			}
 		});
@@ -488,12 +474,12 @@ function SuratControllers() {
 			sub_sub_jenis = req.body.sub_sub_jenis_surat,
 			tipe = req.body.tipe_surat,
 			status = req.body.status_surat,
-			file = req.body.file_surat;
+			file = req.body.file_surat
+			lampiran = req.body.lampiran_surat;
 
 		if (nomor == undefined || unit_kerja  == undefined || hal  == undefined || tahun  == undefined || perihal  == undefined || pengirim  == undefined || tanggal  == undefined || tanggal_terima  == undefined || !tanggal_entri  == undefined || sub_sub_jenis  == undefined || tipe  == undefined || file  == undefined || status  == undefined) {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else {
-			console.log(req.body)
 			Surat
 				.create({
 					nomor_surat: nomor,
@@ -505,16 +491,34 @@ function SuratControllers() {
 			        tanggal_surat: tanggal,
 			        tanggal_terima_surat: tanggal_terima,
 			        tanggal_entri_surat: tanggal_entri,
-			        sub_sub_jenis_surat_id: sub_sub_jenis,
 			        status_surat: status,
 			        tipe_surat: tipe, 
-			        file_surat: file
+			        file_surat: file,
+			        sub_sub_jenis_surat_id: sub_sub_jenis
 				})
 				.then(function(result) {
-					res.json({status: true, message: 'Surat berhasil ditambahkan!'});
+					if (lampiran !== null && lampiran.length > 0) {
+						console.log(result.dataValues);
+						for (var i = 0; i < lampiran.length; i++) {
+							Lampiran
+								.update({
+									surat_id: result.dataValues.id
+								}, {
+									where: {
+										id: lampiran[i].id
+									}
+								})
+								.catch(function(err) {
+									res.json({status: false, message: 'Update lampiran gagal!', err_code: 400, err: err});
+								});
+						}
+						res.json({status: true, message: 'Surat dan lampiran berhasil ditambahkan!'})
+					} else {
+						res.json({status: true, message: 'Hanya surat berhasil ditambahkan!'});
+					}
 				})
 				.catch(function(err) {
-					res.json({status: false, message: 'Surat gagal ditambahkan!', err_code: 404, err: err});
+					res.json({status: false, message: 'Surat gagal ditambahkan!', err_code: 400, err: err});
 				})
 		}
 		

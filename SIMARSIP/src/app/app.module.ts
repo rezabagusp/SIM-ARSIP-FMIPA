@@ -28,12 +28,9 @@ import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
 // superadmin
 
-// departemen
-
 // Modal Component
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ModalsComponent } from './modals/modals.component';
-
 
 // Guard for canActive
 import { AuthGuard } from './_guards/auth.guard';
@@ -70,8 +67,7 @@ import { AuthGuard } from './_guards/auth.guard';
     NAV_DROPDOWN_DIRECTIVES,
     BreadcrumbsComponent,
     SIDEBAR_TOGGLE_DIRECTIVES,
-    AsideToggleDirective,    
-
+    AsideToggleDirective,
   ],
   providers: [{
     provide: LocationStrategy,

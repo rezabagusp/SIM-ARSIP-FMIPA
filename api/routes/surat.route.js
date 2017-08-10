@@ -7,6 +7,10 @@ router.get('/', function(req, res) {
   res.json({status: false, message: 'None API Implemented'});
 });
 
+router.post('/', function(req, res) {
+  res.json({status: false, message: 'None API Implemented'});
+});
+
 router.post('/add', function(req, res) {
 	surat.add(req, res);
 });

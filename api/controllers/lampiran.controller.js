@@ -150,6 +150,49 @@ function LampiranControllers() {
 			}
 		});
 	}
+
+	this.update = function(req, res) {
+		var id = req.body.id_lampiran,
+			judul = req.body.judul_lampiran,
+        	tanggal = req.body.tanggal_lampiran,
+        	tanggal_entri = req.body.tanggal_entri_lampiran,
+        	file = req.body.file_lampiran;
+
+      	if (id == undefined || judul == undefined || tanggal == undefined || tanggal_entri == undefined || file == undefined) {
+      		res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+      	} else {
+      		Lampiran
+      			.findOne({
+      				where: {
+      					id: id
+      				}
+      			})
+      			.then(function(result) {
+      				if (result == null) {
+      					res.json({status: false, message: 'Lampiran tidak ditemukan!', err_code: 404});
+      				} else {
+      					Lampiran
+			      			.update({
+			      				judul_lampiran: judul,
+			      				tanggal_lampiran: tanggal,
+			      				tanggal_entri_lampiran: tanggal_entri,
+			      				file_lampiran: file
+			      			}, {
+			      				where: {
+			      					id: id
+			      				}
+			      			})
+			      			.then(function(result) {
+			      				res.json({status: true, message: 'Update lampiran berhasil!'});
+			      			})
+			      			.catch(function(err) {
+			      				res.json({status: false, message: 'Update lampiran gagal!', err_code: 400, err: err});
+			      			})
+      				}
+      			})
+      	}
+	}
+
 }
 
 module.exports = new LampiranControllers();

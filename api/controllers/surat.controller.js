@@ -521,7 +521,9 @@ function SuratControllers() {
 	}
 
 	this.delete = function(req, res) {
-		var id = req.body.id_surat;
+		var id = req.body.id_surat,
+			destination = 'public/uploads/surat',
+			dir = '/../';
 
 		if (id == undefined) {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
@@ -534,8 +536,10 @@ function SuratControllers() {
 				})
 				.then(function(result) {
 					if (result == null) {
-						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 400});
+						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 404});
 					} else {
+						var filename = result.dataValues.file_surat;
+						fs.unlinkSync(__dirname + dir + destination + '/' + filename);
 						Surat
 							.destroy({
 								where: {
@@ -550,8 +554,8 @@ function SuratControllers() {
 							})
 					}
 				})
-				.then(function(err) {
-					res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 400, err: err});
+				.catch(function(err) {
+					res.json({status: false, message: 'Surat gagal ditemukan!', err_code: 400, err: err});
 				})
 			
 		}

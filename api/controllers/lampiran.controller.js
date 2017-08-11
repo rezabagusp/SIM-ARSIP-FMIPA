@@ -193,6 +193,47 @@ function LampiranControllers() {
       	}
 	}
 
+	this.delete = function(req, res) {
+		var id = req.body.id_lampiran,
+			destination = 'public/uploads/lampiran',
+			dir = '/../';
+
+		if (id == undefined) {
+			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else {
+			Lampiran
+				.findOne({
+					where: {
+						id: id
+					}
+				})
+				.then(function(result) {
+					if (result == null) {
+						res.json({status: false, message: 'Lampiran tidak ditemukan!', err_code: 404});
+					} else {
+						var filename = result.dataValues.file_lampiran;
+						fs.unlinkSync(__dirname + dir + destination + '/' + filename);
+						Lampiran
+							.destroy({
+								where: {
+									id: id
+								}
+							})
+							.then(function(result) {
+								res.json({status: true, message: 'Lampiran berhasil dihapus!'});
+							})
+							.catch(function(err) {
+								res.json({status: false, message: 'Lampiran gagal dihapus!', err_code: 400, err: err});
+							})
+					}
+				})
+				.catch(function(err) {
+					res.json({status: false, message: 'Lampiran gagal ditemukan!', err_code: 400, err: err});
+				})
+			
+		}
+	}
+
 }
 
 module.exports = new LampiranControllers();

@@ -28,9 +28,15 @@ import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
 // superadmin
 
+
 // Modal Component
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ModalsComponent } from './modals/modals.component';
+
+// service 
+import { AuthenticationService } from './_services/authentication.service';
+import { AdminService } from './_services/admin.service';
+import { UploadService } from './_services/upload.service';
 
 // Guard for canActive
 import { AuthGuard } from './_guards/auth.guard';
@@ -44,7 +50,7 @@ import { AuthGuard } from './_guards/auth.guard';
     AppRoutingModule,
     BsDropdownModule.forRoot(),
     TabsModule.forRoot(),
-    ToastrModule.forRoot(), // ToastrModule added
+    ToastrModule.forRoot(),
     ChartsModule,
     BrowserAnimationsModule,
     HttpModule,
@@ -64,16 +70,16 @@ import { AuthGuard } from './_guards/auth.guard';
     ModalsComponent,
   ],
   exports: [
-    NAV_DROPDOWN_DIRECTIVES,
-    BreadcrumbsComponent,
-    SIDEBAR_TOGGLE_DIRECTIVES,
-    AsideToggleDirective,
+
   ],
   providers: [{
     provide: LocationStrategy,
     useClass: HashLocationStrategy
   },
-  AuthGuard
+  AuthGuard,
+  AuthenticationService,
+  AdminService,
+  UploadService
 ],
   schemas: [NO_ERRORS_SCHEMA],
   bootstrap: [ AppComponent ]

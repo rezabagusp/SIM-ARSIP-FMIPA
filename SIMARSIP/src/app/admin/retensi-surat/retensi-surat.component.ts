@@ -7,7 +7,7 @@ import { DatePickerOptions, DateModel } from 'ng2-datepicker'; // dipake buat da
 @Component({
   selector: 'app-retensi-surat',
   templateUrl: './retensi-surat.component.html',
-  styleUrls: ['./../surat-masuk/surat-masuk.component.scss']
+  styleUrls: ['./../surat/surat.component.scss']
 })
 export class RetensiSuratComponent implements OnInit {
 

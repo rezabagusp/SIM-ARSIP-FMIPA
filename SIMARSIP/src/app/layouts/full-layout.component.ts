@@ -1,12 +1,13 @@
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from './../_services/authentication.service';
+import { DataService } from './../_services/data.service';
 
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './full-layout.component.html',
-  providers:[AuthenticationService]
+  providers:[AuthenticationService, DataService]
 })
 export class FullLayoutComponent implements OnInit {
 

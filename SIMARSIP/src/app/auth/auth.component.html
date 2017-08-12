@@ -15,14 +15,20 @@
                   <input type="text" class="form-control" placeholder="Username" name="username" [(ngModel)]="nama_user">
                 </div>
 
-                <div class="input-group mb-4 form-grouup">
+                <div class="input-group mb-4 form-group">
                   <span class="input-group-addon"><i class="icon-lock"></i></span>
                   <input type="password" class="form-control" placeholder="Password" name="password" [(ngModel)]="password_user">
                 </div>
-
+                <div class="input-group mb-4 form-group">
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" (click)="changeRememberMe()"> Remember me
+                    </label>
+                  </div>
+                </div>
                 <div class="row">
                   <div class="col-6">
-                    <button type="submit" [disabled]="!nama_usar && !password_user" class="btn btn-primary" [routerLink]="['/dashboard']" >Login</button>
+                    <button type="submit" [disabled]="!nama_usar && !password_user" class="btn btn-primary" >Login</button>
                   </div>
 
                   <div class="col-6 text-right">

@@ -7,7 +7,7 @@
       <div class="card card-accent-primary">
         <div class="card-header">
           <b>Daftar Lampiran</b>
-          <button type="button" class="btn btn-success btn-sm pull-right" style="border-radius:5px" data-toggle="modal" (click)="largeModal.show()" >
+          <button type="button" class="btn btn-success btn-sm pull-right" style="border-radius:5px" data-toggle="modal" (click)="changeFormType(0);resetForm();entryLampiranModal.show()" >
             <i class="fa fa-plus"></i>&nbsp; Tambah Lampiran
           </button>          
         </div>
@@ -16,18 +16,25 @@
             <table datatable class="row-border hover" [dtOptions]="dtOptions"  [dtTrigger]="dtTrigger">
               <thead>
                 <tr>
-                  <th>id</th>                  
-                  <th>user id</th>
-                  <th>title</th>
-                  <th>completed</th>
+                  <th>No</th>                  
+                  <th>judul</th>
+                  <th>tanggal lampiran</th>
+                  <th>tanggal entri</th>
+                  <th>file</th>
+                  <th>aksi</th>
                 </tr>
               </thead>
-              <tbody style="overflow-x: scroll; overflow: auto">
-                <tr *ngFor="let data of datalist">
-                  <td>{{data.id}}</td>
-                  <td>{{data.title}}</td>
-                  <td>{{data.userId}}</td>
-                  <td>{{data.completed}}</td>
+              <tbody>
+                <tr *ngFor="let lampiran of list_lampiran; let i = index">
+                  <td>{{i+1}}</td>
+                  <td>{{lampiran.judul_lampiran}}</td>
+                  <td>{{lampiran.tanggal_lampiran | date}}</td>
+                  <td>{{lampiran.tanggal_entri_lampiran | date:'medium'}}</td>                  
+                  <td>{{lampiran.file_lampiran}}</td>
+                  <td>
+                    <span><a href="javascript:void(0)" (click)="delete(lampiran.id);" ><i class="fa fa-trash-o" aria-hidden="true" title="Hapus"></i>Delete</a></span> &nbsp;
+                    <span><a href="javascript:void(0)" (click)="changeFormType(1); clickRow(lampiran); editLampiranModal.show()" ><i class="fa fa-pencil-square-o" aria-hidden="true" title="Edit"></i>Update</a> </span>
+                  </td>                    
                 </tr>
               </tbody>
             </table>
@@ -40,52 +47,90 @@
 </div>
 
 <!-- form entri lampiran -->
-<div bsModal #largeModal="bs-modal" class="modal fade" style="" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div bsModal #entryLampiranModal="bs-modal" class="modal fade" style="" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 style="text-align:center;" >Masukan Informasi Lampiran</h4>
-         <button type="button" class="close" (click)="largeModal.hide()" aria-label="Close">
+        <h4 style="text-align:center;" >Tambah Lampiran</h4>
+         <button type="button" class="close" (click)="entryLampiranModal.hide()" aria-label="Close">
           <span aria-hidden="true">&times;</span>
-        </button> 
+        </button>
       </div>
       <div class="modal-body">
-          <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
-            <div class="form-group row">
-              <label class="col-md-3 form-control-label">Nomor</label>
-              <div class="col-md-9">
-                <input type="text" id="text-input" name="text-input" class="form-control" placeholder="masukkan nomor lampiran">
-              </div>
+        <form [formGroup]="form" (submit)="submit()" class="form-horizontal" novalidate>
+          <div class="form-group row">
+            <label class="col-md-3 form-control-label" for="text-input">Judul</label>
+            <div class="col-md-9">
+              <input type="text" id="judul_lampiran" formControlName="judul_lampiran" name="judul_lampiran" class="form-control" placeholder="judul lampiran">
             </div>
-            <div class="form-group row">
-              <label class="col-md-3 form-control-label" for="text-input">Judul</label>
-              <div class="col-md-9">
-                <input type="text" id="text-input" name="text-input" class="form-control" placeholder="judul lampiran">
-              </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 form-control-label" for="password-input">Tanggal Lampiran</label>
+            <div class="col-md-9">
+              <date-picker *ngIf = "form_type==0" [showClearButton]="false" formControlName="tanggal_lampiran" name="tanggal_lampiran"></date-picker>
             </div>
-            <div class="form-group row">
-              <label class="col-md-3 form-control-label" for="email-input">Pengirim</label>
-              <div class="col-md-9">
-                <input type="email" id="email-input" name="email-input" class="form-control" placeholder="masukkan nama pengirim">
-              </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 form-control-label" for="lampiran">Upload Lampiran</label>
+            <div class="col-md-9">
+              <input type="file" id="lampiran" name="lampiran" class="form-control" (change)="onChangeFile($event)" accept="image/jpeg, application/pdf"  single required>
             </div>
-            <div class="form-group row">
-              <label class="col-md-3 form-control-label" for="password-input">Tanggal Lampiran</label>
-              <div class="col-md-9">
-                  <ng2-datepicker [options]="options" class="paksa"  [(ngModel)]="dateLampiran" name="date" ></ng2-datepicker>
+          </div>
+          <div class="progress" *ngIf="fileValid && uploadProgress!=100 " >
+              <div class="progress-bar progress-bar-striped bg-success" role="progressbar" [style.width]="(uploadProgress/100)*100 + '%'" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">{{uploadProgress}} %
               </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-md-3 form-control-label" for="password-input">Upload Lampiran</label>
-              <div class="col-md-9">
-                <input type="file" id="password-input" name="password-input" class="form-control">
-              </div>
-            </div>            
-          </form>        
+          </div><br>          
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cek()">cek</button>
+            <button type="button" class="btn btn-secondary" (click)="entryLampiranModal.hide()">Batal</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!form.valid || !fileValid" (click)="entryLampiranModal.hide()" >Simpan</button>            
+          </div>          
+        </form>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="largeModal.hide()">Tutup</button>
-        <button type="button" class="btn btn-primary">Simpan</button>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div bsModal #editLampiranModal="bs-modal" class="modal fade" style="" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 style="text-align:center;" >Update Informasi Lampiran</h4>
+         <button type="button" class="close" (click)="editLampiranModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form" (submit)="edit()" class="form-horizontal" novalidate>
+          <div class="form-group row">
+            <label class="col-md-3 form-control-label" for="text-input">Judul</label>
+            <div class="col-md-9">
+              <input type="text" id="judul_lampiran" formControlName="judul_lampiran" name="judul_lampiran" class="form-control" placeholder="judul lampiran">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 form-control-label" for="password-input">Tanggal Lampiran</label>
+            <div class="col-md-9">
+              <date-picker *ngIf = "form_type==1" [showClearButton]="false" formControlName="tanggal_lampiran" name="tanggal_lampiran"></date-picker>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 form-control-label" for="lampiran">Upload Lampiran</label>
+            <div class="col-md-9">
+              <input type="file" id="lampiran" name="lampiran" class="form-control" (change)="onChangeFile($event)" accept="image/jpeg, application/pdf"  single required>
+              <small class="help-block" style="color:crimson">Silahkan upload ulang jika ingin mengganti file lampiran</small>            
+            </div>
+          </div>
+          <div class="progress" *ngIf="fileValid && uploadProgress!=100 " >
+              <div class="progress-bar progress-bar-striped bg-success" role="progressbar" [style.width]="(uploadProgress/100)*100 + '%'" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">{{uploadProgress}} %
+              </div>
+          </div><br>          
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cek()">cek</button>
+            <button type="button" class="btn btn-secondary" (click)="editLampiranModal.hide()">Batal</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!form.valid">Simpan</button>            
+          </div>          
+        </form>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

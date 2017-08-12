@@ -12,8 +12,8 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path:'admin',
-    redirectTo:'admin/dashboard'
+    path: 'admin',
+    redirectTo: 'admin'
   },
 
   // //ADMIN
@@ -48,7 +48,6 @@ export const routes: Routes = [
   //       path: 'sasaranmutu',
   //       loadChildren: './sasaran-mutu/sasaran-mutu.module#SasaranMutuModule'
   //     },
-                 
   //   ]
   // },
 

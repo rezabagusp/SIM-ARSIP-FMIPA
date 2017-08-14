@@ -546,10 +546,8 @@ function SuratControllers() {
 				})
 				.catch(function(err) {
 					res.json({status: false, message: 'Surat gagal ditambahkan!', err_code: 400, err: err});
-				})
+				});
 		}
-		}
-		
 	}
 
 	this.delete = function(req, res) {

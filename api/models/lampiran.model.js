@@ -7,7 +7,6 @@ module.exports = function(sequelize, DataType) {
         tanggal_lampiran: DataType.DATE,
         tanggal_entri_lampiran: DataType.DATE,
         file_lampiran: DataType.STRING,
-        isi_lampiran: DataType.TEXT,
         surat_id: { type: DataType.INTEGER, defaultValue: null, references: { model: Surat, key: 'id' } }
 	});
 }

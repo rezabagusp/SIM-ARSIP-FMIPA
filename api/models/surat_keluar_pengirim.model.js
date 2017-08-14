@@ -1,9 +1,10 @@
 var sequelize = require('./../connection');
 var Surat = sequelize.import(__dirname + "/../models/surat.model");
-var Penerima = sequelize.import(__dirname + "/../models/penerima.model");
+var Staff = sequelize.import(__dirname + "/../models/staff.model");
+
 module.exports = function(sequelize, DataType){
-	return sequelize.define('surat_penerima',{
+	return sequelize.define('surat_keluar_pengirim',{
 		surat_id: { type: DataType.INTEGER, references: { model: Surat, key: 'id' } },
-		penerima_id: { type: DataType.INTEGER, references: { model: Penerima, key: 'id' } }
+		staff_id: { type: DataType.STRING, references: { model: Staff, key: 'id' } }
     });
 }

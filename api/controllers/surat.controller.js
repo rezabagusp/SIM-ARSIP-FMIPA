@@ -7,9 +7,10 @@ var sequelize = require('../connection');
 
 var Surat = sequelize.import(__dirname + '/../models/surat.model');
 var Lampiran = sequelize.import(__dirname + '/../models/lampiran.model');
-var Penerima = sequelize.import(__dirname + '/../models/penerima.model');
-var Pengirim = sequelize.import(__dirname + '/../models/pengirim.model');
-var Surat_penerima = sequelize.import(__dirname + '/../models/surat_penerima.model');
+var Staff = sequelize.import(__dirname + '/../models/staff.model');
+
+var Surat_masuk_penerima = sequelize.import(__dirname + '/../models/surat_masuk_penerima.model');
+var Surat_keluar_pengirim = sequelize.import(__dirname + '/../models/surat_keluar_pengirim.model');
 var Kode_surat = sequelize.import(__dirname + '/../models/kode_surat.model');
 var Jenis_surat = sequelize.import(__dirname + '/../models/jenis_surat.model');
 var Sub_jenis_surat = sequelize.import(__dirname + '/../models/sub_jenis_surat.model');
@@ -20,9 +21,10 @@ Sub_jenis_surat.belongsTo(Jenis_surat, {foreignKey: 'jenis_surat_id'});
 Sub_sub_jenis_surat.belongsTo(Sub_jenis_surat, {foreignKey: 'sub_jenis_surat_id'});
 Surat.belongsTo(Sub_sub_jenis_surat, {foreignKey: 'sub_sub_jenis_surat_id'});
 
-Surat_penerima.belongsTo(Surat, {foreignKey: 'surat_id'});
-Surat_penerima.belongsTo(Penerima, {foreignKey: 'penerima_id'});
-Surat.belongsTo(Pengirim, {foreignKey: 'pengirim_surat'});
+Surat_masuk_penerima.belongsTo(Surat, {foreignKey: 'surat_id'});
+Surat_masuk_penerima.belongsTo(Staff, {foreignKey: 'staff_id'});
+Surat_keluar_pengirim.belongsTo(Surat, {foreignKey: 'surat_id'});
+Surat_keluar_pengirim.belongsTo(Staff, {foreignKey: 'staff_id'});
 
 var validateNomorSurat = function(nomor) {
 	var regex = /^[0-9]+\/IT3(\.[0-9]+)*\/[A-Z]{2,2}(\.[0-9]{2,2}){0,4}\/[0-9]{4,4}$/;
@@ -183,7 +185,7 @@ function SuratControllers() {
 				})
 		}
 	}
-	
+		
 	this.getAll = function(req, res) {	
 		Surat
 			.findAll()
@@ -254,16 +256,27 @@ function SuratControllers() {
 
 		if (nomor == undefined) {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else if (!validateNomorSurat(nomor)) {
+			res.json({status: false, message: 'Format nomor surat tidak sesuai!', err_code: 400});
 		} else {
+			var temp = splitNomorSurat(nomor),
+				nomor = Number(temp[0]),
+				unit_kerja = temp[1],
+				hal = temp[2],
+				tahun = Number(temp[3]);
+
 			Surat
 				.findAll({
 					where: {
-						nomor_surat: nomor
+						nomor_surat: nomor,
+						unit_kerja_surat: unit_kerja,
+						hal_surat: hal,
+						tahun_surat: tahun
 					}
 				})
 				.then(function(result) {
 					if (result == null) {
-						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 400});
+						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 404});
 					} else {
 						res.json({status: true, message: 'Ambil surat dengan nomor berhasil!', data: result});
 					}
@@ -473,7 +486,6 @@ function SuratControllers() {
 	this.add = function(req, res) {
 		var nomor = req.body.nomor_surat,
 			perihal = req.body.perihal_surat,
-			pengirim = req.body.pengirim_surat,
 			tanggal = req.body.tanggal_surat,
 			tanggal_terima = req.body.tanggal_terima_surat,
 			tanggal_entri = req.body.tanggal_entri_surat,
@@ -481,21 +493,22 @@ function SuratControllers() {
 			status = req.body.status_surat,
 			file = req.body.file_surat,
 			lampiran = req.body.lampiran_surat,
+			pengirim = req.body.pengirim_surat,
 			penerima = req.body.penerima_surat;
 
-		if (nomor == undefined || perihal  == undefined || pengirim  == undefined || tanggal  == undefined || tanggal_terima  == undefined || !tanggal_entri  == undefined || tipe  == undefined || file  == undefined || status  == undefined) {
+		if (nomor == undefined || perihal  == undefined || tanggal  == undefined || tanggal_terima  == undefined || !tanggal_entri  == undefined || tipe  == undefined || status  == undefined || file  == undefined || pengirim == undefined || penerima == undefined) {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else if (!validateNomorSurat(nomor)) {
-			res.json({status: false, message: 'Format nomor surat tidak sesuai dengan aturan!'})
+			res.json({status: false, message: 'Format nomor surat tidak sesuai!', err_code: 400})
 		} else {
 			// memecah nomor surat menjadi 4 bagian sesuai format standar IPB
 			var temp = splitNomorSurat(nomor);
 
 			// memasukkan bagian-bagian nomor surat sesuai fungsinya
-			var nomor = temp[0],
+			var nomor = Number(temp[0]),
 				unit_kerja = temp[1],
 				hal_surat = temp[2],
-				tahun = temp[3];
+				tahun = Number(temp[3]);
 
 			Surat
 				.create({
@@ -504,7 +517,6 @@ function SuratControllers() {
 					hal_surat: hal,
 					tahun_surat: tahun,
 			        perihal_surat: perihal,
-			        pengirim_surat: pengirim,
 			        tanggal_surat: tanggal,
 			        tanggal_terima_surat: tanggal_terima,
 			        tanggal_entri_surat: tanggal_entri,
@@ -529,23 +541,50 @@ function SuratControllers() {
 								});
 						}
 					}
-					if (penerima !== null && penerima.length > 0) {
-						for (var i = 0; i < penerima.length; i++) {
-							Surat_penerima
-								.create({
-									surat_id: result.dataValues.id,
-									penerima_id: penerima[i].id
-								})
-								.catch(function(err) {
-									res.json({status: false, message: 'Pemasangan surat dengan penerima gagal!', err_code: 400, err: err});
-								})
-						}
+					if (tipe == 'masuk' && penerima.length > 0) {
+						Surat_masuk_pengirim
+							.create({
+								surat_id: result.dataValues.id,
+								nama_pengirim: pengirim[0].nama_pengirim
+							})
+							.then(function(result) {
+								for (var i = 0; i < penerima.length; i++) {
+									Surat_masuk_penerima
+										.create({
+											surat_id: result.dataValues.id,
+											staff_id: penerima[i].id
+										})
+										.catch(function(err) {
+											res.json({status: false, message: 'Pemasangan surat masuk dengan penerima gagal!', err_code: 400, err: err});
+										})
+								}
+							})
+							.catch(function(err) {
+								res.json({status: false, message: 'Pemasangan surat masuk dengan pengirim gagal!', err_code: 400, err: err});
+							})
+					} else if (tipe == 'keluar' && penerima.length > 0) {
+						Surat_keluar_pengirim
+							.create({
+								surat_id: result.dataValues.id,
+								staff_id: pengirim
+							})
+							.then(function(result) {
+								for (var i = 0; i < penerima.length; i++) {
+									Surat_keluar_penerima
+										.create({
+											surat_id: result.dataValues.id,
+											nama_penerima: penerima[i].nama_penerima
+										})
+										.catch(function(err) {
+											res.json({status: false, message: 'Pemasangan surat masuk dengan penerima gagal!', err_code: 400, err: err});
+										})
+								}
+							})
 					}
-					// panggil fungsi kirim surat melalui email
-					mailer.suratMasuk(id, lampiran, pengirim, penerima);
+					res.json({status: true, message: 'Tambah surat berhasil!'});
 				})
 				.catch(function(err) {
-					res.json({status: false, message: 'Surat gagal ditambahkan!', err_code: 400, err: err});
+					res.json({status: false, message: 'Tambah surat gagal!', err_code: 400, err: err});
 				});
 		}
 	}
@@ -568,6 +607,111 @@ function SuratControllers() {
 					if (result == null) {
 						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 404});
 					} else {
+						Lampiran
+							.findAll({
+								where: {
+									surat_id: id
+								}
+							})
+							.then(function(result) {
+								if (result !== null) {
+									Lampiran
+										.update({
+											surat_id: null
+										}, {
+											where: {
+												surat_id: id
+											}
+										})
+										.catch(function(err) {
+											res.json({status: false, message: 'Update lampiran gagal!', err_code: 400, err: err});
+										})
+								}
+							})
+							.catch(function(err) {
+								res.json({status: false, message: 'Lampiran gagal ditemukan!', err_code: 400, err: err});
+							});
+
+						Surat_masuk_penerima
+							.findAll({
+								where: {
+									surat_id: id
+								}
+							})
+							.then(function(result) {
+								if (result !== null) {
+									Surat_masuk_penerima
+										.destroy({
+											where: {
+												surat_id: id
+											}
+										})
+										.catch(function(err) {
+											res.json({status: false, message: 'Hapus pasangan surat masuk dengan penerima gagal!', err_code: 400, err: err})
+										});
+								}
+							})
+
+						Surat_masuk_pengirim
+							.findAll({
+								where: {
+									surat_id: id
+								}
+							})
+							.then(function(result) {
+								if (result !== null) {
+									Surat_masuk_pengirim
+										.destroy({
+											where: {
+												surat_id: id
+											}
+										})
+										.catch(function(err) {
+											res.json({status: false, message: 'Hapus pasangan surat masuk dengan pengirim gagal!', err_code: 400, err: err});
+										});
+								}
+							})
+						
+						Surat_keluar_penerima
+							.findAll({
+								where: {
+									surat_id: id
+								}
+							})
+							.then(function(result) {
+								if (result !== null) {
+									Surat_keluar_penerima
+										.destroy({
+											where: {
+												surat_id: id
+											}
+										})
+										.catch(function(err) {
+											res.json({status: false, message: 'Hapus pasangan surat keluar dengan penerima gagal!', err_code: 400, err: err})
+										});
+								}
+							})
+
+						Surat_keluar_pengirim
+							.findAll({
+								where: {
+									surat_id: id
+								}
+							})
+							.then(function(result) {
+								if (result !== null) {
+									Surat_keluar_pengirim
+										.destroy({
+											where: {
+												surat_id: id
+											}
+										})
+										.catch(function(err) {
+											res.json({status: false, message: 'Hapus pasangan surat keluar dengan pengirim gagal!', err_code: 400, err: err})
+										});
+								}
+							})
+
 						var filename = result.dataValues.file_surat;
 						fs.unlinkSync(__dirname + dir + destination + '/' + filename);
 						Surat
@@ -594,22 +738,25 @@ function SuratControllers() {
 	this.update = function(req, res) {
 		var id = req.body.id_surat,
 			nomor = req.body.nomor_surat,
-			unit_kerja = req.body.unit_kerja_surat,
-			hal = req.body.hal_surat,
-			tahun = req.body.tahun_surat,
 			perihal = req.body.perihal_surat,
-			pengirim = req.body.pengirim_surat,
 			tanggal = req.body.tanggal_surat,
 			tanggal_terima = req.body.tanggal_terima_surat,
 			tanggal_entri = req.body.tanggal_entri_surat,
-			sub_sub_jenis = req.body.sub_sub_jenis_surat,
 			tipe = req.body.tipe_surat,
 			status = req.body.status_surat,
 			file = req.body.file_surat;
 
-		if (nomor == undefined || unit_kerja  == undefined || hal  == undefined || tahun  == undefined || perihal  == undefined || pengirim  == undefined || tanggal  == undefined || tanggal_terima  == undefined || !tanggal_entri  == undefined || sub_sub_jenis  == undefined || tipe  == undefined || file  == undefined || status  == undefined) {
+		if (nomor == undefined || perihal  == undefined || tanggal  == undefined || tanggal_terima  == undefined || tanggal_entri  == undefined || tipe  == undefined || file  == undefined || status  == undefined) {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else if (!validateNomorSurat(nomor)) {
+			res.json({status: false, message: 'Format nomor surat tidak sesuai!', err_code: 400});
 		} else {
+			var temp = splitNomorSurat(nomor),
+				nomor = Number(temp[0]),
+				unit_kerja = tempat[1],
+				hal = tempat[2],
+				tahun = Number(temp[3]);
+
 			Surat
 				.findOne({
 					where: {
@@ -627,11 +774,9 @@ function SuratControllers() {
 								hal_surat: hal,
 								tahun_surat: tahun,
 						        perihal_surat: perihal,
-						        pengirim_surat: pengirim,
 						        tanggal_surat: tanggal,
 						        tanggal_terima_surat: tanggal_terima,
 						        tanggal_entri_surat: tanggal_entri,
-						        sub_sub_jenis_surat_id: sub_sub_jenis,
 						        status_surat: status,
 						        tipe_surat: tipe, 
 						        file_surat: file

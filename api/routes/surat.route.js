@@ -19,6 +19,14 @@ router.post('/get', function(req, res) {
 	surat.getAll(req, res);
 });
 
+router.post('/get/tipe', function(req, res) {
+	surat.getByTipe(req, res);
+});
+
+router.post('/get/nomor', function(req, res) {
+	surat.getByNomor(req, res);
+});
+
 router.post('/get/kode', function(req, res) {
 	surat.getByKode(req, res);
 });

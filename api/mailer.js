@@ -13,9 +13,6 @@ var transporter = nodemailer.createTransport({
 });
 
 function Mailer() {
-    this.template = function(mailtype) {
-        return mailtemplate
-    }
 
     this.send = function(options, res) {
         var mailto = options.mailto,
@@ -28,6 +25,11 @@ function Mailer() {
             to: 'aslamabdurrohim@gmail.com', // list of receivers
             subject: 'Lupa Password | SIMARSIP FMIPA', // Subject line
             html: '<p>Halo! Kami menerima permintaan <b>penggantian password</b> akun SIMARSIP Anda. Silahkan klik <a href="">disini</a> atau kunjungi link berikut () untuk mengganti password Anda. Catatan: Mohon abaikan e-mail ini jika Anda tidak meminta melakukan reset password</p>' // html body
+            attachment: [
+                {
+
+                }
+            ]
         };
 
         // send mail with defined transport object

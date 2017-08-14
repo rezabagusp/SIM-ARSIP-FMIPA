@@ -7,19 +7,18 @@ var Unit_kerja = sequelize.import(__dirname + "/../models/unit_kerja.model");
 module.exports = function(sequelize, DataType) {
 	return sequelize.define('surat', {
 		nomor_surat: DataType.INTEGER,
-        unit_kerja_surat: { type: DataType.INTEGER, references: { model: Unit_kerja, key: 'id' } },
+        unit_kerja_surat: DataType.STRING,
         hal_surat: DataType.STRING,
         tahun_surat: DataType.INTEGER,
-        perihal_surat: { type: DataType.INTEGER, references: { model: Perihal, key: 'id' } } ,
-        pengirim_surat: { type: DataType.INTEGER, references: { model: Pengirim, key: 'id' } },
         tanggal_surat: DataType.DATE,
         tanggal_terima_surat: DataType.DATE,
         tanggal_entri_surat: DataType.DATE,
+        sifat_surat: DataType.ENUM('rahasia', 'biasa'),
         tipe_surat: DataType.ENUM('masuk', 'keluar'),
         file_surat: DataType.STRING,
-        isi_surat: DataType.TEXT,
         status_surat: { type: DataType.ENUM('aktif', 'inaktif'), defaultValue: 'aktif' },
-        sub_sub_jenis_surat_id: { type: DataType.INTEGER, references: { model: Sub_sub_jenis_surat, key: 'id' } },                                              
+        perihal_id: { type: DataType.INTEGER, references: { model: Perihal, key: 'id' } } ,
+        pengirim_id: { type: DataType.INTEGER, references: { model: Pengirim, key: 'id' } }                                           
 	 }, {
 	 	getterMethode: {
 	 		getNomor: function() {

@@ -6,7 +6,6 @@ var User = sequelize.import(__dirname + "/../models/user.model"),
     Penerima = sequelize.import(__dirname + "/../models/penerima.model"),
     Pengirim = sequelize.import(__dirname + "/../models/pengirim.model"),
     Perihal = sequelize.import(__dirname + "/../models/perihal.model"),
-    Staff = sequelize.import(__dirname + "/../models/staff.model"),
 
     Kode_surat = sequelize.import(__dirname + "/../models/kode_surat.model"),
     Jenis_surat = sequelize.import(__dirname + "/../models/jenis_surat.model"),
@@ -18,7 +17,6 @@ var User = sequelize.import(__dirname + "/../models/user.model"),
 User.sync();
 Jabatan.sync();
 Perihal.sync();
-Staff.sync();
 Pengirim.sync();
 Unit_kerja.sync();
 

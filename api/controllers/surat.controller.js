@@ -24,6 +24,19 @@ Surat_penerima.belongsTo(Surat, {foreignKey: 'surat_id'});
 Surat_penerima.belongsTo(Penerima, {foreignKey: 'penerima_id'});
 Surat.belongsTo(Pengirim, {foreignKey: 'pengirim_surat'});
 
+var validateNomorSurat = function(nomor) {
+	var regex = /^[0-9]+\/IT3(\.[0-9]+)*\/[A-Z]{2,2}(\.[0-9]{2,2}){0,4}\/[0-9]{4,4}$/;
+	return nomor.match(regex);
+}
+
+var splitNomorSurat = function(nomor, result) {
+	return nomor.split('/');
+}
+
+var splitHalSurat = function(hal, result) {
+	return nomor.split('.');
+}
+
 function SuratControllers() {
 	this.countAll = function(req, res) {
 		Surat
@@ -412,7 +425,7 @@ function SuratControllers() {
 				})
 				.catch(function(err) {
 					res.json({status: false, message: 'Ambil surat dengan subsubjenis gagal!', err_code: 400, err: err});
-				})
+				});
 		}
 	}
 
@@ -459,23 +472,31 @@ function SuratControllers() {
 
 	this.add = function(req, res) {
 		var nomor = req.body.nomor_surat,
-			unit_kerja = req.body.unit_kerja_surat,
-			hal = req.body.hal_surat,
-			tahun = req.body.tahun_surat,
 			perihal = req.body.perihal_surat,
 			pengirim = req.body.pengirim_surat,
 			tanggal = req.body.tanggal_surat,
 			tanggal_terima = req.body.tanggal_terima_surat,
 			tanggal_entri = req.body.tanggal_entri_surat,
-			sub_sub_jenis = req.body.sub_sub_jenis_surat,
 			tipe = req.body.tipe_surat,
 			status = req.body.status_surat,
-			file = req.body.file_surat
-			lampiran = req.body.lampiran_surat;
+			file = req.body.file_surat,
+			lampiran = req.body.lampiran_surat,
+			penerima = req.body.penerima_surat;
 
-		if (nomor == undefined || unit_kerja  == undefined || hal  == undefined || tahun  == undefined || perihal  == undefined || pengirim  == undefined || tanggal  == undefined || tanggal_terima  == undefined || !tanggal_entri  == undefined || sub_sub_jenis  == undefined || tipe  == undefined || file  == undefined || status  == undefined) {
+		if (nomor == undefined || perihal  == undefined || pengirim  == undefined || tanggal  == undefined || tanggal_terima  == undefined || !tanggal_entri  == undefined || tipe  == undefined || file  == undefined || status  == undefined) {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else if (!validateNomorSurat(nomor)) {
+			res.json({status: false, message: 'Format nomor surat tidak sesuai dengan aturan!'})
 		} else {
+			// memecah nomor surat menjadi 4 bagian sesuai format standar IPB
+			var temp = splitNomorSurat(nomor);
+
+			// memasukkan bagian-bagian nomor surat sesuai fungsinya
+			var nomor = temp[0],
+				unit_kerja = temp[1],
+				hal_surat = temp[2],
+				tahun = temp[3];
+
 			Surat
 				.create({
 					nomor_surat: nomor,
@@ -489,12 +510,11 @@ function SuratControllers() {
 			        tanggal_entri_surat: tanggal_entri,
 			        status_surat: status,
 			        tipe_surat: tipe, 
-			        file_surat: file,
-			        sub_sub_jenis_surat_id: sub_sub_jenis
+			        file_surat: file
 				})
 				.then(function(result) {
+					// Jika surat ada lampirannya, maka lampiran yang bersangkutan akan diupdate surat_id nya
 					if (lampiran !== null && lampiran.length > 0) {
-						console.log(result.dataValues);
 						for (var i = 0; i < lampiran.length; i++) {
 							Lampiran
 								.update({
@@ -508,14 +528,26 @@ function SuratControllers() {
 									res.json({status: false, message: 'Update lampiran gagal!', err_code: 400, err: err});
 								});
 						}
-						res.json({status: true, message: 'Surat dan lampiran berhasil ditambahkan!'})
-					} else {
-						res.json({status: true, message: 'Hanya surat berhasil ditambahkan!'});
 					}
+					if (penerima !== null && penerima.length > 0) {
+						for (var i = 0; i < penerima.length; i++) {
+							Surat_penerima
+								.create({
+									surat_id: result.dataValues.id,
+									penerima_id: penerima[i].id
+								})
+								.catch(function(err) {
+									res.json({status: false, message: 'Pemasangan surat dengan penerima gagal!', err_code: 400, err: err});
+								})
+						}
+					}
+					// panggil fungsi kirim surat melalui email
+					mailer.suratMasuk(id, lampiran, pengirim, penerima);
 				})
 				.catch(function(err) {
 					res.json({status: false, message: 'Surat gagal ditambahkan!', err_code: 400, err: err});
 				})
+		}
 		}
 		
 	}
@@ -611,7 +643,35 @@ function SuratControllers() {
 								}
 							})
 							.then(function(result) {
-								res.json({status: true, message: 'Surat berhasil diupdate!'});
+								Lampiran
+									.update({
+										surat_id: null
+									}, {
+										where: {
+											surat_id: null
+										}
+									})
+									.then(function(result) {
+										if (lampiran !== null && lampiran.length > 0) {
+											console.log(result.dataValues);
+											for (var i = 0; i < lampiran.length; i++) {
+												Lampiran
+													.update({
+														surat_id: id
+													}, {
+														where: {
+															id: lampiran[i].id
+														}
+													})
+													.catch(function(err) {
+														res.json({status: false, message: 'Update lampiran gagal!', err_code: 400, err: err});
+													});
+											}
+											res.json({status: true, message: 'Surat beserta lampiran jika ada berhasil ditambahkan!'});
+										} else {
+											res.json({status: true, message: 'Surat berhasil ditambahkan!'});
+										}
+									})
 							})
 							.catch(function(err) {
 								res.json({status: false, message: 'Surat gagal diupdate!', err_code: 400, err: err});

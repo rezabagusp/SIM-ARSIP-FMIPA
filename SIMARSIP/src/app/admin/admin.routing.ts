@@ -2,6 +2,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { FullLayoutComponent } from '../layouts/full-layout.component';
 
+import { LampiranComponent } from './lampiran/lampiran.component';
+import { SuratComponent } from './surat/surat.component';
+import { RetensiSuratComponent } from './retensi-surat/retensi-surat.component';
+
 import { AuthGuard } from '../_guards/auth.guard';
 
 const routes: Routes = [
@@ -11,7 +15,7 @@ const routes: Routes = [
     component: FullLayoutComponent,
     canActivate: [],
     children: [
-      { path: '', 
+      { path:   '', 
         redirectTo: 'dashboard', 
         pathMatch: 'full' 
       },
@@ -20,20 +24,29 @@ const routes: Routes = [
         loadChildren: './dashboard/dashboard.module#DashboardModule'
       },
       {
-        path: 'suratmasuk',
-        loadChildren: './surat-masuk/surat-masuk.module#SuratMasukModule'
+        path: 'suratmasuk/:tipe_surat',
+        data: {
+          title: 'Surat Masuk'
+        },
+        component: SuratComponent
       },
       {
-        path: 'suratkeluar',
-        loadChildren: './surat-keluar/surat-keluar.module#SuratKeluarModule'
+        path: 'suratkeluar/:tipe_surat',
+        data: {
+          title: 'Surat Keluar'
+        },        
+        component: SuratComponent
       },
       {
         path: 'lampiran',
-        loadChildren: './lampiran/lampiran.module#LampiranModule'
+        data: {
+          title: 'Lampiran'
+        },
+        component: LampiranComponent
       },
       {
         path: 'retensisurat',
-        loadChildren: './retensi-surat/retensi-surat.module#RetensiSuratModule'
+        component: RetensiSuratComponent
       },
       {
         path: 'sasaranmutu',

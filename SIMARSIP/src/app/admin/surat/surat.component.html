@@ -1,0 +1,264 @@
+<div class="row">
+  <div class="col-md-6 push-5 loader" [hidden]="loadComplete"></div>
+</div>
+
+<div class="animated fadeIn">
+  <div class="row" [hidden]="!loadComplete">
+  <!-- datatables for list suratmasuk -->
+    <div class="col-sm-6 col-md-12">
+      <div class="card card-accent-primary">
+        <div class="card-header">
+          <b>Daftar surat {{tipe_surat}}</b>
+          <button type="button" class="btn btn-success btn-sm pull-right" style="border-radius:5px" data-toggle="modal" (click)="clickRow();entrySuratModal.show()" >
+            <i class="fa fa-plus"></i>&nbsp; Entri surat {{tipe_surat}}
+          </button>          
+        </div>
+        <div class="card-block">
+          <div class="col-lg-12">
+            <table datatable class="row-border hover" [dtOptions]="dtOptions"  [dtTrigger]="dtTrigger">
+              <thead>
+                <tr>
+                  <th>Nomor</th>       
+                  <th>Tgl surat</th>
+                  <th>Tgl entri</th>
+                  <th>Perihal</th>
+                  <th>Pengirim</th>
+                  <th>Tujuan</th>
+                  <th>Status simpan</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of [01,2,3,4]">
+                  <td>s</td>
+                  <td>17/8/1945</td>
+                  <td>27/8/1945</td>
+                  <td></td>
+                  <td>Nama pengirim</td>
+                  <td>list nama tujuan</td>
+                  <td>gudang arsip</td>
+                  <td>
+                    <span><a href="javascript:void(0)" (click)="previewModal.show()" ><i class="fa fa-file-text-o" aria-hidden="true" title="Preview"></i></a> </span> &nbsp;
+                    <span><a href="javascript:void(0)" (click)="deleteConfirm()" ><i class="fa fa-trash-o" aria-hidden="true" title="Hapus"></i></a> </span> &nbsp;
+                    <span><a href="javascript:void(0)" (click)="entrySuratModal.show()" ><i class="fa fa-pencil-square-o" aria-hidden="true" title="Edit"></i></a> </span>
+                  </td>                                                
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div><!--/.col-->
+  </div>
+</div>
+
+<!-- form entri surat -->
+<div bsModal #entrySuratModal="bs-modal" class="modal fade" style="" tabindex="-1" role="dialog" aria-labelledby="entrySuratModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg" style="width: 1024" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 style="text-align:center;" >Entri surat {{tipe_surat}}</h4>
+         <button type="button" class="close" (click)="entrySuratModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> 
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form" class="form-horizontal" novalidate>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="garis">
+                <p> <span style="font-size:17px">Informasi Surat</span></p>
+              </div>             
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label">Nomor</label>
+                <div class="col-md-9">
+                  <input type="text" id="nomor" name="nomor_surat" formControlName="nomor_surat" class="form-control" placeholder="nomor">
+                </div>
+              </div>          
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input">Tanggal surat</label>
+                <div class="col-md-9">
+                  <date-picker [showClearButton]="false" formControlName="tanggal_surat" name="tanggal_surat"></date-picker>                  
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="text-input">Perihal</label>
+                <div class="col-md-9">
+                  <input type="text" id="perihal" name="perihal" formControlName="perihal" class="form-control" placeholder="Perihal">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="email-input">Pengirim</label>
+                <div class="col-md-9">
+                  <input type="text" id="pengirim" name="pengirim" formControlName="pengirim" class="form-control" placeholder="Pengirim">
+                </div>
+              </div>                  
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input">Jenis surat</label>
+                  <div class="col-md-9">
+                  <ng-select [allowClear]="true"
+                              formControlName="jenis_surat"
+                              [items]="coba"
+                              placeholder="pilih jenis surat">
+                  </ng-select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input">Upload surat</label>
+                <div class="col-md-9">
+                  <input type="file" id="file" name="file" class="form-control" >
+                </div>
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="garis">
+                <p><span style="font-size:17px">Relasi Surat</span></p>
+              </div>
+              <div *ngIf = "tipe_surat==='masuk' " class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input">Tujuan <span class="text-muted">(Jabatan)</span></label>
+                  <div class="col-md-9">
+                  <ng-select  [multiple]="true"
+                              formControlName="tujuan_jabatan"
+                              [items]="coba"
+                              placeholder="   pilih tujuan jabatan">
+                  </ng-select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input">Tujuan <span class="text-muted">(Orang)</span></label>
+                <div class="col-md-9">
+                  <ng-select  [multiple]="true"
+                              [items]="coba"
+                              formControlName="tujuan_orang"
+                              placeholder="   pilih tujuan orang">
+                  </ng-select>
+                </div>
+              </div>
+              <div *ngIf = "tipe_surat=== 'masuk' " class="form-group row">
+                <div class="col-md-9 push-3">              
+                  <input type="checkbox" name="vehicle" value="Car" (click)="stateDisposisi()"/> Tujuan disposisi
+                  <ng-select  [multiple]="true"
+                              [items]="items"
+                              formControlName="tujuan_disposisi"
+                              placeholder="   pilih tujuan disposisi" [hidden]="hidden">
+                  </ng-select>              
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input">Lampiran</label>
+                <div class="col-md-9">
+                  <ng-select  [multiple]="true"
+                              [items]="coba"
+                              formControlName="lampiran"
+                              placeholder="   pilih tujuan disposisi">
+                  </ng-select>
+                </div>
+              </div>    
+            </div>    
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="entrySuratModal.hide()">Tutup</button>
+            <button type="button" class="btn btn-primary" (click)="entrySurat()">Simpan</button>
+          </div>                 
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- row preview surat -->
+<div bsModal #previewModal="bs-modal" class="modal fade" style="" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" style="width: 1024" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 style="text-align:center;" >Preview Surat</h4>
+         <button type="button" class="close" (click)="previewModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> 
+      </div>
+      <div class="modal-body">
+        <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="garis">
+                <p> <span style="font-size:17px">Informasi Surat</span></p>
+              </div>             
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label"><strong>Nomor</strong></label>
+                <div class="col-md-8 push-1">
+                    nomor suratnya
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input"><strong>Tanggal surat</strong></label>
+                <div class="col-md-8 push-1">
+                    20/08/1995
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input"><strong>Tanggal entri</strong></label>
+                <div class="col-md-8 push-1">
+                    30/08/1998
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="text-input"><strong>Perihal</strong></label>
+                <div class="col-md-8 push-1">
+                    Undangan pernikahan
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="email-input"><strong>Pengirim</strong></label>
+                <div class="col-md-8 push-1">
+                    Reza Bagus Permana
+                </div>
+              </div>                  
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input"><strong>Jenis surat</strong></label>
+                  <div class="col-md-8 push-1">
+                    KK
+                  </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="garis">
+                <p><span style="font-size:17px">Relasi Surat</span></p>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input"><strong>Tujuan</strong></label>
+                <div class="col-md-8 push-1">
+                    list tujuan
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input"><strong>Tujuan disposisi</strong></label>                
+                <div class="col-md-8 push-1">
+                    list tujuan disposisi            
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input"><strong>Status</strong></label>                
+                <div class="col-md-8 push-1">
+                    Aktif/Inaktif            
+                </div>
+              </div>              
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="lampiran"><strong>Surat</strong></label>
+                <div class="col-md-8 push-1">
+                    link to view surat at new tab 
+                    <a href="assets/fourier1d.pdf" target="_blank">Read more</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="previewModal.hide()">Tutup</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+

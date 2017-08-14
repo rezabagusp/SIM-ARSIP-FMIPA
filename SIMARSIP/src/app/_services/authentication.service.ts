@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http'; // add http module
 import { Observable } from 'rxjs/Observable';
+// jwt helper
 import { AuthHttp, JwtHelper, tokenNotExpired } from 'angular2-jwt';
 
 @Injectable()
 export class AuthenticationService {
   public jwtHelper: JwtHelper = new JwtHelper();
 
-  public url_login = 'http://localhost:8000/login/masuk';
+  public url_login = 'http://localhost:3000/api/user/login';
   private token: string;
 
   constructor(private http: Http) {
     this.token = localStorage.getItem('token');
   }
 
-  login(nama_user: string, password_user: string) {
-    let send = JSON.stringify({nama_user: nama_user, password_user:password_user });
-    console.log("yang akan dikirim vias service: ", send, this.url_login);    
+  login(nama_user: string, password_user: string, remember_me: boolean) {
+    let send = JSON.stringify({nama_user: nama_user, password_user:password_user, remember_me: remember_me });
     let header= new Headers();
     header.append('Content-type', 'application/json' );
 

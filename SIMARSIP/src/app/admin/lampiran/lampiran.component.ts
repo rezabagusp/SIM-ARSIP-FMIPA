@@ -1,65 +1,222 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import { Subject } from 'rxjs/Rx'; // dipake buat datatables\
-import { DatePickerOptions, DateModel } from 'ng2-datepicker'; // dipake buat datepicker 
+import { Subject } from 'rxjs/Rx'; // use for datatables\
+import { FormGroup, FormBuilder, Validators } from "@angular/forms";
+
+import { AdminService } from './../../_services/admin.service';
+import { DataService } from './../../_services/data.service';
+import { UploadService } from './../../_services/upload.service';
 
 
 @Component({
   selector: 'app-lampiran',
   templateUrl: './lampiran.component.html',
-  styleUrls: ['./../surat-masuk/surat-masuk.component.scss']
+  styleUrls: ['./../surat/surat.component.scss']
 })
 export class LampiranComponent implements OnInit {
   
+  // define angular dateikcer for work 0 add, 1 edit
+  form_type = 0;
+
+  public form: FormGroup;
+  public today;
+  public uploadProgress: number = 0;  
+
+  //upload file
+  public max_size = Math.pow(10,6);
+  public filesToUpload: Array<File>;
+  public fileValid: boolean = false;
+  public lampiran: string;
+
+  // client
+  public list_lampiran;
+
   // data tables
-  datalist:any=[];
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject();  
-  message = '';
 
-  // date picker
-  dateLmpiran: DateModel;
-  options: DatePickerOptions;
-  constructor(private http: Http, private zone: NgZone) { }
-
-  someClickHandler(info: any): void {
-    this.message = info.id + ' - ' + info.firstName;
+  constructor(private http: Http, 
+              private zone: NgZone, 
+              private fb: FormBuilder,
+              private adminService:AdminService,
+              private data: DataService,
+              private upload: UploadService
+            ) {
+    
+    this.upload.progress$.subscribe(status => {
+      this.uploadProgress = status;
+    });              
+    
+    this.today = new Date().toISOString()
   }
 
   ngOnInit() {
-      //get the data
-      this.http.get('https://jsonplaceholder.typicode.com/todos')
-      .map(this.extractData)
-      .subscribe(data => {
-        console.log(data);
-        this.datalist = data;
-        // Calling the DT trigger to manually render the table
-        this.dtTrigger.next();
-      });
-      //config and init datatables
-      this.dtOptions = {
+    //config and init datatables
+    this.dtOptions = {
       pagingType: 'full_numbers',
       pageLength: 10,
-      retrieve: true,
-      rowCallback: (row: Node, data: any[] | Object, index: number) => {
-        const self = this;
-        // Unbind first in order to avoid any duplicate handler
-        // (see https://github.com/l-lin/angular-datatables/issues/87)
-        $('td', row).unbind('click');
-        $('td', row).bind('click', () => {
-          self.someClickHandler(data);
-        });
-        return row;
+      retrieve: true
+    };    
+    this.initForm();
+    this.getAllLampiran();
+  }
+
+  initForm(){
+    this.form = this.fb.group({
+      judul_lampiran: ['', Validators.required],
+      tanggal_lampiran: ['', Validators.required],   
+    });
+  }
+  
+  resetForm(){
+    this.fileValid=false; // for add lampiran only
+    this.form.controls.judul_lampiran.setValue('' ,  { onlySelf: true });    
+    this.form.controls.tanggal_lampiran.setValue( new Date().toISOString().substring(0, 10) ,  { onlySelf: true });
+
+  }
+
+  changeFormType(value){
+    if (this.form_type!=value)
+      this.form_type=value;
+    console.log('status, ', this.form_type);
+
+  }
+
+  submit(){
+    let creds = JSON.stringify({
+                                judul_lampiran:this.form.value.judul_lampiran,
+                                tanggal_lampiran: this.form.value.tanggal_lampiran,
+                                tanggal_entri_lampiran: new Date().toISOString(),
+                                file_lampiran: this.lampiran
+                                })
+    this.adminService.entryLampiran(this.data.url_add_lampiran, this.data.token, creds)
+    .subscribe(
+      data =>{
+        console.log(data)
+        if(data.status){
+          this.dtTrigger.next();
+          this.ngOnInit();
+          this.data.showSuccess(data.message)
+        }
+        else{
+          this.data.showError(data.message)
+        }
       }
-    };
-
+    )
 
   }
 
-  private extractData(res: Response) {
-    return res.json();
+  edit(){
+    let creds = JSON.stringify({
+                                judul_lampiran:this.form.value.judul_lampiran,
+                                tanggal_lampiran: this.form.value.tanggal_lampiran,
+                                tanggal_entri_lampiran: this.form.value.tanggal_entri_lampiran,
+                                file_lampiran: this.lampiran                                
+                              })
+    this.adminService.editLampiran(this.data.url_edit_lampiran, this.data.token, creds)
+    .subscribe(
+      data =>{
+        if(data.status){
+          this.dtTrigger.next();
+          this.data.showSuccess(data.message)
+        }
+        else
+          this.data.showError(data.message)
+      }
+    )
+    
   }
 
+  clickRow(data){
+    console.log('data click', data)
+    this.form.controls.judul_lampiran.setValue(data.judul_lampiran,  { onlySelf: true });
+    this.form.controls.tanggal_lampiran.setValue( new Date(data.tanggal_lampiran).toISOString().substring(0, 10) ,  { onlySelf: true });
+    this.lampiran = data.file_lampiran;    
+  }
 
+  delete(id){
+    this.deleteConfirm()
+    .then(()=>{
+      let creds = JSON.stringify({id_lampiran:id})
+      this.adminService.deleteLampiran(this.data.url_delete_lampiran, this.data.token, creds )
+      .subscribe(
+        data =>{
+          if(data.status)
+            this.data.showSuccess(data.message)
+          else
+            this.data.showError(data.message)
+        }
+      )
+    })
+  }
+
+  deleteConfirm(){
+    return swal({
+        title: 'apakah anda yakin ?',
+        text: "data tidak dapat dikembalikan",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, hapus!'
+      })  
+  }  
+
+  getAllLampiran(){
+    this.adminService.getAllLampiran(this.data.url_get_all_lampiran, this.data.token)
+    .subscribe(
+      data=>{
+        console.log(data)
+        if(data.status){
+          this.list_lampiran=data.data;
+          this.dtTrigger.next(); 
+        }
+        else
+          this.data.showError(data.message)
+      }
+    )
+  }
+
+  cek(){
+    console.log('form', this.form)
+  }
+
+  onChangeFile(fileinput:any){
+    var sementara = <Array<File>> fileinput.target.files
+    var ext = sementara[0].type;
+    this.filesToUpload = <Array<File>> fileinput.target.files;
+    var size = Number(sementara[0].size);
+    console.log(this.filesToUpload)
+    if(ext !=='application/pdf' ){
+        swal(
+          'Perhatian',
+          'file harus *.jpeg/ *.pdf/ *.pdf',
+          'warning'
+        )
+    }
+    else if(size > this.max_size)
+        swal(
+          'Perhatian',
+          'ukuran file max 1 MB',
+          'warning'
+        )      
+    else{
+      this.filesToUpload = <Array<File>> fileinput.target.files;
+      this.upload.uploadFile(this.data.url_upload_file, this.data.token, this.filesToUpload).
+      then(data =>{
+        console.log(data)
+        if(JSON.parse(JSON.stringify(data)).status){
+          this.fileValid = true;
+          this.lampiran = JSON.parse(JSON.stringify(data)).data;
+          console.log(this.lampiran)
+        }
+        else   
+          this.data.showError('error upload');
+      }).catch((err)=>{
+        this.data.showError('error upload')
+      })
+    }
+  }
 
 }
+

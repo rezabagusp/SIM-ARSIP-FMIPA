@@ -30,8 +30,8 @@ app.use('/api/surat', surat);
 app.use('/api/surat/*', surat);
 app.use('/api/lampiran', lampiran);
 app.use('/api/lampiran/*', lampiran);
-app.use('/api/dataform', lampiran);
-app.use('/api/dataform/*', lampiran);
+app.use('/api/dataform', dataform);
+app.use('/api/dataform/*', dataform);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

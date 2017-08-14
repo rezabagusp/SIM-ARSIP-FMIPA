@@ -17,7 +17,7 @@ var Unit_kerja = sequelize.import(__dirname + '/../models/unit_kerja.model');
 Jenis_surat.belongsTo(Kode_surat, {foreignKey: 'kode_surat_id'});
 Sub_jenis_surat.belongsTo(Jenis_surat, {foreignKey: 'jenis_surat_id'});
 Sub_sub_jenis_surat.belongsTo(Sub_jenis_surat, {foreignKey: 'sub_jenis_surat_id'});
-Surat.belongsTo(Sub_sub_jenis_surat, {foreignKey: 'sub_sub_jenis_surat_id'});
+Penerima.belongsTo(Jabatan, {foreignKey: 'jabatan_id'});
 
 function DataformControllers() {
 	this.getPerihal = function(req, res) {
@@ -270,7 +270,7 @@ function DataformControllers() {
 	}
 
 	this.deletePengirim = function(req, res) {
-		var id = req.body.id_pengirim,
+		var id = req.body.id_pengirim;
 
 		if (id == undefined) {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
@@ -365,6 +365,34 @@ function DataformControllers() {
 				})
 				.catch(function(err) {
 					res.json({status: false, message: 'Ambil penerima gagal!', err_code: 400, err: err});
+				})
+		}
+	}
+
+	this.getPenerimaByJabatan = function(req, res) {
+		var id = req.body.id_jabatan;
+
+		if (id == undefined) {
+			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else {
+			Penerima
+				.findOne({
+					include: [{
+						model: Jabatan,
+						where: {
+							id: id
+						}
+					}]
+				})
+				.then(function(result) {
+					if (result == null) {
+						res.json({status: false, message: 'Penerima dengan jabatan tidak ditemukan!', err_code: 404});
+					} else {
+						res.json({status: true, message: 'Ambil penerima dengan jabatan berhasil!', data: result});
+					}
+				})
+				.catch(function(err) {
+					res.json({status: false, message: 'Ambil penerima dengan jabatan gagal!', err_code: 400, err: err});
 				})
 		}
 	}
@@ -534,7 +562,12 @@ function DataformControllers() {
 	}
 
 	this.addJabatan = function(req, res) {
+		var nama = req.body.nama_jabatan;
 
+		Jabatan
+			.create({
+				nama
+			})
 	}
 
 	this.updateJabatan = function(req, res) {

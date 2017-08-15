@@ -100,4 +100,61 @@ export class AdminService {
         );        
   }
   
+  // dataform 
+  getTujuanJabatan(url, token){
+    let header= new Headers();
+
+    header.append('Content-type', 'application/json' );
+    header.append('token', token );//put token to request API
+
+    return this.http.post(url, null, {headers:header})
+        .map((response: Response) => 
+            response.json()
+        );
+  }
+  getTujuanOrang(url, token){
+    let header= new Headers();
+
+    header.append('Content-type', 'application/json' );
+    header.append('token', token );//put token to request API
+
+    return this.http.post(url, null, {headers:header})
+        .map((response: Response) => 
+            response.json()
+        );
+  }    
+  getJenisSurat(url, token){
+    let header= new Headers();
+
+    header.append('Content-type', 'application/json' );
+    header.append('token', token );//put token to request API
+
+    return this.http.post(url, null, {headers:header})
+        .map((response: Response) => 
+            response.json()
+        );
+  }      
+  getPerihal(url, token){
+    let header= new Headers();
+
+    header.append('Content-type', 'application/json' );
+    header.append('token', token );//put token to request API
+
+    return this.http.post(url, null, {headers:header})
+        .map((response: Response) => 
+            response.json()
+        );      
+  }
+  getLampiran(url, token){
+    let header= new Headers();
+
+    header.append('Content-type', 'application/json' );
+    header.append('token', token );//put token to request API
+
+    return this.http.post(url, null, {headers:header})
+        .map((response: Response) => 
+            response.json()
+        );         
+
+  }
 }

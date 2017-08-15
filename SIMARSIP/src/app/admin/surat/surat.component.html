@@ -9,7 +9,7 @@
       <div class="card card-accent-primary">
         <div class="card-header">
           <b>Daftar surat {{tipe_surat}}</b>
-          <button type="button" class="btn btn-success btn-sm pull-right" style="border-radius:5px" data-toggle="modal" (click)="clickRow();entrySuratModal.show()" >
+          <button type="button" class="btn btn-success btn-sm pull-right" style="border-radius:5px" data-toggle="modal" (click)="changeFormType(0);entrySuratModal.show()" >
             <i class="fa fa-plus"></i>&nbsp; Entri surat {{tipe_surat}}
           </button>          
         </div>
@@ -25,23 +25,26 @@
                   <th>Pengirim</th>
                   <th>Tujuan</th>
                   <th>Status simpan</th>
+                  <th>Sifat</th>                  
                   <th></th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let data of [01,2,3,4]">
-                  <td>s</td>
-                  <td>17/8/1945</td>
-                  <td>27/8/1945</td>
+                <tr *ngFor="let data of list_surat">
+                  <td>{{data.nomor_surat}}</td>
+                  <td>{{data.tanggal_surat | date}}</td>
+                  <td>{{data.tanggal_entri_surat | date:'medium'}}</td>
                   <td></td>
-                  <td>Nama pengirim</td>
+                  <td></td>
                   <td>list nama tujuan</td>
                   <td>gudang arsip</td>
+                  <td>{{data.sifat_surat}}</td>                  
                   <td>
                     <span><a href="javascript:void(0)" (click)="previewModal.show()" ><i class="fa fa-file-text-o" aria-hidden="true" title="Preview"></i></a> </span> &nbsp;
                     <span><a href="javascript:void(0)" (click)="deleteConfirm()" ><i class="fa fa-trash-o" aria-hidden="true" title="Hapus"></i></a> </span> &nbsp;
-                    <span><a href="javascript:void(0)" (click)="entrySuratModal.show()" ><i class="fa fa-pencil-square-o" aria-hidden="true" title="Edit"></i></a> </span>
-                  </td>                                                
+                    <span><a href="javascript:void(0)" (click)="changeFormType(1);editSuratModal.show()" ><i class="fa fa-pencil-square-o" aria-hidden="true" title="Edit"></i></a> </span> &nbsp;
+                    <span><a href="javascript:void(0)" (click)="disposisiModal.show()" ><i class="fa fa-share" aria-hidden="true" title="Disposisikan"></i></a> </span>
+                  </td>                                   
                 </tr>
               </tbody>
             </table>
@@ -78,35 +81,29 @@
               <div class="form-group row">
                 <label class="col-md-3 form-control-label" for="password-input">Tanggal surat</label>
                 <div class="col-md-9">
-                  <date-picker [showClearButton]="false" formControlName="tanggal_surat" name="tanggal_surat"></date-picker>                  
+                  <date-picker *ngIf = "form_type==0" [showClearButton]="false" formControlName="tanggal_surat" name="tanggal_surat"></date-picker>                  
                 </div>
               </div>
               <div class="form-group row">
                 <label class="col-md-3 form-control-label" for="text-input">Perihal</label>
                 <div class="col-md-9">
-                  <input type="text" id="perihal" name="perihal" formControlName="perihal" class="form-control" placeholder="Perihal">
+                  <ng-select 
+                              formControlName="perihal"
+                              [items]="list_perihal"
+                              placeholder="   pilih perihal">
+                  </ng-select>
                 </div>
               </div>
               <div class="form-group row">
                 <label class="col-md-3 form-control-label" for="email-input">Pengirim</label>
                 <div class="col-md-9">
-                  <input type="text" id="pengirim" name="pengirim" formControlName="pengirim" class="form-control" placeholder="Pengirim">
-                </div>
-              </div>                  
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="password-input">Jenis surat</label>
-                  <div class="col-md-9">
-                  <ng-select [allowClear]="true"
-                              formControlName="jenis_surat"
-                              [items]="coba"
-                              placeholder="pilih jenis surat">
-                  </ng-select>
+                  <input type="text" id="pengirim" name="pengirim" formControlName="pengirim" class="form-control" placeholder="Pengirim" (change)="onChangeFile($event)" accept="application/pdf" single required>
                 </div>
               </div>
               <div class="form-group row">
                 <label class="col-md-3 form-control-label" for="password-input">Upload surat</label>
                 <div class="col-md-9">
-                  <input type="file" id="file" name="file" class="form-control" >
+                  <input type="file" id="file" name="file" class="form-control" (change)="onChangeFile($event)" accept="application/pdf"  single required>
                 </div>
               </div>
               </div>
@@ -119,7 +116,7 @@
                   <div class="col-md-9">
                   <ng-select  [multiple]="true"
                               formControlName="tujuan_jabatan"
-                              [items]="coba"
+                              [items]="list_tujuan_jabatan"
                               placeholder="   pilih tujuan jabatan">
                   </ng-select>
                 </div>
@@ -128,13 +125,13 @@
                 <label class="col-md-3 form-control-label" for="password-input">Tujuan <span class="text-muted">(Orang)</span></label>
                 <div class="col-md-9">
                   <ng-select  [multiple]="true"
-                              [items]="coba"
+                              [items]="list_tujuan_orang"
                               formControlName="tujuan_orang"
                               placeholder="   pilih tujuan orang">
                   </ng-select>
                 </div>
               </div>
-              <div *ngIf = "tipe_surat=== 'masuk' " class="form-group row">
+              <!-- <div *ngIf = "tipe_surat=== 'masuk' " class="form-group row">
                 <div class="col-md-9 push-3">              
                   <input type="checkbox" name="vehicle" value="Car" (click)="stateDisposisi()"/> Tujuan disposisi
                   <ng-select  [multiple]="true"
@@ -143,14 +140,14 @@
                               placeholder="   pilih tujuan disposisi" [hidden]="hidden">
                   </ng-select>              
                 </div>
-              </div>
+              </div> -->
               <div class="form-group row">
                 <label class="col-md-3 form-control-label" for="password-input">Lampiran</label>
                 <div class="col-md-9">
                   <ng-select  [multiple]="true"
-                              [items]="coba"
+                              [items]="list_lampiran"
                               formControlName="lampiran"
-                              placeholder="   pilih tujuan disposisi">
+                              placeholder="   ketik atau pilih lampiran">
                   </ng-select>
                 </div>
               </div>    
@@ -259,6 +256,128 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<!-- form entri surat -->
+<div bsModal #editSuratModal="bs-modal" class="modal fade" style="" tabindex="-1" role="dialog" aria-labelledby="editSuratModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg" style="width: 1024" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 style="text-align:center;" >edit surat {{tipe_surat}}</h4>
+         <button type="button" class="close" (click)="editSuratModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> 
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form" class="form-horizontal" novalidate>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="garis">
+                <p> <span style="font-size:17px">Informasi Surat</span></p>
+              </div>             
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label">Nomor</label>
+                <div class="col-md-9">
+                  <input type="text" id="nomor" name="nomor_surat" formControlName="nomor_surat" class="form-control" placeholder="nomor">
+                </div>
+              </div>          
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input">Tanggal surat</label>
+                <div class="col-md-9">
+                  <date-picker *ngIf = "form_type==1" [showClearButton]="false" formControlName="tanggal_surat" name="tanggal_surat"></date-picker>                  
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="text-input">Perihal</label>
+                <div class="col-md-9">
+                  <ng-select 
+                              formControlName="perihal"
+                              [items]="list_perihal"
+                              placeholder="   pilih perihal">
+                  </ng-select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="email-input">Pengirim</label>
+                <div class="col-md-9">
+                  <input type="text" id="pengirim" name="pengirim" formControlName="pengirim" class="form-control" placeholder="Pengirim">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input">Upload surat</label>
+                <div class="col-md-9">
+                  <input type="file" id="file" name="file" class="form-control" (change)="onChangeFile($event)" accept="application/pdf"  single required >
+                  <small class="help-block" style="color:crimson">Silahkan upload ulang jika ingin mengganti file surat</small>                   
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input">Lampiran</label>
+                <div class="col-md-9">
+                  <ng-select  [multiple]="true"
+                              [items]="list_lampiran"
+                              formControlName="lampiran"
+                              placeholder="   ketik atau pilih lampiran">
+                  </ng-select>
+                </div>
+              </div>   
+            </div>                
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="editSuratModal.hide()">Tutup</button>
+            <button type="button" class="btn btn-primary">Simpan</button>
+          </div>                 
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- form entri surat -->
+<div bsModal #disposisiModal="bs-modal" class="modal fade" style="" tabindex="-1" role="dialog" aria-labelledby="disposisiModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg" style="width: 1024" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 style="text-align:center;" >Disposisikan Surat</h4>
+         <button type="button" class="close" (click)="disposisiModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> 
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form" class="form-horizontal" novalidate>
+          <div class="row">
+            <div class="col-md-12">
+              <div *ngIf = "tipe_surat==='masuk' " class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input">Tujuan <span class="text-muted">(Jabatan)</span></label>
+                  <div class="col-md-9">
+                  <ng-select  [multiple]="true"
+                              formControlName="tujuan_jabatan"
+                              [items]="list_tujuan_jabatan"
+                              placeholder="   pilih tujuan jabatan">
+                  </ng-select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="password-input">Tujuan <span class="text-muted">(Orang)</span></label>
+                <div class="col-md-9">
+                  <ng-select  [multiple]="true"
+                              [items]="list_tujuan_orang"
+                              formControlName="tujuan_orang"
+                              placeholder="   pilih tujuan orang">
+                  </ng-select>
+                </div>
+              </div> 
+            </div>    
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="disposisiModal.hide()">Tutup</button>
+            <button type="button" class="btn btn-primary">Simpan</button>
+          </div>                 
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
 
 
 

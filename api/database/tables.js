@@ -1,3 +1,4 @@
+var sequelize = require('./../connection');
 // call all models to sync with database
 var User = sequelize.import(__dirname + '/../models/user.model'),
     Surat = sequelize.import(__dirname + '/../models/surat.model'),
@@ -16,8 +17,6 @@ var User = sequelize.import(__dirname + '/../models/user.model'),
     Unit_kerja = sequelize.import(__dirname + '/../models/unit_kerja.model');
 
 User.sync();
-Surat_masuk_pengirim.sync();
-Surat_keluar_pengirim.sync();
 
 Kode_surat.sync().then(function(result) {
     Jenis_surat.sync().then(function(result) {
@@ -29,8 +28,13 @@ Kode_surat.sync().then(function(result) {
                             Lampiran.sync();
                             Jabatan.sync().then(function(result) {
                                 Staff.sync().then(function(result) {
-                                    Surat_masuk_penerima.sync();
-                                    Surat_keluar_pengirim.sync();
+                                    Surat_masuk_penerima.sync().then(function(result) {
+                                        Surat_masuk_pengirim.sync().then(function(result) {
+                                            Surat_keluar_penerima.sync().then(function(result) {
+                                                Surat_keluar_pengirim.sync();
+                                            });
+                                        });
+                                    });
                                 });
                             });
                         });

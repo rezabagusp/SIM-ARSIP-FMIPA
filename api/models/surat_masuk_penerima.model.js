@@ -6,6 +6,6 @@ module.exports = function(sequelize, DataType){
 	return sequelize.define('surat_masuk_penerima',{
 		surat_id: { type: DataType.INTEGER, references: { model: Surat, key: 'id' } },
 		staff_id: { type: DataType.INTEGER, references: { model: Staff, key: 'id' } },
-		status_disposisi_surat: { type: DataType.INTEGER, defaultValue: null }
+		status_disposisi_penerima: { type: DataType.INTEGER, defaultValue: null }
     });
 }

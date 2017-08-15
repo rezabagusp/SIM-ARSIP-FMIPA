@@ -1,6 +1,5 @@
 var sequelize = require('../connection');
 var Perihal = sequelize.import(__dirname + '/../models/perihal.model');
-var Unit_kerja = sequelize.import(__dirname + '/../models/unit_kerja.model');
 
 module.exports = function(sequelize, DataType) {
 	return sequelize.define('surat', {
@@ -16,70 +15,5 @@ module.exports = function(sequelize, DataType) {
         file_surat: DataType.STRING,
         status_surat: { type: DataType.ENUM('aktif', 'inaktif'), defaultValue: 'aktif' },
         perihal_id: { type: DataType.INTEGER, references: { model: Perihal, key: 'id' } }                                         
-	 }, {
-	 	getterMethode: {
-	 		getNomor: function() {
-	 		    return this.getDataValue('nomor_surat');
-            }, 
-            getPerihal: function() {
-	 			return this.getDataValue('perihal_surat');
-            },
-            getPengirim: function() {
-	 		    return this.getDataValue('pengirim_surat');
-            },
-            getTanggal: function() {
-	 			return this.getDataValue('tanggal_surat');
-            },
-            getTanggalTerima: function() {
-	 			return this.getDataValue('tanggal_terima_surat');
-            },
-            getTanggalEntri: function() {
-	 			return this.getDataValue('tanggal_entri_surat');
-            },
-            getIsi: function() {
-                return this.getDataValue('isi_surat');
-            },
-            getFile: function() {
-                return this.getDataValue('file_surat');
-            },
-            getStatus: function() {
-                return this.getDataValue('status_surat');
-            },
-            getSubSubJenis: function() {
-                return this.getDataValue('sub_sub_jenis_surat_id');
-            }
-         }, 
-         setterMethode: {
-			setNomor: function(nomor) {
-                return this.setDataValue('nomor_surat', nomor);
-            }, 
-            setPerihal: function(perihal) {
-                return this.setDataValue('perihal_surat', perihal);
-            },
-            setPengirim: function(pengirim) {
-                return this.setDataValue('pengirim_surat', pengirim);
-            },
-            setTanggal: function(tanggal) {
-                return this.setDataValue('tanggal_surat', tanggal);
-            },
-            setTanggalTerima: function(tanggal_terima) {
-                return this.setDataValue('tanggal_terima_surat', tanggal_terima);
-            },
-            setTanggalEntri: function(tanggal_entri) {
-                return this.setDataValue('tanggal_entri_surat', tanggal_entri);
-            },
-            setJenis: function(jenis) {
-                return this.setDataValue('jenis_surat', jenis);
-            },
-            setIsi: function(isi) {
-                return this.setDataValue('isi_surat', isi);
-            },
-            setFile: function(file) {
-                return this.setDataValue('file_surat', file);
-            },
-            setStatus: function(status) {
-                return this.setDataValue('status_surat', status);
-            }
-	 	}
 	});
 }

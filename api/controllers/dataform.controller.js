@@ -601,7 +601,7 @@ function DataformControllers() {
 					res.json({status: true, message: 'Tambah jabatan berhasil!'});
 				})
 				.catch(function(err) {
-					res.json({status: false, message: })
+					res.json({status: false, message: 'Tambah jabatan gagal!', err_code: 400, err: err});
 				})
 		}
 	}
@@ -611,7 +611,34 @@ function DataformControllers() {
 			nama = req.body.nama_jabatan;
 
 		if (id == undefined || nama == undefined) {
-			res.json({status: false, message})
+			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else {
+			Jabatan
+				.findOne({
+					where: {
+						id: id
+					}
+				})
+				.then(function(result) {
+					if (result == null) {
+						res.json({status: false, message: 'Jabatan tidak ditemukan!', err_code: 404});
+					} else {
+						Jabatan
+							.update({
+								nama_jabatan: nama
+							}, {
+								where: {
+									id: id
+								}
+							})
+							.then(function(result) {
+								res.json({status: true, message: 'Update jabatan berhasil!'});
+							})
+							.catch(function(err) {
+								res.json({status: false, message: 'Update jabatan gagal!', err_code: 400, err: err});
+							});
+					}
+				})
 		}
 	}
 

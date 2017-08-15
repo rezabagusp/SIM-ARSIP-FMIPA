@@ -84,6 +84,7 @@ function LampiranControllers() {
 		}
 	}
 
+	// fungsi tambah lampiran sudah di test
 	this.add = function(req, res) {
 		var judul = req.body.judul_lampiran,
         	tanggal = req.body.tanggal_lampiran,
@@ -109,6 +110,7 @@ function LampiranControllers() {
         }
 	}
 
+	// fungsi upload lampiran berhasil di test
 	this.upload = function(req, res) {
 		var destination = 'public/uploads/lampiran',
 			dir = '/../',

@@ -51,6 +51,10 @@ router.post('/edit', function(req, res) {
 	surat.update(req, res);
 });
 
+router.post('/edit/disposisi', function(req, res) {
+	surat.updateDisposisi(req, res);
+});
+
 router.post('/upload', function(req, res) {
 	surat.upload(req, res);
 });

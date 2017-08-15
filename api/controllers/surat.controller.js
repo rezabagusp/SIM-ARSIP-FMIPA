@@ -443,6 +443,7 @@ function SuratControllers() {
 		}
 	}
 
+	// fungsi upload surat sudah di test
 	this.upload = function(req, res) {
 		var destination = 'public/uploads/surat',
 			dir = '/../',
@@ -484,6 +485,7 @@ function SuratControllers() {
 		});
 	}
 
+	// fungsi add surat sudah di test
 	this.add = function(req, res) {
 		var nomor = req.body.nomor_surat,
 			perihal = req.body.perihal_surat,
@@ -751,7 +753,9 @@ function SuratControllers() {
 		}
 	}
 
+	// fungsi update surat sudah di test
 	this.update = function(req, res) {
+		console.log(req);
 		var id = req.body.id_surat,
 			nomor = req.body.nomor_surat,
 			perihal = req.body.perihal_surat,
@@ -759,18 +763,20 @@ function SuratControllers() {
 			tanggal_terima = req.body.tanggal_terima_surat,
 			tanggal_entri = req.body.tanggal_entri_surat,
 			tipe = req.body.tipe_surat,
+			sifat = req.body.sifat_surat,
 			status = req.body.status_surat,
-			file = req.body.file_surat;
+			file = req.body.file_surat,
+			lampiran = req.body.lampiran_surat;
 
-		if (nomor == undefined || perihal  == undefined || tanggal  == undefined || tanggal_terima  == undefined || tanggal_entri  == undefined || tipe  == undefined || file  == undefined || status  == undefined) {
+		if (id == undefined || nomor == undefined || perihal  == undefined || tanggal  == undefined || tanggal_terima  == undefined || tanggal_entri  == undefined || tipe  == undefined || file  == undefined || status  == undefined) {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else if (!validateNomorSurat(nomor)) {
 			res.json({status: false, message: 'Format nomor surat tidak sesuai!', err_code: 400});
 		} else {
 			var temp = splitNomorSurat(nomor),
 				nomor = Number(temp[0]),
-				unit_kerja = tempat[1],
-				hal = tempat[2],
+				unit_kerja = temp[1],
+				hal = temp[2],
 				tahun = Number(temp[3]);
 
 			Surat
@@ -795,6 +801,7 @@ function SuratControllers() {
 						        tanggal_entri_surat: tanggal_entri,
 						        status_surat: status,
 						        tipe_surat: tipe, 
+						        sifat_surat: sifat,
 						        file_surat: file
 							}, {
 								where: {
@@ -826,9 +833,9 @@ function SuratControllers() {
 														res.json({status: false, message: 'Update lampiran gagal!', err_code: 400, err: err});
 													});
 											}
-											res.json({status: true, message: 'Surat beserta lampiran jika ada berhasil ditambahkan!'});
+											res.json({status: true, message: 'Update surat beserta lampiran berhasil!'});
 										} else {
-											res.json({status: true, message: 'Surat berhasil ditambahkan!'});
+											res.json({status: true, message: 'Update surat berhasil!'});
 										}
 									})
 							})
@@ -839,8 +846,43 @@ function SuratControllers() {
 				})
 				.catch(function(err) {
 					res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 400, err: err});
-				})
+				});
 		}
+	}
+
+	this.updateDisposisi = function(req, res) {
+		var id = req.body.id_surat,
+			penerima = req.body.penerima_surat;
+
+		Surat_masuk_penerima
+			.findOne({
+				where: {
+					id: 91
+				}
+			})
+			.then(function(result) {
+				if (result == null) {
+					res.json({status: null, data: result});
+				} else {
+					res.json({status: true, data: result});
+				}
+			})
+			.catch(function(err) {
+				res.json({status: false, data: err});
+			})
+
+		/*if (id == undefined || penerima == null || )
+		Surat_masuk_penerima
+			.max('status_disposisi_penerima', {
+				where: {
+					surat_id: id
+				}
+			})
+			.then(function(result) {
+				var i = result;
+
+				//res.json({data: result});
+			})*/
 	}
 }
 

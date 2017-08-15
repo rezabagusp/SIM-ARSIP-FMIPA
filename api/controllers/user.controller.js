@@ -14,6 +14,7 @@ var validateEmail = function(email) {
 }
 
 function UserControllers() {
+	// fungsi ambil semua user berhasil
 	this.getAll = function(req, res) {
 		User
 			.findAll({
@@ -36,48 +37,60 @@ function UserControllers() {
 			})
 	}
 
+	// fungsi ambil user sudah ditest
 	this.getOne = function(req, res) {
 		var id = req.body.id_user;
 
-		User
-			.findAll({
-				where: {
-					id: id
-				},
-				attributes: [
-					'nama_user',
-					'email_user',
-					'role_user',
-					'status_user'
-				]
-			})
-			.then(function(result) {
-				if (result == null) {
-					res.json({status: false, message: 'User tidak ditemukan!', err_code: 400});
-				} else {
-					res.json({status: true, message: 'Ambil user berhasil!', data: result});
-				}
-			})
-			.catch(function(err) {
-				res.json({status: false, message: 'Ambil user gagal!', err_code: 400, err: err});
-			})
+		if (id == undefined) {
+			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else {
+			User
+				.findAll({
+					where: {
+						id: id
+					},
+					attributes: [
+						'nama_user',
+						'email_user',
+						'role_user',
+						'status_user'
+					]
+				})
+				.then(function(result) {
+					if (result == null) {
+						res.json({status: false, message: 'User tidak ditemukan!', err_code: 400});
+					} else {
+						res.json({status: true, message: 'Ambil user berhasil!', data: result});
+					}
+				})
+				.catch(function(err) {
+					res.json({status: false, message: 'Ambil user gagal!', err_code: 400, err: err});
+				})
+		}
 	}
 
+	//fungsi login sudah ditest
 	this.login = function(req, res){
-		var nama = req.body.nama_user,
+		var email = req.body.email_user,
 			password = req.body.password_user,
 			remember_me = req.body.remember_me;
 
-		if (!nama || !password ) {
+		if (!email || !password ) {
 			res.json({status: false, message: 'Nama atau password user masih kosong!', err_code: 400});
 		} else {
 			User
 				.findAll({
 					where: {
-						nama_user: nama,
+						email_user: email,
 						password_user: crypto.createHash('sha256').update(password).digest('hex'),
 						status_user: true
-					}
+					},
+					attributes: [
+						'nama_user',
+						'email_user',
+						'role_user',
+						'status_user'
+					]
 				})
 				.then(function(result) {
 			      	if (result == null) {
@@ -100,6 +113,7 @@ function UserControllers() {
 		}
 	}
 
+	// fungsi tambah user sudah ditest
 	this.add = function(req, res) {
 		var nama = req.body.nama_user,
 			email = req.body.email_user,

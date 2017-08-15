@@ -17,7 +17,16 @@ export class DataService {
   public url_surat_delete = 'http://localhost:3000/api/surat/delete'
   public url_surat_edit = 'http://localhost:3000/api/surat/edit'   
   public url_surat_get = 'http://localhost:3000/api/surat/get'   
-   
+
+  //data form
+  public url_perihal_get = 'http://localhost:3000/api/dataform/get/perihal'
+  public url_pengirim_get = 'http://localhost:3000/api/dataform/get/pengirim'
+  public url_penerima_get = 'http://localhost:3000/api/dataform/get/penerima'
+  public url_penerima_jabatan_get = 'http://localhost:3000/api/dataform/get/jabatan'
+  public url_jabatan_get = 'http://localhost:3000/api/dataform/get/jabatan'
+  public url_kode_surat_get = 'http://localhost:3000/api/dataform/get/kode-surat'  
+  public url_subjenis_surat_get = 'http://localhost:3000/api/dataform/get/subjenis_surat'
+  public url_subsubjenis_surat_get = 'http://localhost:3000/api/dataform/get/subsubjenis-surat'  
 
   
 

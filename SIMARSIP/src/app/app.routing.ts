@@ -3,7 +3,6 @@ import { NgModule, Component } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 // Layouts
 import { FullLayoutComponent } from './layouts/full-layout.component';
-import { LoginComponent } from './login/login.component';
 
 export const routes: Routes = [
   {

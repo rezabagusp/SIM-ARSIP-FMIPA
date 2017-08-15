@@ -73,7 +73,7 @@
           <div class="form-group row">
             <label class="col-md-3 form-control-label" for="lampiran">Upload Lampiran</label>
             <div class="col-md-9">
-              <input type="file" id="lampiran" name="lampiran" class="form-control" (change)="onChangeFile($event)" accept="image/jpeg, application/pdf"  single required>
+              <input type="file" id="lampiran" name="lampiran" class="form-control" (change)="onChangeFile($event)" accept="application/pdf"  single required>
             </div>
           </div>
           <div class="progress" *ngIf="fileValid && uploadProgress!=100 " >
@@ -135,6 +135,7 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
 
 
 

@@ -20,6 +20,7 @@ import { AdminService } from './../../_services/admin.service';
 export class SuratComponent implements OnInit {
 
   public form: FormGroup;
+  public form_type=0;
 
   //upload file
   public max_size = Math.pow(10,6);
@@ -43,20 +44,11 @@ export class SuratComponent implements OnInit {
   //data form 
   private list_jenis_surat;
   private list_tujuan_jabatan;
+  private list_tujuan_orang;  
   private list_tujuan_disposisi;
+  private list_perihal;  
   private list_lampiran;
 
-  public items:Array<string> = ['Amsterdam@gmail.com', 'Antwerp@gmail.com', 'Athens@gmail.com', 'Barcelona@gmail.com',
-    'Berlin@gmail.com', 'Birmingham@gmail.com', 'Bradford@gmail.com', 'Bremen@gmail.com', 'Brussels@gmail.com', 'Bucharest@gmail.com',
-    'Budapest@gmail.com', 'Cologne@gmail.com', 'Copenhagen@gmail.com', 'Dortmund@gmail.com', 'Dresden@gmail.com', 'Dublin@gmail.com', 'Düsseldorf@gmail.com',
-    'Essen@gmail.com', 'Frankfurt@gmail.com', 'Genoa@gmail.com', 'Glasgow@gmail.com', 'Gothenburg@gmail.com', 'Hamburg', 'Hannover',
-    'Helsinki', 'Leeds', 'Leipzig', 'Lisbon', 'Łódź', 'London', 'Kraków', 'Madrid',
-    'Málaga', 'Manchester', 'Marseille', 'Milan', 'Munich', 'Naples', 'Palermo',
-    'Paris', 'Poznań', 'Prague', 'Riga', 'Rome', 'Rotterdam', 'Seville', 'Sheffield',
-    'Sofia', 'Stockholm', 'Stuttgart', 'The Hague', 'Turin', 'Valencia', 'Vienna',
-    'Vilnius', 'Warsaw', 'Wrocław', 'Zagreb', 'Zaragoza'];
-
-  private coba = [ {text:"blabla1", id:1}, {text:"blabla2", id:2}, {text:"blabla3", id:3} ]
 
   constructor(private http: Http, 
               private zone: NgZone, 
@@ -77,7 +69,7 @@ export class SuratComponent implements OnInit {
   ngOnInit() {
       this.dtOptions = {
         pagingType: 'full_numbers',
-        pageLength: 2,
+        pageLength: 10,
         retrieve: true,
         scrollX:true
       };
@@ -95,11 +87,20 @@ export class SuratComponent implements OnInit {
       jenis_surat: ['', Validators.required],
       tujuan_jabatan: ['', Validators.required],
       tujuan_orang: ['', Validators.required],
-      tujuan_disposisi: ['', Validators.required],
-      lampiran: ['', Validators.required]      
-
+      lampiran: ['', Validators.required]
     });
+    this.getPerihal();
+    this.getTujuanJabatan();
+    this.getTujuanOrang();
+    this.getLampiran();
   }    
+
+  changeFormType(value){
+    if (this.form_type!=value)
+      this.form_type=value;
+    console.log('status, ', this.form_type);
+
+  }
 
   getSurat(){
     let creds = JSON.stringify({tipe_surat: this.tipe_surat});
@@ -111,6 +112,7 @@ export class SuratComponent implements OnInit {
         if(data.status){
           this.list_surat = data.data;
           this.dtTrigger.next();
+          console.log(this.list_surat)
         }
         else 
           this.data.showError(data.message);
@@ -123,7 +125,6 @@ export class SuratComponent implements OnInit {
   stateDisposisi(){
     if (this.hidden==true) this.hidden=false;
     else this.hidden= true;
-    this.form.controls.tujuan_disposisi.setValue('',  { onlySelf: true })
   }
   
   deleteConfirm(){
@@ -141,12 +142,10 @@ export class SuratComponent implements OnInit {
 
   clickRow(){
     console.log('click row')
-    this.form.controls.jenis_surat.setValue([this.coba[1]],  { onlySelf: true });    
-    this.form.controls.tujuan_jabatan.setValue(this.coba,  { onlySelf: true });    
+    this.form.controls.tujuan_jabatan.setValue(this.list_tujuan_jabatan,  { onlySelf: true }); 
   }  
 
   // CRUD
-  
   entrySurat(){
     console.log(this.form);
     let creds = JSON.stringify({nomor_surat: this.form.value.nomor_surat,
@@ -222,6 +221,7 @@ export class SuratComponent implements OnInit {
   }
 
   onChangeFile(fileinput:any){
+    console.log(fileinput)
     var sementara = <Array<File>> fileinput.target.files
     var ext = sementara[0].type;
     this.filesToUpload = <Array<File>> fileinput.target.files;
@@ -257,7 +257,71 @@ export class SuratComponent implements OnInit {
     //   })
     // }
   }
-                              
-  
+
+  // Data form 
+  getTujuanJabatan(){
+    this.adminService.getTujuanJabatan(this.data.url_jabatan_get, this.data.token)
+    .subscribe(
+      data =>{
+        if(data.status){
+          this.list_tujuan_jabatan = data.data;
+          for(let x in this.list_tujuan_jabatan)
+            this.list_tujuan_jabatan[x].text = this.list_tujuan_jabatan[x].nama_jabatan;
+          console.log(this.list_tujuan_jabatan)
+        }
+        else 
+          this.data.showError(data.message)
+      }
+    ) 
+  }
+
+  getTujuanOrang(){
+    this.adminService.getTujuanOrang(this.data.url_penerima_get, this.data.token)
+    .subscribe(
+      data=>{
+        if(data.status){
+          this.list_tujuan_orang = data.data;
+          for(let x in this.list_tujuan_orang)
+            this.list_tujuan_orang[x].text = this.list_tujuan_orang[x].nama_penerima;
+          console.log(this.list_tujuan_orang);    
+        }
+        else 
+          this.data.showError(data.mesage)
+      }
+    )
+  }
+
+  getPerihal(){
+    this.adminService.getPerihal(this.data.url_perihal_get, this.data.token)
+    .subscribe(
+      data => {
+        if(data.status){
+          this.list_perihal = data.data;
+          for(let x in this.list_perihal)
+            this.list_perihal[x].text = this.list_perihal[x].nama_perihal;
+          console.log(this.list_perihal);              
+        }
+        else 
+          this.data.showError(data.message);
+      }
+    )
+
+  }
+
+  getLampiran(){
+    this.adminService.getAllLampiran(this.data.url_get_all_lampiran, this.data.token)
+    .subscribe(
+      data =>{
+        if(data.status){
+          this.list_lampiran = data.data;
+          for(let x in this.list_lampiran)
+            this.list_lampiran[x].text = this.list_lampiran[x].judul_lampiran;
+          console.log(this.list_lampiran);              
+        }
+        else 
+          this.data.showError(data.message);        
+      }
+    )
+  }
 
 }

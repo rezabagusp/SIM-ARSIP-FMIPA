@@ -8,39 +8,35 @@ router.get('/*', function(req, res) {
   res.json({status: false, message: 'None API Implemented'});
 });
 
-router.post('/get/perihal', function(req, res) {
+router.post('/get/perihal/all', function(req, res) {
 	dataform.getPerihal(req, res);
 });
 
-router.post('/get/pengirim', function(req, res) {
-	dataform.getPengirim(req, res);
+router.post('/get/staff/all', function(req, res) {
+	dataform.getStaff(req, res);
 });
 
-router.post('/get/penerima', function(req, res) {
-	dataform.getPenerima(req, res);
-});
-
-router.post('/get/penerima/jabatan', function(req, res) {
-	dataform.getPenerimaByJabatan(req, res);
-});
-
-router.post('/get/jabatan', function(req, res) {
+router.post('/get/jabatan/all', function(req, res) {
 	dataform.getJabatan(req, res);
 });
 
-router.post('/get/kode-surat', function(req, res) {
+router.post('/get/unitkerja/all', function(req, res) {
+	dataform.getUnitKerja(req, res);
+});
+
+router.post('/get/kode-surat/all', function(req, res) {
 	dataform.getKodeSurat(req, res);
 });
 
-router.post('/get/jenis-surat', function(req, res) {
+router.post('/get/jenis-surat/all', function(req, res) {
 	dataform.getJenisSurat(req, res);
 });
 
-router.post('/get/subjenis-surat', function(req, res) {
+router.post('/get/subjenis-surat/all', function(req, res) {
 	dataform.getSubJenisSurat(req, res);
 });
 
-router.post('/get/subsubjenis-surat', function(req, res) {
+router.post('/get/subsubjenis-surat/all', function(req, res) {
 	dataform.getSubSubJenisSurat(req, res);
 });
 

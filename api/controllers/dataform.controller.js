@@ -26,7 +26,7 @@ function DataformControllers() {
 		Perihal
 			.findAll()
 			.then(function(result) {
-				if (result == null) {
+				if (result == 0) {
 					res.json({status: false, message: 'Perihal tidak ditemukan!', err_code: 404});
 				} else {
 					res.json({status: true, message: 'Ambil perihal berhasil!', data: result});
@@ -50,7 +50,7 @@ function DataformControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Perihal tidak ditemukan!', err_code: 404});
 					} else {
 						res.json({status: true, message: 'Ambil perihal berhasil!', data: result});
@@ -118,7 +118,7 @@ function DataformControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Perihal tidak ditemukan!', err_code: 404});
 					} else {
 						Surat
@@ -169,7 +169,7 @@ function DataformControllers() {
 		Pengirim
 			.findAll()
 			.then(function(result) {
-				if (result == null) {
+				if (result == 0) {
 					res.json({status: false, message: 'Pengirim tidak ditemukan!', err_code: 404});
 				} else {
 					res.json({status: true, message: 'Ambil pengirim berhasil!', data: result});
@@ -193,7 +193,7 @@ function DataformControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Pengirim tidak ditemukan!', err_code: 404});
 					} else {
 						res.json({status: true, message: 'Ambil pengirim berhasil!', data: result});
@@ -244,7 +244,7 @@ function DataformControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Pengirim tidak ditemukan!', err_code: 404});
 					} else {
 						Pengirim
@@ -284,7 +284,7 @@ function DataformControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Pengirim tidak ditemukan!', err_code: 404});
 					} else {
 						Surat
@@ -335,7 +335,7 @@ function DataformControllers() {
 		Staff
 			.findAll()
 			.then(function(result) {
-				if (result == null) {
+				if (result == 0) {
 					res.json({status: false, message: 'Staff tidak ditemukan!', err_code: 404});
 				} else {
 					res.json({status: true, message: 'Ambil staff berhasil!', data: result});
@@ -359,7 +359,7 @@ function DataformControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Staff tidak ditemukan!', err_code: 404});
 					} else {
 						res.json({status: true, message: 'Ambil staff berhasil!', data: result});
@@ -387,7 +387,7 @@ function DataformControllers() {
 					}]
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Staff dengan jabatan tidak ditemukan!', err_code: 404});
 					} else {
 						res.json({status: true, message: 'Ambil staff dengan jabatan berhasil!', data: result});
@@ -438,7 +438,7 @@ function DataformControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Staff tidak ditemukan!', err_code: 404});
 					} else {
 						Staff
@@ -478,7 +478,7 @@ function DataformControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Staff tidak ditemukan!', err_code: 404});
 					} else {
 						Surat_masuk_penerima
@@ -551,7 +551,7 @@ function DataformControllers() {
 		Jabatan
 			.findAll()
 			.then(function(result) {
-				if (result == null) {
+				if (result == 0) {
 					res.json({status: false, message: 'Jabatan tidak ditemukan!', err_code: 404});
 				} else {
 					res.json({status: true, message: 'Ambil jabatan berhasil!', data: result});
@@ -575,7 +575,7 @@ function DataformControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Jabatan tidak ditemukan!', err_code: 404});
 					} else {
 						res.json({status: true, message: 'Ambil jabatan berhasil!', data: result});
@@ -620,7 +620,7 @@ function DataformControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Jabatan tidak ditemukan!', err_code: 404});
 					} else {
 						Jabatan
@@ -650,7 +650,7 @@ function DataformControllers() {
 		Kode_surat
 			.findAll()
 			.then(function(result) {
-				if (result == null) {
+				if (result == 0) {
 					res.json({status: false, message: 'Kode surat tidak ditemukan!', err_code: 404});
 				} else {
 					res.json({status: true, message: 'Ambil kode surat berhasil!', data: result});
@@ -674,7 +674,7 @@ function DataformControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Jabatan tidak ditemukan!', err_code: 404});
 					} else {
 						res.json({status: true, message: 'Ambil jabatan berhasil!', data: result});
@@ -702,7 +702,7 @@ function DataformControllers() {
 		Jenis_surat
 			.findAll()
 			.then(function(result) {
-				if (result == null) {
+				if (result == 0) {
 					res.json({status: false, message: 'Jenis surat tidak ditemukan!', err_code: 404});
 				} else {
 					res.json({status: true, message: 'Ambil jenis surat berhasil!', data: result});
@@ -733,7 +733,7 @@ function DataformControllers() {
 		Sub_jenis_surat
 			.findAll()
 			.then(function(result) {
-				if (result == null) {
+				if (result == 0) {
 					res.json({status: false, message: 'Sub jenis surat tidak ditemukan!', err_code: 404});
 				} else {
 					res.json({status: true, message: 'Ambil sub jenis surat berhasil!', data: result});
@@ -764,7 +764,7 @@ function DataformControllers() {
 		Sub_sub_jenis_surat
 			.findAll()
 			.then(function(result) {
-				if (result == null) {
+				if (result == 0) {
 					res.json({status: false, message: 'Sub sub jenis surat tidak ditemukan!', err_code: 404});
 				} else {
 					res.json({status: true, message: 'Ambil sub sub jenis surat berhasil!', data: result});
@@ -795,7 +795,7 @@ function DataformControllers() {
 		Unit_kerja
 			.findAll()
 			.then(function(result) {
-				if (result == null) {
+				if (result == 0) {
 					res.json({status: false, message: 'Unit kerja tidak ditemukan!', err_code: 404});
 				} else {
 					res.json({status: true, message: 'Ambil unit kerja berhasil!', data: result});

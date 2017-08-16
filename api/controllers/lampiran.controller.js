@@ -34,6 +34,7 @@ function LampiranControllers() {
 			})
 	}
 
+	
 	this.getOne = function(req, res) {
 		var id = req.body.id_lampiran;
 
@@ -59,6 +60,7 @@ function LampiranControllers() {
 		}
 	}
 
+	// fungsi ambil lampiran id surat berhasil
 	this.getBySurat = function(req, res) {
 		var id = req.body.id_surat;
 

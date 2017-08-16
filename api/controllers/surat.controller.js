@@ -854,35 +854,54 @@ function SuratControllers() {
 		var id = req.body.id_surat,
 			penerima = req.body.penerima_surat;
 
-		Surat_masuk_penerima
-			.findOne({
-				where: {
-					id: 91
-				}
-			})
-			.then(function(result) {
-				if (result == null) {
-					res.json({status: null, data: result});
-				} else {
-					res.json({status: true, data: result});
-				}
-			})
-			.catch(function(err) {
-				res.json({status: false, data: err});
-			})
-
-		/*if (id == undefined || penerima == null || )
-		Surat_masuk_penerima
-			.max('status_disposisi_penerima', {
-				where: {
-					surat_id: id
-				}
-			})
-			.then(function(result) {
-				var i = result;
-
-				//res.json({data: result});
-			})*/
+		if (id == undefined || penerima == undefined) {
+			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else {
+			Surat
+				.findOne({
+					where: {
+						id: id
+					}
+				})
+				.then(function(result) {
+					if (result == null) {
+						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 404});
+					} else {
+						Surat_masuk_penerima
+							.max('status_disposisi_penerima', {
+								where: {
+									surat_id: id
+								}
+							})
+							.then(function(result) {
+								var status = result + 1;
+								if (penerima == null || penerima.length < 0) {
+									res.json({status: false, message: 'Penerima tidak boleh kosong!', err_code: 400});
+								} else {
+									for (var i = 0; i < penerima.length; i++) {
+										Surat_masuk_penerima
+											.create({
+												surat_id: id,
+												staff_id: penerima[i].id,
+												status_disposisi_penerima: status
+											})
+											.catch(function(err) {
+												res.json({status: false, message: 'Penerima disposisi gagal ditambahkan!', err_code: 400, err: err});
+											})
+									}
+								}
+								res.json({status: true, message: 'Penerima disposisi berhasil ditambahkan!'});
+							})
+							.catch(function(err) {
+								res.json({status: false, message: 'Ambil status disposisi gagal!', err_code: 400, err: err});
+							})
+					}
+				})
+				.catch(function(err) {
+					res.json({status: false, message: 'Surat gagal ditemukan!', err_code})
+				})
+			
+		}
 	}
 }
 

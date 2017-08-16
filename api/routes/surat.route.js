@@ -16,6 +16,10 @@ router.post('/add', function(req, res) {
 });
 
 router.post('/get', function(req, res) {
+	surat.getOne(req, res);
+});
+
+router.post('/get/all', function(req, res) {
 	surat.getAll(req, res);
 });
 

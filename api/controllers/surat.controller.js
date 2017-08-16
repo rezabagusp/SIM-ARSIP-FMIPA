@@ -22,10 +22,17 @@ Jenis_surat.belongsTo(Kode_surat, {foreignKey: 'kode_surat_id'});
 Sub_jenis_surat.belongsTo(Jenis_surat, {foreignKey: 'jenis_surat_id'});
 Sub_sub_jenis_surat.belongsTo(Sub_jenis_surat, {foreignKey: 'sub_jenis_surat_id'});
 
-Surat_masuk_penerima.belongsTo(Surat, {foreignKey: 'surat_id'});
+Surat.hasMany(Surat_masuk_penerima, {foreignKey: 'surat_id'});
+Surat.hasOne(Surat_masuk_pengirim, {foreignKey: 'surat_id'});
+Surat.hasMany(Surat_keluar_penerima, {foreignKey: 'surat_id'});
+Surat.hasOne(Surat_keluar_pengirim, {foreignKey: 'surat_id'});
+
+/*Surat_masuk_penerima.belongsTo(Surat, {foreignKey: 'surat_id'});
+Surat_masuk_pengirim.belongsTo(Surat, {foreignKey: 'surat_id'});
 Surat_masuk_penerima.belongsTo(Staff, {foreignKey: 'staff_id'});
 Surat_keluar_pengirim.belongsTo(Surat, {foreignKey: 'surat_id'});
-Surat_keluar_pengirim.belongsTo(Staff, {foreignKey: 'staff_id'});
+Surat_keluar_penerima.belongsTo(Surat, {foreignKey: 'surat_id'});
+Surat_keluar_pengirim.belongsTo(Staff, {foreignKey: 'staff_id'});*/
 
 var validateNomorSurat = function(nomor) {
 	var regex = /^[0-9]+\/IT3(\.[0-9]+)*\/[A-Z]{2,2}(\.[0-9]{2,2}){0,4}\/[0-9]{4,4}$/;
@@ -111,7 +118,7 @@ function SuratControllers() {
 		Surat
 			.findAll()
 			.then(function(result) {
-				if (result == null) {
+				if (result == 0) {
 					res.json({status: false, message: 'Semua surat gagal ditemukan!', err_code: 400});
 				} else {
 					res.json({status: true, message: 'Ambil semua surat berhasil!', data: result});
@@ -136,7 +143,7 @@ function SuratControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Surat gagal ditemukan!', err_code: 400});
 					} else {
 						res.json({status: true, message: 'Ambil satu surat berhasil!', data: result});
@@ -148,29 +155,104 @@ function SuratControllers() {
 		}
 	}
 
-	// fungsi ambil surat berdasarkan tipe sudah ditest
+
 	this.getByTipe = function(req, res) {
 		var tipe = req.body.tipe_surat;
 
 		if (tipe == undefined) {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else {
-			Surat
-				.findAll({
-					where: {
-						tipe_surat: tipe
-					}
-				})
-				.then(function(result) {
-					if (result == null) {
-						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 400});
-					} else {
-						res.json({status: true, message: 'Ambil surat dengan tipe berhasil!', data: result});
-					}
-				})
-				.catch(function(err) {
-					res.json({status: false, message: 'Ambil surat dengan tipe gagal!', err_code: 400, err: err});
-				})
+			if (tipe == 'masuk') {
+				Surat
+					.findAll({
+						where: {
+							tipe_surat: 'masuk'
+						},
+						include: [{
+							model: Surat_masuk_pengirim,
+							required: true
+						}, {
+							model: Surat_masuk_penerima,
+							required: true
+						}]
+					})
+					.then(function(result) {
+						if (result == 0) {
+							res.json({status: false, message: 'Surat masuk tidak ditemukan!', err_code: 400});
+						} else {
+							res.json({status: true, message: 'Ambil semua surat masuk berhasil!', data: result});
+						}
+					})
+					.catch(function(err) {
+						res.json({status: false, message: 'Ambil semua surat masuk gagal!', err_code: 400, err: err});
+					})
+			} else if (tipe == 'keluar') {
+				// let gabungan = []
+				// Surat_keluar_penerima
+				// 	.findAll({
+				// 		include: [{
+				// 			model: Surat,
+				// 			where: {
+				// 				tipe_surat: 'keluar'
+				// 			}
+				// 		}]
+				// 	})
+				// 	.then((keluar_penerima) => {
+				// 		keluar_penerima = JSON.parse(JSON.stringify(keluar_penerima))
+				// 		for(let i=0; i<keluar_penerima.length; i++) {
+				// 			gabungan.push(keluar_penerima[i])
+				// 		}
+				// 		// gabungan.push()
+				// 		Surat_keluar_pengirim
+				// 			.findAll({
+				// 				include: [{
+				// 					model: Surat,
+				// 					where: {
+				// 						tipe_surat: 'keluar'
+				// 					}
+				// 				}]
+				// 			})
+				// 			.then((keluar_pengirim) => {
+				// 				keluar_pengirim = JSON.parse(JSON.stringify(keluar_pengirim))
+				// 				for(let i=0; i< keluar_pengirim.length; i++) {
+				// 					gabungan.push(keluar_pengirim[i])
+				// 				}
+				// 				if (gabungan.length == 0) {
+				// 						res.json({status: false, message: 'Surat keluar tidak ditemukan!', err_code: 400});
+				// 					} else {
+				// 						res.json({status: true, message: 'Ambil semua surat keluar berhasil!', data: gabungan});
+				// 					}
+				// 			})
+				// 			.catch((err) => {
+				// 				res.json({status: false, message: 'Ambil semua surat keluar gagal!', err_code: 400, err: err})
+				// 			})
+				// 	})
+				// 	.catch((err) => {
+				// 		res.json({status: false, message: 'Ambil semua surat keluar gagal!', err_code: 400, err: err})
+				// 	})
+				Surat
+					.findAll({
+						where: {
+							tipe_surat: 'keluar'
+						},
+						include: [{
+							model: Surat_keluar_pengirim
+						}, {
+							model: Surat_keluar_penerima
+						}]
+					})
+					.then(function(result) {
+						if (result == 0) {
+							res.json({status: false, message: 'Surat keluar tidak ditemukan!', err_code: 400});
+						} else {
+							res.json({status: true, message: 'Ambil semua surat keluar berhasil!', data: result});
+						}
+					})
+					.catch(function(err) {
+						res.json({status: false, message: 'Ambil semua surat keluar gagal!', err_code: 400, err: err});
+					})
+			}
+			
 		}
 	}
 
@@ -198,7 +280,7 @@ function SuratControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 404});
 					} else {
 						res.json({status: true, message: 'Ambil surat dengan nomor berhasil!', data: result});
@@ -223,7 +305,7 @@ function SuratControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 400});
 					} else {
 						res.json({status: true, message: 'Ambil satu surat dari penerima berhasil!', data: result});
@@ -260,7 +342,7 @@ function SuratControllers() {
 					}]
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 400});
 					} else {
 						res.json({status: true, message: 'Ambil surat dengan kode berhasil!', data: result});
@@ -294,7 +376,7 @@ function SuratControllers() {
 					}]
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 400});
 					} else {
 						res.json({status: true, message: 'Ambil surat dengan jenis berhasil!', data: result});
@@ -325,7 +407,7 @@ function SuratControllers() {
 					}]
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 400});
 					} else {
 						res.json({status: true, message: 'Ambil surat dengan subjenis berhasil!', data: result});
@@ -353,7 +435,7 @@ function SuratControllers() {
 					}]
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 400});
 					} else {
 						res.json({status: true, message: 'Ambil surat dengan subsubjenis berhasil!', data: result});
@@ -530,7 +612,7 @@ function SuratControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 404});
 					} else {
 						console.log("masuk")
@@ -708,7 +790,7 @@ function SuratControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 400});
 					} else {
 						Surat
@@ -787,7 +869,7 @@ function SuratControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
 						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 404});
 					} else {
 						Surat_masuk_penerima

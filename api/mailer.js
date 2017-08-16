@@ -1,5 +1,9 @@
-'use strict';
-const nodemailer = require('nodemailer');
+'use strict'
+const nodemailer = require('nodemailer')
+var sequelize = require(__dirname + '/connection')
+const Lampiran = sequelize.import(__dirname + '/models/lampiran.model')
+const Surat = sequelize.import(__dirname + '/models/surat.model')
+const Staff = sequelize.import(__dirname + '/models/staff.model')
 
 // create reusable transporter object using the default SMTP transport
 var transporter = nodemailer.createTransport({
@@ -11,30 +15,73 @@ var transporter = nodemailer.createTransport({
         pass: 'akangaep10'    // put your email password here
     }
 });
-
-function Mailer() {
-
-    this.send = function(options, res) {
-        var mailto = options.mailto,
-            mailtype = options.mailtype
-            varpass = options.varpass;
-
+var misal = [{id:1}, {id:2}, {id:3}]
+class Mailer{
+    constructor() {
+        this.sender = '"SIMARSIP FMIPA" <miqdadfawwaz95@gmail.com>'
+        this.recievers = []
+        this.subject = 'Surat Masuk di SIMARSIP'
+        this.attachments = []
+        this.html = '<p>Hallo ganteng</p>'
+    }
+    SendSuratWithLampiran(data, res) {
+        /*Get surat and lampiran first*/
+        console.log(misal)
+        Surat
+            .findOne({
+                where: {
+                    id: 98 /*data.params.id*/
+                },
+                attributes: ['id', 'file_surat']
+            })
+            .then((surat) => {
+                this.attachments.push({filename: surat.dataValues.file_surat, path: __dirname + '/public/uploads/surat/' + surat.dataValues.file_surat})
+                Lampiran
+                    .findAll({
+                        where: {
+                            surat_id: 98 /*data.params.id*/
+                        },
+                        attributes: ['file_lampiran']
+                    })
+                    .then((lampiran) => {
+                        for(let i=0; i<lampiran.length; i++) {
+                            this.attachments.push({filename: lampiran[i].dataValues.file_lampiran, path: __dirname + '/public/uploads/lampiran/' + lampiran[i].dataValues.file_lampiran})
+                        }
+                        // this.send(data, res)
+                        Staff
+                            .findAll({
+                                where: {
+                                    $or: misal /*data.params.recipientArray*/
+                                },
+                                attributes: ['email_staff']
+                            })
+                            .then((staff) => {
+                                for(let i=0; i<staff.length; i++) {
+                                    this.recievers.push(staff[i].dataValues.email_staff)
+                                }
+                                this.send(data, res)
+                            })
+                    })
+            })
+    }
+    send(data, res) {
         // setup email data with unicode symbols
         var mailOptions = {
-            from: '"SIMARSIP FMIPA" <miqdadfawwaz95@gmail.com>', // sender address
-            to: 'aslamabdurrohim@gmail.com', // list of receivers
-            subject: 'Lupa Password | SIMARSIP FMIPA', // Subject line
-            html: '<p>Halo! Kami menerima permintaan <b>penggantian password</b> akun SIMARSIP Anda. Silahkan klik <a href="">disini</a> atau kunjungi link berikut () untuk mengganti password Anda. Catatan: Mohon abaikan e-mail ini jika Anda tidak meminta melakukan reset password</p>' // html body
-        };
+            from: this.sender, // sender address
+            to: this.recievers, // list of receivers
+            subject: this.subject, // Subject line
+            html: this.html, // html body
+            attachments: this.attachments
+        }
 
         // send mail with defined transport object
         transporter.sendMail(mailOptions, function(err, info) {
             if (err) {
-                return console.log(error);
+                return console.log(err);
             }
             console.log('Message %s sent: %s', info.messageId, info.response);
-        });
+        })
     }
 }
 
-module.exports = new Mailer();
+module.exports = new Mailer;

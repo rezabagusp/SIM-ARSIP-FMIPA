@@ -25,7 +25,7 @@ var transporter = nodemailer.createTransport({
         pass: 'akangaep10'    // put your email password here
     }
 });
-var misal = [{id:1}, {id:2}, {id:3}]
+
 class Mailer{
     constructor() {
         this.sender = '"SIMARSIP FMIPA" <miqdadfawwaz95@gmail.com>'
@@ -34,7 +34,8 @@ class Mailer{
         this.attachments = []
         this.html = ''
     }
-    SetHtml(surat, status) {
+
+    setHtml(surat, status) {
         if (status > 0) {
                 this.html += `
                 <p>Surat berikut adalah surat yang didisposisikan kepada Anda.</p>
@@ -51,9 +52,9 @@ class Mailer{
             <p>Catatan: ` + surat.dataValues.keterangan_surat + `</p><br>
         `
     }
-    SendSuratWithLampiran(id, status, res) {
+
+    sendSurat(id, status, res) {
         /*Get surat and lampiran first*/
-        console.log(misal)
         Surat
             .findOne({
                 where: {
@@ -67,7 +68,7 @@ class Mailer{
             })
             .then((surat) => {
                 this.attachments.push({filename: surat.dataValues.file_surat, path: __dirname + '/public/uploads/surat/' + surat.dataValues.file_surat})
-                this.SetHtml(surat, status)
+                this.setHtml(surat, status)
                 Lampiran
                     .findAll({
                         where: {
@@ -76,8 +77,10 @@ class Mailer{
                         attributes: ['file_lampiran']
                     })
                     .then((lampiran) => {
-                        for(let i=0; i<lampiran.length; i++) {
-                            this.attachments.push({filename: lampiran[i].dataValues.file_lampiran, path: __dirname + '/public/uploads/lampiran/' + lampiran[i].dataValues.file_lampiran})
+                        if (lampiran !== 0) {
+                            for(let i = 0; i < lampiran.length; i++) {
+                                this.attachments.push({filename: lampiran[i].dataValues.file_lampiran, path: __dirname + '/public/uploads/lampiran/' + lampiran[i].dataValues.file_lampiran})
+                            }
                         }
                         // this.send(data, res)
                         Staff
@@ -91,7 +94,7 @@ class Mailer{
                                 }]
                             })
                             .then((staff) => {
-                                for(let i=0; i<staff.length; i++) {
+                                for(let i = 0; i<staff.length; i++) {
                                     this.recievers.push(staff[i].dataValues.email_staff)
                                 }
                                 this.send(res)
@@ -99,6 +102,7 @@ class Mailer{
                     })
             })
     }
+
     send(res) {
         // setup email data with unicode symbols
         var mailOptions = {

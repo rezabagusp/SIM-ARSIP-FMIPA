@@ -22,9 +22,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-var Mail = require(__dirname + '/mailer')
-Mail.SendSuratWithLampiran(24, 0)
-
 // routes handler
 app.use('/api', index);
 app.use('/api/user', user);

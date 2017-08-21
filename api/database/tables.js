@@ -6,6 +6,7 @@ var User = sequelize.import(__dirname + '/../models/user.model'),
     Jabatan = sequelize.import(__dirname + '/../models/jabatan.model'),
     Staff = sequelize.import(__dirname + '/../models/staff.model'),
     Perihal = sequelize.import(__dirname + '/../models/perihal.model'),
+    Posisi = sequelize.import(__dirname + '/../models/posisi.model'),
     Kode_surat = sequelize.import(__dirname + '/../models/kode_surat.model'),
     Jenis_surat = sequelize.import(__dirname + '/../models/jenis_surat.model'),
     Sub_jenis_surat = sequelize.import(__dirname + '/../models/sub_jenis_surat.model'),
@@ -24,20 +25,22 @@ Kode_surat.sync().then(function(result) {
             Sub_sub_jenis_surat.sync().then(function(result) {
                 Unit_kerja.sync().then(function(result) {
                     Perihal.sync().then(function(result) {
-                        Surat.sync().then(function(result) {
-                            Lampiran.sync();
-                            Jabatan.sync().then(function(result) {
-                                Staff.sync().then(function(result) {
-                                    Surat_masuk_penerima.sync().then(function(result) {
-                                        Surat_masuk_pengirim.sync().then(function(result) {
-                                            Surat_keluar_penerima.sync().then(function(result) {
-                                                Surat_keluar_pengirim.sync();
+                        Posisi.sync().then(function(result) {
+                            Surat.sync({force: true}).then(function(result) {
+                                Lampiran.sync();
+                                Jabatan.sync().then(function(result) {
+                                    Staff.sync().then(function(result) {
+                                        Surat_masuk_penerima.sync().then(function(result) {
+                                            Surat_masuk_pengirim.sync().then(function(result) {
+                                                Surat_keluar_penerima.sync().then(function(result) {
+                                                    Surat_keluar_pengirim.sync();
+                                                });
                                             });
                                         });
                                     });
                                 });
                             });
-                        });
+                        })
                     });
                 });
             });

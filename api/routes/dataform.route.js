@@ -3,11 +3,11 @@ var router = express.Router();
 
 var dataform = require('../controllers/dataform.controller');
 
-// get
 router.get('/*', function(req, res) {
   res.json({status: false, message: 'None API Implemented'});
 });
 
+// get
 router.post('/get/perihal/all', function(req, res) {
 	dataform.getPerihal(req, res);
 });
@@ -41,19 +41,45 @@ router.post('/get/subsubjenis-surat/all', function(req, res) {
 });
 
 // get by id
+router.post('/get/perihal', function(req, res) {
+	dataform.getPerihal(req, res);
+});
 
+router.post('/get/staff', function(req, res) {
+	dataform.getStaff(req, res);
+});
+
+router.post('/get/jabatan', function(req, res) {
+	dataform.getJabatan(req, res);
+});
+
+router.post('/get/unitkerja', function(req, res) {
+	dataform.getUnitKerja(req, res);
+});
+
+router.post('/get/kode-surat', function(req, res) {
+	dataform.getKodeSurat(req, res);
+});
+
+router.post('/get/jenis-surat', function(req, res) {
+	dataform.getJenisSurat(req, res);
+});
+
+router.post('/get/subjenis-surat', function(req, res) {
+	dataform.getSubJenisSurat(req, res);
+});
+
+router.post('/get/subsubjenis-surat/all', function(req, res) {
+	dataform.getSubSubJenisSurat(req, res);
+});
 
 // add
 router.post('/add/perihal', function(req, res) {
 	dataform.addPerihal(req, res);
 });
 
-router.post('/add/pengirim', function(req, res) {
-	dataform.addPengirim(req, res);
-});
-
-router.post('/add/penerima', function(req, res) {
-	dataform.addPenerima(req, res);
+router.post('/add/staff', function(req, res) {
+	dataform.addStaff(req, res);
 });
 
 router.post('/add/jabatan', function(req, res) {
@@ -81,12 +107,8 @@ router.post('/edit/perihal', function(req, res) {
 	dataform.updatePerihal(req, res);
 });
 
-router.post('/edit/pengirim', function(req, res) {
-	dataform.updatePengirim(req, res);
-});
-
-router.post('/edit/penerima', function(req, res) {
-	dataform.updatePenerima(req, res);
+router.post('/edit/staff', function(req, res) {
+	dataform.updateStaff(req, res);
 });
 
 router.post('/edit/jabatan', function(req, res) {
@@ -114,11 +136,7 @@ router.post('/delete/perihal', function(req, res) {
 	dataform.deletePerihal(req, res);
 });
 
-router.post('/delete/pengirim', function(req, res) {
-	dataform.deletePengirim(req, res);
-});
-
-router.post('/delete/penerima', function(req, res) {
+router.post('/delete/staff', function(req, res) {
 	dataform.deletePenerima(req, res);
 });
 

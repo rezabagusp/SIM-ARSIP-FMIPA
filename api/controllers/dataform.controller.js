@@ -6,6 +6,7 @@ var sequelize = require('../connection');
 var Perihal = sequelize.import(__dirname + '/../models/perihal.model');
 var Staff = sequelize.import(__dirname + '/../models/staff.model');
 var Jabatan = sequelize.import(__dirname + '/../models/jabatan.model');
+var Posisi = sequelize.import(__dirname + '/../models/posisi.model');
 
 var Kode_surat = sequelize.import(__dirname + '/../models/kode_surat.model');
 var Jenis_surat = sequelize.import(__dirname + '/../models/jenis_surat.model');
@@ -19,9 +20,44 @@ var Surat_masuk_penerima = sequelize.import(__dirname + '/../models/surat_masuk_
 Jenis_surat.belongsTo(Kode_surat, {foreignKey: 'kode_surat_id'});
 Sub_jenis_surat.belongsTo(Jenis_surat, {foreignKey: 'jenis_surat_id'});
 Sub_sub_jenis_surat.belongsTo(Sub_jenis_surat, {foreignKey: 'sub_jenis_surat_id'});
+
 Staff.belongsTo(Jabatan, {foreignKey: 'jabatan_id'});
+Jabatan.hasOne(Staff, {foreignKey: 'jabatan_id'});
 
 function DataformControllers() {
+	this.getPosisi = function(req, res) {
+		Posisi
+			.findAll()
+			.then(function(result) {
+				if (result == 0) {
+					res.json({status: false, message: 'Posisi tidak ditemukan!', err_code: 404});
+				} else {
+					res.json({status: true, message: 'Ambil semua posisi berhasil!', data: result});
+				}
+			})
+			.catch(function(result) {
+				res.json({status: false, message: 'Ambil semua posisi gagal!', err_code: 400, err: err});
+			});
+	}
+
+	this.getPosisiById = function(req, res) {
+		var id = req.body.id_posisi;
+
+		if (id == undefined) {
+			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else {
+			Posisi
+				.findById(id)
+				.then(function(result) {
+					if (result == 0) {
+						res.json({status: false, message: 'Posisi tidak ditemukan', err_code: 404});
+					} else {
+						
+					}
+				})
+		}
+	}
+
 	this.getPerihal = function(req, res) {
 		Perihal
 			.findAll()
@@ -44,11 +80,7 @@ function DataformControllers() {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else {
 			Perihal
-				.findOne({
-					where: {
-						id: id
-					}
-				})
+				.findOne(id)
 				.then(function(result) {
 					if (result == 0) {
 						res.json({status: false, message: 'Perihal tidak ditemukan!', err_code: 404});
@@ -165,175 +197,13 @@ function DataformControllers() {
 		}
 	}
 
-	this.getPengirim = function(req, res) {
-		Pengirim
-			.findAll()
-			.then(function(result) {
-				if (result == 0) {
-					res.json({status: false, message: 'Pengirim tidak ditemukan!', err_code: 404});
-				} else {
-					res.json({status: true, message: 'Ambil pengirim berhasil!', data: result});
-				}
-			})
-			.catch(function(err) {
-				res.json({status: false, message: 'Ambil pengirim gagal!', err_code: 400, err: err});
-			})
-	}
-
-	this.getPengirimById = function(req, res) {
-		var id = req.body.id_pengirim;
-
-		if (id == undefined) {
-			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
-		} else {
-			Pengirim
-				.findOne({
-					where: {
-						id: id
-					}
-				})
-				.then(function(result) {
-					if (result == 0) {
-						res.json({status: false, message: 'Pengirim tidak ditemukan!', err_code: 404});
-					} else {
-						res.json({status: true, message: 'Ambil pengirim berhasil!', data: result});
-					}
-				})
-				.catch(function(err) {
-					res.json({status: false, message: 'Ambil pengirim gagal!', err_code: 400, err: err});
-				});
-		}
-	}
-
-	this.addPengirim = function(req, res) {
-		var nama = req.body.nama_pengirim,
-			jabatan = req.body.jabatan_pengirim,
-			email = req.body.email_pengirim;
-
-		if (nama == undefined) {
-			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
-		} else {
-			Pengirim
-				.create({
-					nama_pengirim: nama,
-					jabatan_pengirim: jabatan,
-					email_pengirim: email
-				})
-				.then(function(result) {
-					res.json({status: true, message: 'Tambah pengirim berhasil!'});
-				})
-				.catch(function(err) {
-					res.json({status: false, message: 'Tambah pengirim gagal!', err_code: 400, err: err});
-				});
-		}
-	}
-
-	this.updatePengirim = function(req, res) {
-		var id = req.body.id_pengirim,
-			nama = req.body. nama_pengirim,
-			jabatan = req.body.jabatan_pengirim,
-			email = req.body.email_pengirim;
-
-		if (id == undefined || nama == undefined) {
-			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
-		} else {
-			Pengirim
-				.findOne({
-					where: {
-						id: id
-					}
-				})
-				.then(function(result) {
-					if (result == 0) {
-						res.json({status: false, message: 'Pengirim tidak ditemukan!', err_code: 404});
-					} else {
-						Pengirim
-							.update({
-								nama_pengirim: nama,
-								jabatan_pengirim: jabatan,
-								email_pengirim: email
-							}, {
-								where: {
-									id: id
-								}
-							})
-							.then(function(result) {
-								res.json({status: true, message: 'Update pengirim berhasil!'});
-							})
-							.catch(function(err) {
-								res.json({status: false, message: 'Update pengirim gagal!', err_code: 400, err: err});
-							})
-					}
-				})
-				.catch(function(err) {
-					res.json({status: false, message: 'Pengirim gagal ditemukan!', err_code: 400, err: err});
-				})
-		}
-	}
-
-	this.deletePengirim = function(req, res) {
-		var id = req.body.id_pengirim;
-
-		if (id == undefined) {
-			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
-		} else {
-			Pengirim
-				.findOne({
-					where: {
-						id: id
-					}
-				})
-				.then(function(result) {
-					if (result == 0) {
-						res.json({status: false, message: 'Pengirim tidak ditemukan!', err_code: 404});
-					} else {
-						Surat
-							.findAll({
-								where: {
-									pengirim_surat: id
-								}
-							})
-							.then(function(result) {
-								if (result !== null) {
-									Surat
-										.update({
-											pengirim_surat: null
-										}, {
-											where: {
-												pengirim_surat: id
-											}
-										})
-										.catch(function(err) {
-											res.json({status: false, message: 'Update pengirim surat gagal!', err_code: 400, err: err});
-										});
-								}
-								Pengirim
-									.destroy({
-										where: {
-											id: id
-										}
-									})
-									.then(function(result) {
-										res.json({status: true, message: 'Hapus pengirim berhasil!'});
-									})
-									.catch(function(err) {
-										res.json({status: false, message: 'Hapus pengirim gagal!', err_code: 400, err: err});
-									});
-							})
-							.catch(function(err) {
-								res.json({status: false, message: 'Surat gagal ditemukan!', err_code: 400, err: err});
-							})
-					}
-				})
-				.catch(function(err) {
-					res.json({status: false, message: 'Pengirim gagal ditemukan!', err_code: 400, err: err});
-				})
-		}		
-	}
-
 	this.getStaff = function(req, res) {
 		Staff
-			.findAll()
+			.findAll({
+				include: [{
+					model: Jabatan
+				}]
+			})
 			.then(function(result) {
 				if (result == 0) {
 					res.json({status: false, message: 'Staff tidak ditemukan!', err_code: 404});
@@ -356,7 +226,10 @@ function DataformControllers() {
 				.findOne({
 					where: {
 						id: id
-					}
+					},
+					include: [{
+						model: Jabatan
+					}]
 				})
 				.then(function(result) {
 					if (result == 0) {
@@ -367,34 +240,6 @@ function DataformControllers() {
 				})
 				.catch(function(err) {
 					res.json({status: false, message: 'Ambil staff gagal!', err_code: 400, err: err});
-				})
-		}
-	}
-
-	this.getStaffByJabatan = function(req, res) {
-		var id = req.body.id_jabatan;
-
-		if (id == undefined) {
-			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
-		} else {
-			Staff
-				.findOne({
-					include: [{
-						model: Jabatan,
-						where: {
-							id: id
-						}
-					}]
-				})
-				.then(function(result) {
-					if (result == 0) {
-						res.json({status: false, message: 'Staff dengan jabatan tidak ditemukan!', err_code: 404});
-					} else {
-						res.json({status: true, message: 'Ambil staff dengan jabatan berhasil!', data: result});
-					}
-				})
-				.catch(function(err) {
-					res.json({status: false, message: 'Ambil staff dengan jabatan gagal!', err_code: 400, err: err});
 				})
 		}
 	}
@@ -432,11 +277,7 @@ function DataformControllers() {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else {
 			Staff
-				.findOne({
-					where: {
-						id: id
-					}
-				})
+				.findById(id)
 				.then(function(result) {
 					if (result == 0) {
 						res.json({status: false, message: 'Staff tidak ditemukan!', err_code: 404});
@@ -461,7 +302,7 @@ function DataformControllers() {
 				})
 				.catch(function(err) {
 					res.json({status: false, message: 'Staff gagal ditemukan!', err_code: 400, err: err});
-				})
+				});
 		}
 	}
 
@@ -472,11 +313,7 @@ function DataformControllers() {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else {
 			Staff
-				.findOne({
-					where: {
-						id: id
-					}
-				})
+				.findOne(id)
 				.then(function(result) {
 					if (result == 0) {
 						res.json({status: false, message: 'Staff tidak ditemukan!', err_code: 404});
@@ -549,7 +386,11 @@ function DataformControllers() {
 
 	this.getJabatan = function(req, res) {
 		Jabatan
-			.findAll()
+			.findAll({
+				include: [{
+					model: Staff
+				}]
+			})
 			.then(function(result) {
 				if (result == 0) {
 					res.json({status: false, message: 'Jabatan tidak ditemukan!', err_code: 404});
@@ -572,7 +413,10 @@ function DataformControllers() {
 				.findOne({
 					where: {
 						id: id
-					}
+					},
+					include: [{
+						model: Staff
+					}]
 				})
 				.then(function(result) {
 					if (result == 0) {
@@ -643,7 +487,53 @@ function DataformControllers() {
 	}
 
 	this.deleteJabatan = function(req, res) {
-		
+		var id = req.body.id_jabatan;
+
+		if (id == undefined) {
+			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400, err: err});
+		} else {
+			Jabatan
+				.findOne({
+					where: {
+						id: id
+					}
+				})
+				.then(function(result) {
+					Staff
+						.findAll({
+							where: {
+								jabatan_id: id
+							}
+						})
+						.then(function(result) {
+							if (result !== 0) {
+								Staff
+									.update({
+										jabatan_id: null
+									})
+									.catch(function(err) {
+										res.json({status: false, message: 'Update staff gagal!'});
+									})
+							}
+							Jabatan
+								.destroy({
+									where: {
+										id: id
+									}
+								})
+								.then(function(result) {
+									res.json({status: true, message: 'Hapus jabatan berhasil!'});
+								})
+								.catch(function(err) {
+									res.json({status: false, message: 'Hapus jabatan gagal!', err_code: 400, err: err});
+								})
+						})
+					
+				})
+				.catch(function(err) {
+					res.json({status: false, message: 'Ambil jabatan gagal!', err_code: 400, err: err});
+				});
+		}
 	}
 
 	this.getKodeSurat = function(req, res) {
@@ -668,11 +558,7 @@ function DataformControllers() {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else {
 			Kode_surat
-				.findOne({
-					where: {
-						id: id
-					}
-				})
+				.findById(id)
 				.then(function(result) {
 					if (result == 0) {
 						res.json({status: false, message: 'Jabatan tidak ditemukan!', err_code: 404});

@@ -1,2 +1,4 @@
 api/node_modules/**
 SIMARSIP/node_modules/**
+api/public/uploads/surat/**
+api/public/uploads/lampiran/**

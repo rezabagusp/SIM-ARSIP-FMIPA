@@ -510,10 +510,14 @@ function DataformControllers() {
 								Staff
 									.update({
 										jabatan_id: null
+									}, {
+										where: {
+											jabatan_id: id
+										}
 									})
 									.catch(function(err) {
 										res.json({status: false, message: 'Update staff gagal!'});
-									})
+									});
 							}
 							Jabatan
 								.destroy({
@@ -526,12 +530,15 @@ function DataformControllers() {
 								})
 								.catch(function(err) {
 									res.json({status: false, message: 'Hapus jabatan gagal!', err_code: 400, err: err});
-								})
+								});
 						})
+						.catch(function(err) {
+							res.json({status: false, message: 'Staff gagal ditemukan!', err_code: 400, err: err});
+						});
 					
 				})
 				.catch(function(err) {
-					res.json({status: false, message: 'Ambil jabatan gagal!', err_code: 400, err: err});
+					res.json({status: false, message: 'Jabatan gagal ditemukan!', err_code: 400, err: err});
 				});
 		}
 	}

@@ -112,19 +112,16 @@ class Mailer{
                                         res.json({status: false, message: 'Staff penerima email tidak ditemukan!', err_code: 404});
                                     } else {
                                         for(let i = 0; i < staff.length; i++) {
-                                            console.log(staff[i].dataValues.email_staff)
-                                        //    this.receivers.push(staff[i].dataValues.email_staff)
+                                            this.receivers.push(staff[i].dataValues.email_staff)
                                         }
                                     }
+                                    this.send(res);
                                 })
                                 .catch(function(err) {
                                     res.json({status: false, message: 'Staff penerima email gagal ditemukan!'})
                                 })
                         })   
                 }
-            })
-            .then(function(result) {
-                this.send(res)
             })
     }
 

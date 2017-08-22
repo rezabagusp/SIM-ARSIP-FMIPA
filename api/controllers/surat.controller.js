@@ -378,7 +378,7 @@ function SuratControllers() {
 			        file_surat: file,
 			        keterangan_surat: keterangan,
 			        perihal_id: perihal,
-			        posisi_id: posisi
+			        posisi_surat: posisi
 				})
 				.then(function(result) {
 					// Ambil id surat
@@ -418,8 +418,6 @@ function SuratControllers() {
 											res.json({status: false, message: 'Pemasangan surat masuk dengan penerima gagal!', err_code: 400, err: err});
 										});
 								}
-							})
-							.then(function(result) {
 								mailer.sendSurat(id, 0, res);
 							})
 							.catch(function(err) {
@@ -620,10 +618,13 @@ function SuratControllers() {
 			tanggal = req.body.tanggal_surat,
 			tanggal_terima = req.body.tanggal_terima_surat,
 			tanggal_entri = req.body.tanggal_entri_surat,
+			kepentingan = req.body.kepentingan_surat,
 			tipe = req.body.tipe_surat,
 			sifat = req.body.sifat_surat,
 			status = req.body.status_surat,
 			file = req.body.file_surat,
+			keterangan = req.body.keterangan_surat,
+			posisi = req.body.posisi_surat,
 			lampiran = req.body.lampiran_surat;
 
 		if (id == undefined || nomor == undefined || perihal  == undefined || tanggal  == undefined || tanggal_terima  == undefined || tanggal_entri  == undefined || tipe  == undefined || file  == undefined || status  == undefined) {
@@ -653,14 +654,17 @@ function SuratControllers() {
 								unit_kerja_surat: unit_kerja,
 								hal_surat: hal,
 								tahun_surat: tahun,
-						        perihal_surat: perihal,
 						        tanggal_surat: tanggal,
 						        tanggal_terima_surat: tanggal_terima,
 						        tanggal_entri_surat: tanggal_entri,
 						        status_surat: status,
-						        tipe_surat: tipe, 
+						        tipe_surat: tipe,
 						        sifat_surat: sifat,
-						        file_surat: file
+						        kepentingan_surat: kepentingan,
+						        file_surat: file,
+						        keterangan_surat: keterangan,
+						        perihal_id: perihal,
+						        posisi_surat: posisi
 							}, {
 								where: {
 									id: id
@@ -748,11 +752,10 @@ function SuratControllers() {
 												res.json({status: false, message: 'Penerima disposisi gagal ditambahkan!', err_code: 400, err: err});
 											})
 									}
+									mailer.sendSurat(id, status, res);
 								}
 							})
-							.then(function(result) {
-								mailer.sendSurat(id, status, res);
-							})
+							
 							.catch(function(err) {
 								res.json({status: false, message: 'Ambil status disposisi gagal!', err_code: 400, err: err});
 							});

@@ -29,7 +29,15 @@ var transporter = nodemailer.createTransport({
 class Mailer{
     constructor() {
         this.sender = '"SIMARSIP FMIPA" <miqdadfawwaz95@gmail.com>'
-        this.recievers = []
+        this.receivers = []
+        this.subject = 'Surat Masuk di SIMARSIP'
+        this.attachments = []
+        this.html = ''
+    }
+
+    redefined() {
+        this.sender = '"SIMARSIP FMIPA" <miqdadfawwaz95@gmail.com>'
+        this.receivers = []
         this.subject = 'Surat Masuk di SIMARSIP'
         this.attachments = []
         this.html = ''
@@ -54,11 +62,13 @@ class Mailer{
     }
 
     sendSurat(id, status, res) {
+        this.redefined();
         /*Get surat and lampiran first*/
         Surat
             .findOne({
                 where: {
-                    id: id
+                    id: id,
+                    tipe_surat: 'masuk'
                 },
                 include: [{
                     model: Perihal
@@ -67,39 +77,54 @@ class Mailer{
                 }]
             })
             .then((surat) => {
-                this.attachments.push({filename: surat.dataValues.file_surat, path: __dirname + '/public/uploads/surat/' + surat.dataValues.file_surat})
-                this.setHtml(surat, status)
-                Lampiran
-                    .findAll({
-                        where: {
-                            surat_id: id
-                        },
-                        attributes: ['file_lampiran']
-                    })
-                    .then((lampiran) => {
-                        if (lampiran !== 0) {
-                            for(let i = 0; i < lampiran.length; i++) {
-                                this.attachments.push({filename: lampiran[i].dataValues.file_lampiran, path: __dirname + '/public/uploads/lampiran/' + lampiran[i].dataValues.file_lampiran})
-                            }
-                        }
-                        // this.send(data, res)
-                        Staff
-                            .findAll({
-                                include: [{
-                                    model: Surat_masuk_penerima,
-                                    where: {
-                                        surat_id: id,
-                                        status_disposisi_penerima: status
-                                    }
-                                }]
-                            })
-                            .then((staff) => {
-                                for(let i = 0; i<staff.length; i++) {
-                                    this.recievers.push(staff[i].dataValues.email_staff)
+                if (surat == 0) {
+                    res.json({status: false, message: 'Surat masuk tidak ditemukan!', err_code: 400});
+                } else {
+                    this.setHtml(surat, status)
+                    this.attachments.push({filename: surat.dataValues.file_surat, path: __dirname + '/public/uploads/surat/' + surat.dataValues.file_surat});
+                    Lampiran
+                        .findAll({
+                            where: {
+                                surat_id: id
+                            },
+                            attributes: ['file_lampiran']
+                        })
+                        .then((lampiran) => {
+                            if (lampiran !== 0) {
+                                for(let i = 0; i < lampiran.length; i++) {
+                                    this.attachments.push({filename: lampiran[i].dataValues.file_lampiran, path: __dirname + '/public/uploads/lampiran/' + lampiran[i].dataValues.file_lampiran})
                                 }
-                                this.send(res)
-                            })
-                    })
+                            }
+                        })
+                        .then(function(result) {
+                            Staff
+                                .findAll({
+                                    include: [{
+                                        model: Surat_masuk_penerima,
+                                        where: {
+                                            surat_id: id,
+                                            status_disposisi_penerima: status
+                                        }
+                                    }]
+                                })
+                                .then((staff) => {
+                                    if (staff == 0) {
+                                        res.json({status: false, message: 'Staff penerima email tidak ditemukan!', err_code: 404});
+                                    } else {
+                                        for(let i = 0; i < staff.length; i++) {
+                                            console.log(staff[i].dataValues.email_staff)
+                                        //    this.receivers.push(staff[i].dataValues.email_staff)
+                                        }
+                                    }
+                                })
+                                .catch(function(err) {
+                                    res.json({status: false, message: 'Staff penerima email gagal ditemukan!'})
+                                })
+                        })   
+                }
+            })
+            .then(function(result) {
+                this.send(res)
             })
     }
 
@@ -107,7 +132,7 @@ class Mailer{
         // setup email data with unicode symbols
         var mailOptions = {
             from: this.sender, // sender address
-            to: this.recievers, // list of receivers
+            to: this.receivers, // list of receivers
             subject: this.subject, // Subject line
             html: this.html, // html body
             attachments: this.attachments
@@ -116,9 +141,10 @@ class Mailer{
         // send mail with defined transport object
         transporter.sendMail(mailOptions, function(err, info) {
             if (err) {
-                return console.log(err);
+                res.json({status: false, message: 'Tambah surat gagal! Email gagal dikirimkan!', err_code: 400, err: err});
+            } else {
+                res.json({status: true, message: 'Tambah surat berhasil! Email berhasil dikirimkan!', data: info});
             }
-            console.log('Message %s sent: %s', info.messageId, info.response);
         })
     }
 }

@@ -69,7 +69,6 @@ function SuratControllers() {
 					attributes: ['tipe_surat']
 				})
 				.then(function(result) {
-					console.log(result);
 					if (result == 0) {
 						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 400});
 					} else {
@@ -343,10 +342,11 @@ function SuratControllers() {
 			kepentingan = req.body.kepentingan_surat,
 			status = req.body.status_surat,
 			file = req.body.file_surat,
+			keterangan = req.body.keterangan_surat,
 			lampiran = req.body.lampiran_surat,
 			pengirim = req.body.pengirim_surat,
 			penerima = req.body.penerima_surat,
-			posisi_id = req.body.posisi_surat;
+			posisi = req.body.posisi_surat;
 
 		if (nomor == undefined || perihal  == undefined || tanggal  == undefined || tanggal_terima  == undefined || !tanggal_entri  == undefined || tipe  == undefined || status  == undefined || file  == undefined || pengirim == undefined || penerima == undefined) {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
@@ -376,7 +376,9 @@ function SuratControllers() {
 			        sifat_surat: sifat,
 			        kepentingan_surat: kepentingan,
 			        file_surat: file,
-			        perihal_id: perihal
+			        keterangan_surat: keterangan,
+			        perihal_id: perihal,
+			        posisi_id: posisi
 				})
 				.then(function(result) {
 					// Ambil id surat
@@ -399,24 +401,25 @@ function SuratControllers() {
 					}
 
 					if (tipe == 'masuk' && penerima !== null && penerima.length > 0) {
-						for (var i = 0; i < penerima.length; i++) {
-							Surat_masuk_penerima
-								.create({
-									surat_id: id,
-									staff_id: penerima[i].id,
-									status_disposisi_penerima: 0
-								})
-						}
 						Surat_masuk_pengirim
 							.create({
 								surat_id: id,
 								nama_pengirim: pengirim[0].nama
 							})
 							.then(function(result) {
-								// for (var i = 0; i < penerima.length; i++) {
-									
-								// }
-								//res.json({status: true, message: "Tambah surat masuk berhasil!"});
+								for (var i = 0; i < penerima.length; i++) {
+									Surat_masuk_penerima
+										.create({
+											surat_id: id,
+											staff_id: penerima[i].id,
+											status_disposisi_penerima: 0
+										})
+										.catch(function(err) {
+											res.json({status: false, message: 'Pemasangan surat masuk dengan penerima gagal!', err_code: 400, err: err});
+										});
+								}
+							})
+							.then(function(result) {
 								mailer.sendSurat(id, 0, res);
 							})
 							.catch(function(err) {
@@ -611,7 +614,6 @@ function SuratControllers() {
 
 	// fungsi update surat sudah di test
 	this.update = function(req, res) {
-		console.log(req);
 		var id = req.body.id_surat,
 			nomor = req.body.nomor_surat,
 			perihal = req.body.perihal_surat,
@@ -675,7 +677,6 @@ function SuratControllers() {
 									})
 									.then(function(result) {
 										if (lampiran !== null && lampiran.length > 0) {
-											console.log(result.dataValues);
 											for (var i = 0; i < lampiran.length; i++) {
 												Lampiran
 													.update({
@@ -717,12 +718,13 @@ function SuratControllers() {
 			Surat
 				.findOne({
 					where: {
-						id: id
+						id: id,
+						tipe_surat: 'masuk'
 					}
 				})
 				.then(function(result) {
 					if (result == 0) {
-						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 404});
+						res.json({status: false, message: 'Surat masuk tidak ditemukan!', err_code: 404});
 					} else {
 						Surat_masuk_penerima
 							.max('status_disposisi_penerima', {
@@ -747,16 +749,18 @@ function SuratControllers() {
 											})
 									}
 								}
+							})
+							.then(function(result) {
 								mailer.sendSurat(id, status, res);
 							})
 							.catch(function(err) {
 								res.json({status: false, message: 'Ambil status disposisi gagal!', err_code: 400, err: err});
-							})
+							});
 					}
 				})
 				.catch(function(err) {
 					res.json({status: false, message: 'Surat gagal ditemukan!', err_code})
-				})
+				});
 			
 		}
 	}

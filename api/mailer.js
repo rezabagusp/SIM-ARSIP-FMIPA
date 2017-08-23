@@ -127,7 +127,7 @@ class Mailer {
             })
     }
 
-    this.send = function(res) {
+    send(res) {
         // setup email data with unicode symbols
         var mailOptions = {
             from: sender, // sender address

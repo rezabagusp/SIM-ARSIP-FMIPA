@@ -416,8 +416,9 @@ function SuratControllers() {
 											surat_id: id,
 											staff_id: penerima[i].id,
 											status_disposisi_penerima: 0
-										}).then((hasil) => {
-											if(j == penerima.length-1) {
+										})
+										.then((hasil) => {
+											if(j == penerima.length - 1) {
 												mailer.sendSurat(id, 0, res);
 											}
 											j++
@@ -426,10 +427,6 @@ function SuratControllers() {
 											res.json({status: false, message: 'Pemasangan surat masuk dengan penerima gagal!', err_code: 400, err: err});
 										});
 								}
-<<<<<<< HEAD
-=======
-								res.json({status: true, message: 'Tambah surat masuk berhasil!'});
->>>>>>> 3bfcda8c57721df25b33dd6b2bba40867babde79
 							})
 							.catch(function(err) {
 								res.json({status: false, message: 'Pemasangan surat masuk dengan pengirim gagal!', err_code: 400, err: err});

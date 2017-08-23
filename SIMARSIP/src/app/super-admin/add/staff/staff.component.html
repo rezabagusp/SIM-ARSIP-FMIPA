@@ -1,0 +1,60 @@
+<div class="animated fadeIn">
+  <div class="card">
+    <div class="card-header">
+      List Staff
+    </div>
+    <div class="card-block">
+      <table datatable class="row-border hover" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+        <thead>
+          <tr>
+            <th>Nomor</th>
+            <th>Nama</th>
+            <th>Jabatan</th>
+            <th>Email</th>
+            <th style="text-align: center">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let staff of staffData">
+            <td>{{ ++1 }}</td>
+            <td>{{ staff.nama_staff }}</td>
+            <td>{{ staff.jabatan.nama_jabatan }}</td>
+            <td>{{ staff.email_staff }}</td>
+            <td style="text-align: center">
+              <button class="btn btn-danger btn-sm">Hapus</button>
+              <button class="btn btn-primary btn-sm">Edit</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      Form Tambah Staff
+    </div>
+    <div class="card-block">
+      <form [formGroup] = "staffForm">
+        <div class="form-group">
+          <label for="namaStaff">Nama staff</label>
+          <input type="text" class="form-control" id="namaStaff" 
+          placeholder="Masukkan nama staff" formControlName="namaStaff">
+        </div>
+        <div class="form-group">
+          <label for="jabatanStaff">Jabatan staff</label>
+          <ng-select  
+          [items]="listJabatanStaff"
+          placeholder="Pilih jabatan"
+          formControlName="jabatanStaff">
+          </ng-select>
+        </div>
+        <div class="form-group">
+          <label for="emailStaff">Email staff</label>
+          <input type="email" class="form-control" id="exampleInputEmail1" 
+          aria-describedby="emailHelp" placeholder="Masukkan email staff" formControlName="emailStaff">
+        </div>
+        <button class="btn btn-primary pull-right" (click)="onSubmit()">Tambah</button>
+      </form>
+    </div>
+  </div>
+</div>

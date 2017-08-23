@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LampiranRoutingModule } from './lampiran.routing';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { DataTablesModule } from 'angular-datatables';
 import { SelectModule } from 'ng2-select-compat';
@@ -13,7 +15,19 @@ import { LampiranComponent } from './lampiran.component';
 
 
 @NgModule({
-    imports: [CommonModule, FormsModule, LampiranRoutingModule, DataTablesModule,SelectModule,Ng2AutoCompleteModule, DatePickerModule, ModalModule ],
+    imports: [
+        CommonModule, 
+        FormsModule, 
+        LampiranRoutingModule, 
+        DataTablesModule,
+        SelectModule,
+        Ng2AutoCompleteModule, 
+        DatePickerModule, 
+        ModalModule,
+        BrowserAnimationsModule,
+        BrowserModule 
+    ],
+
     declarations: [LampiranComponent]
 })
 

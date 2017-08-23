@@ -6,8 +6,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DatePickerModule } from 'angular-io-datepicker';
 import { OverlayModule } from 'a4-overlay';
 
-
-
 //library
 import { DataTablesModule } from 'angular-datatables';
 import { SelectModule } from 'ng2-select-compat';
@@ -32,9 +30,15 @@ import { RetensiSuratComponent } from './retensi-surat/retensi-surat.component';
             OverlayModule,
 
             AdminRoutingModule, 
-            SasaranMutuModule, DataTablesModule, SelectModule, Ng2AutoCompleteModule, ModalModule],
+            SasaranMutuModule, 
+            DataTablesModule, 
+            SelectModule, 
+            Ng2AutoCompleteModule, 
+            ModalModule],
   
-  declarations: [LampiranComponent, SuratComponent, RetensiSuratComponent]
+  declarations: [ LampiranComponent, 
+                  SuratComponent, 
+                  RetensiSuratComponent]
 })
 
 export class AdminModule {

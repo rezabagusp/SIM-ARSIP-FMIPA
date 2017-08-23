@@ -1,0 +1,44 @@
+<div class="animated fadeIn">
+  <div class="card">
+    <div class="card-header">
+      List Jabatan
+    </div>
+    <div class="card-block">
+      <table datatable class="row-border hover" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+        <thead>
+          <tr>
+            <th>Nomor</th>
+            <th>Nama Jabatan</th>
+            <th style="text-align: center">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let jabatan of jabatanData">
+            <td>{{ ++1 }}</td>
+            <td>{{ jabatan.text }}</td>
+            <td style="text-align: center">
+              <button class="btn btn-danger btn-sm">Hapus</button>
+              <button class="btn btn-primary btn-sm">Edit</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      Form Tambah Jambatan
+    </div>
+    <div class="card-block">
+      <form class="">
+        <div class="form-group" [formGroup]="jabatanForm">
+          <label for="namaJabatan">Jabatan</label>
+          <input type="text" class="form-control" id="namaJabatan" 
+          placeholder="Masukkan jabatan" formControlName="namaJabatan">
+        </div>
+        <button class="btn btn-primary pull-right" (click)="onSubmit()">Tambah</button>
+      </form>
+      <br>
+    </div>
+  </div>
+</div>

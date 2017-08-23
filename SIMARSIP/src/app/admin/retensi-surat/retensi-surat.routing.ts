@@ -8,7 +8,7 @@ const routes: Routes = [
     path: '',
     component: RetensiSuratComponent,
     data: {
-        title: 'Retensi Surat title'
+        title: 'Retensi Surat'
     },
   }
 ];

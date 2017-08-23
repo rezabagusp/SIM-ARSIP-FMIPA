@@ -46,7 +46,10 @@ const routes: Routes = [
       },
       {
         path: 'retensisurat',
-        component: RetensiSuratComponent
+        component: RetensiSuratComponent,
+        data: {
+          title: 'Ratensi Surat'
+        }
       },
       {
         path: 'sasaranmutu',

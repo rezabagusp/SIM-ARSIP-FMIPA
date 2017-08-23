@@ -26,7 +26,7 @@ export class SuratComponent implements OnInit {
   public max_size = Math.pow(10,6);
   public filesToUpload: Array<File>;
   public fileValid: boolean = false;
-  public file_surat:string;
+  public file_surat: object;
 
   // datatables
   public dtOptions: DataTables.Settings = {};
@@ -40,7 +40,7 @@ export class SuratComponent implements OnInit {
 
   private tipe_surat:string;
   private list_surat;
-
+  private id_staff;
   //data form 
   private list_jenis_surat;
   private list_tujuan_jabatan;
@@ -48,7 +48,21 @@ export class SuratComponent implements OnInit {
   private list_tujuan_disposisi;
   private list_perihal;  
   private list_lampiran;
+  private list_sifat_surat  = [ 
+    {
+      id: 1,
+      text:'biasa'
+    }, 
+    { id: 2,
+      text: 'rahasia'
+    }
+  ];
 
+  public dataForPreview: Array<object> = [];
+  public dataForEdit: Array<object> = [];
+  public list_surat_update;
+  public id_disposisi: number;
+  private returnUrl: string;
 
   constructor(private http: Http, 
               private zone: NgZone, 
@@ -67,14 +81,17 @@ export class SuratComponent implements OnInit {
   }
 
   ngOnInit() {
-      this.dtOptions = {
-        pagingType: 'full_numbers',
-        pageLength: 10,
-        retrieve: true,
-        scrollX:true
-      };
-      this.initForm();   
-      this.getSurat();
+    this.dtOptions = {
+      pagingType: 'full_numbers',
+      pageLength: 10,
+      retrieve: true, 
+      autoWidth: true,
+      order: [2, 'desc']
+    };
+    this.initForm();   
+    this.getSurat();
+    this.returnUrl = this.activatedRoute.snapshot.queryParams['returnUrl'] || 
+    `/admin/surat${this.tipe_surat}/${this.tipe_surat}`;
   }
 
   initForm(){
@@ -87,7 +104,9 @@ export class SuratComponent implements OnInit {
       jenis_surat: ['', Validators.required],
       tujuan_jabatan: ['', Validators.required],
       tujuan_orang: ['', Validators.required],
-      lampiran: ['', Validators.required]
+      sifat_surat: ['', Validators.required],
+      file_surat: ['', Validators.required],
+      lampiran: [''],
     });
     this.getPerihal();
     this.getTujuanJabatan();
@@ -99,26 +118,21 @@ export class SuratComponent implements OnInit {
     if (this.form_type!=value)
       this.form_type=value;
     console.log('status, ', this.form_type);
-
   }
 
   getSurat(){
     let creds = JSON.stringify({tipe_surat: this.tipe_surat});
-
-    this.adminService.getAllSurat(this.data.url_surat_get, this.data.token, creds)
-    .subscribe(
-      data =>{
-        console.log(data)
+    this.adminService.getAllSurat(this.data.url_surat_get, creds)
+    .subscribe(data =>{
         if(data.status){
+          console.log(data);
           this.list_surat = data.data;
           this.dtTrigger.next();
-          console.log(this.list_surat)
         }
-        else 
+        else{
           this.data.showError(data.message);
-      }
-    )
-    
+        } 
+      });
   }
 
   // state for chexbox for disposisi: for surat masuk only
@@ -140,50 +154,96 @@ export class SuratComponent implements OnInit {
     )  
   }
 
-  clickRow(){
-    console.log('click row')
-    this.form.controls.tujuan_jabatan.setValue(this.list_tujuan_jabatan,  { onlySelf: true }); 
+  clickRow(data){
+    console.log('click row', data)
+    //this.form.controls.lampiran.setValue(this.list_lampiran,  { onlySelf: true }); 
   }  
 
   // CRUD
   entrySurat(){
-    console.log(this.form);
-    let creds = JSON.stringify({nomor_surat: this.form.value.nomor_surat,
-                                perihal_surat: this.form.value.perihal,
-                                pengirim_surat: this.form.value.pengirim,
-                                tanggal_surat: this.form.value.tanggal_surat,
-                                tanggal_terima_surat: this.form.value.tanggal_terima_surat,
-                                tanggal_entri_surat: new Date().toISOString(),
-                                sub_sub_jenis_surat: 'satu',
-                                tipe_surat: 'masuk',
-                                status_surat:'aktif',
-                                file_surat: this.file_surat,
-                                lampiran_surat: this.form.value.lampiran
-                                })
-    console.log(creds)
-    // this.adminService.entrySurat(this.data.url_surat_add, this.data.token, creds)
-    // .subscribe(
-    //   data =>{
-    //     if(data.status){
-    //       this.data.showSuccess(data.message)
-    //       this.form.reset();
-    //     }
-    //     else 
-    //       this.data.showError(data.message)
-    //   }
-    // )
+    if (this.tipe_surat === 'masuk') {
+      var creds = JSON.stringify({
+        nomor_surat: this.form.value.nomor_surat,
+        perihal_surat: this.form.value.perihal.map((el) => {
+          return el.id;
+        }),
+        tanggal_surat: this.form.value.tanggal_surat,
+        tanggal_terima_surat: new Date(),
+        tanggal_entri_surat: new Date().toISOString(),
+        tipe_surat: this.tipe_surat,
+        sifat_surat: this.form.value.sifat_surat.map((el) => {
+          return el.text;
+        }),
+        status_surat: 'aktif',
+        file_surat: this.form.value.file_surat,
+        lampiran_surat: this.form.value.lampiran.map((el) => {
+          return {
+            id: el.id
+          }
+        }),
+        pengirim_surat: [
+          {
+            nama: this.form.value.pengirim
+          }
+        ],
+        penerima_surat: this.form.value.tujuan_orang.map((el) =>{
+          return {
+            id: el.id
+          }
+        })
+      });
+    }
+
+    if (this.tipe_surat === 'keluar') {
+      var creds = JSON.stringify({
+        nomor_surat: this.form.value.nomor_surat,
+        perihal_surat: this.form.value.perihal.map((el) => {
+          return el.id;
+        }),
+        tanggal_surat: this.form.value.tanggal_surat,
+        tanggal_terima_surat: new Date(),
+        tanggal_entri_surat: new Date().toISOString(),
+        tipe_surat: this.tipe_surat,
+        sifat_surat: this.form.value.sifat_surat.map((el) => {
+          return el.text;
+        }),
+        status_surat: 'aktif',
+        file_surat: this.form.value.file_surat,
+        lampiran_surat: this.form.value.lampiran.map((el) => {
+          return {
+            id: el.id
+          }
+        }),
+        penerima_surat: [
+          {
+            nama: this.form.value.pengirim
+          }
+        ],
+        pengirim_surat: this.form.value.tujuan_orang.map((el) => {
+          return {
+            id: el.id
+          }
+        })
+      });
+    }
+    console.log(creds);
+    this.adminService.entrySurat(this.data.url_surat_add, creds)
+      .subscribe(data => {
+        console.log(data);
+      });
   }
 
-  deleteSurat(id){
+  deleteSurat(id: number){
     this.deleteConfirm()
     .then(()=>{
-      let creds = JSON.stringify({id_suat: id })
-
-      this.adminService.deleteSurat(this.data.url_surat_delete, this.data.token, creds)
+      let creds = JSON.stringify({ id_surat: id })
+      console.log(creds);
+      this.adminService.deleteSurat(this.data.url_surat_delete, creds)
       .subscribe(
         data =>{
           if(data.status){
             this.data.showSuccess(data.message)
+            console.log('kedelet coy');
           }
           else
             this.data.showError(data.message)
@@ -192,72 +252,52 @@ export class SuratComponent implements OnInit {
     })
   }
 
-  updateSurat(){
-    let creds = JSON.stringify({nomor_surat: this.form.value.nomor_surat,
-                                perihal_surat: this.form.value.perihal,
-                                pengirim_surat: this.form.value.pengirim,
-                                tanggal_surat: this.form.value.tanggal_surat,
-                                tanggal_terima_surat: this.form.value.tanggal_terima_surat,
-                                tanggal_entri_surat: new Date().toISOString(),
-                                sub_sub_jenis_surat: 'satu',
-                                tipe_surat: 'masuk',
-                                status_surat:'aktif',
-                                file_surat: this.file_surat,
-                                lampiran_surat: this.form.value.lampiran
-                                })
-
-    this.adminService.editSurat(this.data.url_surat_edit, this.data.token, creds)
-    .subscribe(
-      data =>{
-        if(data.status){
-          this.data.showSuccess(data.message);
-          this.form.reset();
-        }
-        else
-          this.data.showError(data.message);
-      }
-    )
-
+  getUpdateSurat (id: number) {
+    let url = this.data.url_surat_get_detail;
+    let creds = JSON.stringify({
+      id_surat : id
+    });
+    this.initForm();
+    console.log(creds);
+    this.adminService.getDataDetail(url, creds)
+      .subscribe(data => {
+        this.list_surat_update = data;
+        // this.form.controls.nomor_surat.setValue(data.data.nomor_surat);
+        // this.form.controls.tanggal_surat.setValue(data.data.tanggal_surat);
+        // this.form.controls.perihal_surat.setValue([data.data.perihal]);
+        // this.form.controls.pengirim_surat.setValue(data.pengirim_surat);
+        // this.form.controls.lampiran_surat.setValue(data.lampiran_surat);
+        console.log(this.list_surat_update);
+      });
   }
-
+  
   onChangeFile(fileinput:any){
-    console.log(fileinput)
-    var sementara = <Array<File>> fileinput.target.files
-    var ext = sementara[0].type;
-    this.filesToUpload = <Array<File>> fileinput.target.files;
-    var size = Number(sementara[0].size);
-    console.log(this.filesToUpload)
-    if(ext !=='application/pdf' ){
+    
+    let fileList: FileList = fileinput.target.files;
+    if (fileList.length > 0) {
+      let file: File = fileList[0];
+      let formData: FormData = new FormData();
+      formData.append('uploadFile', file, file.name);
+      // this.file_surat = file;
+      console.log(file);
+      this.file_surat = file;
+      this.form.controls.file_surat.setValue(file.name );
+      if (file.type !== 'application/pdf') {
         swal(
           'Perhatian',
           'file harus *.jpeg/ *.pdf/ *.pdf',
           'warning'
         )
-    }
-    else if(size > this.max_size)
+      }
+      else if (Number(file.size) > this.max_size) {
         swal(
           'Perhatian',
           'ukuran file max 1 MB',
           'warning'
-        )      
-    // else{
-    //   this.filesToUpload = <Array<File>> fileinput.target.files;
-    //   this.upload.uploadFile(this.data.url_upload_file, this.data.token, this.filesToUpload).
-    //   then(data =>{
-    //     console.log(data)
-    //     if(JSON.parse(JSON.stringify(data)).status){
-    //       this.fileValid = true;
-    //       this.lampiran = JSON.parse(JSON.stringify(data)).data;
-    //       console.log(this.lampiran)
-    //     }
-    //     else   
-    //       this.data.showError('error upload');
-    //   }).catch((err)=>{
-    //     this.data.showError('error upload')
-    //   })
-    // }
+        ) 
+      }
+    }
   }
-
   // Data form 
   getTujuanJabatan(){
     this.adminService.getTujuanJabatan(this.data.url_jabatan_get, this.data.token)
@@ -276,14 +316,16 @@ export class SuratComponent implements OnInit {
   }
 
   getTujuanOrang(){
-    this.adminService.getTujuanOrang(this.data.url_penerima_get, this.data.token)
+    this.adminService.getTujuanOrang(this.data.url_penerima_get)
     .subscribe(
       data=>{
         if(data.status){
+          this.id_staff = data.data.id;
           this.list_tujuan_orang = data.data;
-          for(let x in this.list_tujuan_orang)
-            this.list_tujuan_orang[x].text = this.list_tujuan_orang[x].nama_penerima;
-          console.log(this.list_tujuan_orang);    
+          for(let i in this.list_tujuan_orang){
+            this.list_tujuan_orang[i].text = this.list_tujuan_orang[i].nama_staff;
+            this.list_tujuan_orang[i].id = this.list_tujuan_orang[i].id;
+          }  
         }
         else 
           this.data.showError(data.mesage)
@@ -316,7 +358,7 @@ export class SuratComponent implements OnInit {
           this.list_lampiran = data.data;
           for(let x in this.list_lampiran)
             this.list_lampiran[x].text = this.list_lampiran[x].judul_lampiran;
-          console.log(this.list_lampiran);              
+          console.log('lampiran', this.list_lampiran);              
         }
         else 
           this.data.showError(data.message);        
@@ -324,4 +366,46 @@ export class SuratComponent implements OnInit {
     )
   }
 
+  getPreviewData(id: number) {
+    this.dataForPreview.shift();
+    let dataPreview = this.list_surat.map(element => {
+      if (element.id === id) {
+        this.dataForPreview.push(element);
+        console.log('Ini hasil data preview', this.dataForPreview);
+        return this.dataForPreview;
+      }
+    });
+    return null;
+  }
+
+  onDisposisi() {
+      let url = this.data.url_surat_disposisi;
+      let id_staff = this.form.value.tujuan_orang.map((el) => {
+        return {
+          id: el.id
+        }
+      });
+
+      let creds = {
+        id_surat: this.id_disposisi,
+        penerima_surat: id_staff
+      }
+      let data = JSON.stringify(creds);
+      console.log(data);
+      this.adminService.postDisposisi(url, data)
+        .subscribe(data => {
+          console.log('Berhasil disposisi, ini datanaya: ', data);
+        });
+  }
+
+  getDisposisiId(id: number) {
+    this.id_disposisi = id;
+  }
+
+
+
+
+
+
+   
 }

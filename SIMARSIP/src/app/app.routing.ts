@@ -14,6 +14,10 @@ export const routes: Routes = [
     path: 'admin',
     redirectTo: 'admin'
   },
+  {
+    path: 'super-admin',
+    redirectTo: 'super-admin'
+  }
 
   // //ADMIN
   // {

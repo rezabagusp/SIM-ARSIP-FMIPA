@@ -1,19 +1,20 @@
 'use strict'
-const nodemailer = require('nodemailer')
-var sequelize = require(__dirname + '/connection')
-const Lampiran = sequelize.import(__dirname + '/models/lampiran.model')
-const Surat = sequelize.import(__dirname + '/models/surat.model')
-const Staff = sequelize.import(__dirname + '/models/staff.model')
-var Perihal = sequelize.import(__dirname + '/models/perihal.model')
-var Surat_masuk_penerima = sequelize.import(__dirname + '/models/surat_masuk_penerima.model')
-var Surat_masuk_pengirim = sequelize.import(__dirname + '/models/surat_masuk_pengirim.model')
+var nodemailer = require('nodemailer');
+var sequelize = require('./connection');
 
-Surat.belongsTo(Perihal, {foreignKey: 'perihal_id'})
-Surat.hasMany(Surat_masuk_penerima, {foreignKey: 'surat_id'})
-Lampiran.belongsTo(Surat, {foreignKey: 'surat_id'})
-Surat.hasOne(Surat_masuk_pengirim, {foreignKey: 'surat_id'})
-Surat_masuk_penerima.belongsTo(Staff, {foreignKey: 'staff_id'})
-Staff.hasMany(Surat_masuk_penerima, {foreignKey: 'staff_id'})
+var Lampiran = sequelize.import(__dirname + '/models/lampiran.model');
+var Surat = sequelize.import(__dirname + '/models/surat.model');
+var Staff = sequelize.import(__dirname + '/models/staff.model');
+var Perihal = sequelize.import(__dirname + '/models/perihal.model');
+var Surat_masuk_penerima = sequelize.import(__dirname + '/models/surat_masuk_penerima.model');
+var Surat_masuk_pengirim = sequelize.import(__dirname + '/models/surat_masuk_pengirim.model');
+
+Surat.belongsTo(Perihal, {foreignKey: 'perihal_id'});
+Surat.hasMany(Surat_masuk_penerima, {foreignKey: 'surat_id'});
+Surat.hasMany(Lampiran, {foreignKey: 'surat_id'});
+Surat.hasOne(Surat_masuk_pengirim, {foreignKey: 'surat_id'});
+Surat_masuk_penerima.belongsTo(Staff, {foreignKey: 'staff_id'});
+Staff.hasMany(Surat_masuk_penerima, {foreignKey: 'staff_id'});
 
 // create reusable transporter object using the default SMTP transport
 var transporter = nodemailer.createTransport({
@@ -21,6 +22,7 @@ var transporter = nodemailer.createTransport({
     port: 465,
     secure: true, // secure:true for port 465, secure:false for port 587
     auth: {
+<<<<<<< HEAD
         user: 'miqdadfawwaz95@gmail.com',   // put your email here
         pass: 'bismill4h'    // put your email password here
     }
@@ -125,15 +127,28 @@ class Mailer{
                 }
             })
     }
+=======
+        user: 'expresscoba@gmail.com',   // put your email here
+        pass: 'cobacoba'    // put your email password here
+    }
+});
 
-    send(res) {
+function Mailer() {
+    var sender = '"SIMARSIP FMIPA" <expresscoba@gmail.com>',
+        receivers = 'm.aslam.abdurrohim@gmail.com',
+        subject = 'Surat masuk | SIMARSIP',
+        attachments = [],
+        html = 'Hai';
+>>>>>>> 3bfcda8c57721df25b33dd6b2bba40867babde79
+
+    this.send = function(res) {
         // setup email data with unicode symbols
         var mailOptions = {
-            from: this.sender, // sender address
-            to: this.receivers, // list of receivers
-            subject: this.subject, // Subject line
-            html: this.html, // html body
-            attachments: this.attachments
+            from: sender, // sender address
+            to: receivers, // list of receivers
+            subject: subject, // Subject line
+            html: html, // html body
+            attachments: attachments
         }
 
         // send mail with defined transport object
@@ -143,8 +158,8 @@ class Mailer{
             } else {
                 res.json({status: true, message: 'Tambah surat berhasil! Email berhasil dikirimkan!', data: info});
             }
-        })
+        });
     }
 }
 
-module.exports = new Mailer;
+module.exports = new Mailer();

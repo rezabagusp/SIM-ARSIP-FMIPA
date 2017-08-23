@@ -22,7 +22,7 @@ var transporter = nodemailer.createTransport({
     secure: true, // secure:true for port 465, secure:false for port 587
     auth: {
         user: 'miqdadfawwaz95@gmail.com',   // put your email here
-        pass: 'akangaep10'    // put your email password here
+        pass: 'bismill4h'    // put your email password here
     }
 });
 
@@ -96,7 +96,7 @@ class Mailer{
                                 }
                             }
                         })
-                        .then(function(result) {
+                        .then(() => {
                             Staff
                                 .findAll({
                                     include: [{
@@ -108,17 +108,18 @@ class Mailer{
                                     }]
                                 })
                                 .then((staff) => {
+                                    let staffs = JSON.parse(JSON.stringify(staff))
                                     if (staff == 0) {
                                         res.json({status: false, message: 'Staff penerima email tidak ditemukan!', err_code: 404});
                                     } else {
                                         for(let i = 0; i < staff.length; i++) {
-                                            this.receivers.push(staff[i].dataValues.email_staff)
+                                            this.receivers.push(staffs[i].email_staff)
                                         }
                                     }
                                     this.send(res);
                                 })
                                 .catch(function(err) {
-                                    res.json({status: false, message: 'Staff penerima email gagal ditemukan!'})
+                                    res.json({status: false, message: 'Staff penerima email gagal ditemukan!', err:err})
                                 })
                         })   
                 }

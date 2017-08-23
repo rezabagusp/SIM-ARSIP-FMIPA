@@ -63,4 +63,8 @@ router.post('/upload', function(req, res) {
 	surat.upload(req, res);
 });
 
+router.post('/send', (req, res) => {
+	surat.send(req, res)
+})
+
 module.exports = router;

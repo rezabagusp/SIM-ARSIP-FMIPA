@@ -27,7 +27,7 @@ var transporter = nodemailer.createTransport({
     }
 });
 
-class Mailer{
+class Mailer {
     constructor() {
         this.sender = '"SIMARSIP FMIPA" <miqdadfawwaz95@gmail.com>'
         this.receivers = []

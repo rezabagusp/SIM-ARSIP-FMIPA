@@ -199,11 +199,7 @@ function DataformControllers() {
 
 	this.getStaff = function(req, res) {
 		Staff
-			.findAll({
-				include: [{
-					model: Jabatan
-				}]
-			})
+			.findAll()
 			.then(function(result) {
 				if (result == 0) {
 					res.json({status: false, message: 'Staff tidak ditemukan!', err_code: 404});
@@ -226,10 +222,7 @@ function DataformControllers() {
 				.findOne({
 					where: {
 						id: id
-					},
-					include: [{
-						model: Jabatan
-					}]
+					}
 				})
 				.then(function(result) {
 					if (result == 0) {
@@ -242,6 +235,53 @@ function DataformControllers() {
 					res.json({status: false, message: 'Ambil staff gagal!', err_code: 400, err: err});
 				})
 		}
+	}
+
+	this.getStaffJabatan = function(req, res) {
+		Staff
+			.findAll({
+				include: [{
+					model: Jabatan
+				}]
+			})
+			.then(function(result) {
+				if (result == 0) {
+					res.json({status: false, message: 'Staff tidak ditemukan!', err_code: 404});
+				} else {
+					res.json({status: true, message: 'Ambil semua staff dan jabatan berhasil!', data: result});
+				}
+			})
+			.catch(function(err) {
+				res.json({status: false, message: 'Ambil semua staff dan jabatan gagal!', err_code: 400, err: err});
+			})
+	}
+
+	this.getStaffJabatanById = function(req, res) {
+		var id = req.body.id_staff;
+
+		if (id == undefined) {
+			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else {
+			Staff
+				.findAll({
+					where: {
+						id: id
+					},
+					include: [{
+						model: Jabatan
+					}]
+				})
+				.then(function(result) {
+					if (result == 0) {
+						res.json({status: false, message: 'Staff tidak ditemukan!', err_code: 404});
+					} else {
+						res.json({status: true, message: 'Ambil staff dan jabatan berhasil!', data: result});
+					}
+				})
+				.catch(function(err) {
+					res.json({status: false, message: 'Ambil staff dan staff gagal!', err_code: 400, err: err});
+				})
+		}	
 	}
 
 	this.addStaff = function(req, res) {
@@ -386,11 +426,7 @@ function DataformControllers() {
 
 	this.getJabatan = function(req, res) {
 		Jabatan
-			.findAll({
-				include: [{
-					model: Staff
-				}]
-			})
+			.findAll()
 			.then(function(result) {
 				if (result == 0) {
 					res.json({status: false, message: 'Jabatan tidak ditemukan!', err_code: 404});
@@ -413,10 +449,7 @@ function DataformControllers() {
 				.findOne({
 					where: {
 						id: id
-					},
-					include: [{
-						model: Staff
-					}]
+					}
 				})
 				.then(function(result) {
 					if (result == 0) {
@@ -429,6 +462,54 @@ function DataformControllers() {
 					res.json({status: false, message: 'Ambil jabatan gagal!', err_code: 400, err: err});
 				})
 		}
+	}
+
+	this.getJabatanStaff = function(req, res) {
+		Jabatan
+			.findAll({
+				include: [{
+					model: Staff
+				}]
+			})
+			.then(function(result) {
+				if (result == 0) {
+					res.json({status: false, message: 'Jabatan tidak ditemukan!', err_code: 404});
+				} else {
+					res.json({status: true, message: 'Ambil jabatan dan staff berhasil!', data: result});
+				}
+			})
+			.catch(function(err) {
+				res.json({status: false, message: 'Ambil jabatab dan staff gagal!', err_code: 400, err: err});
+			})
+	}
+
+	this.getJabatanStaffById = function(req, res) {
+		var id = req.body.id_jabatan;
+
+		if (id == undefined) {
+			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else {
+			Jabatan
+				.findAll({
+					where: {
+						id: id
+					},
+					include: [{
+						model: Staff
+					}]
+				})
+				.then(function(result) {
+					if (result == 0) {
+						res.json({status: false, message: 'Jabatan tidak ditemukan!', err_code: 404});
+					} else {
+						res.json({status: true, message: 'Ambil jabatan dan staff berhasil!', data: result});
+					}
+				})
+				.catch(function(err) {
+					res.json({status: false, message: 'Ambil jabatab dan staff gagal!', err_code: 400, err: err});
+				})
+		}
+		
 	}
 
 	this.addJabatan = function(req, res) {

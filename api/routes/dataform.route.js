@@ -16,8 +16,16 @@ router.post('/get/staff/all', function(req, res) {
 	dataform.getStaff(req, res);
 });
 
+router.post('/get/staff/jabatan/all', function(req, res) {
+	dataform.getStaffJabatan(req, res);
+});
+
 router.post('/get/jabatan/all', function(req, res) {
 	dataform.getJabatan(req, res);
+});
+
+router.post('/get/jabatan/staff/all', function(req, res) {
+	dataform.getJabatanStaff(req, res);
 });
 
 router.post('/get/unitkerja/all', function(req, res) {
@@ -42,35 +50,43 @@ router.post('/get/subsubjenis-surat/all', function(req, res) {
 
 // get by id
 router.post('/get/perihal', function(req, res) {
-	dataform.getPerihal(req, res);
+	dataform.getPerihalById(req, res);
 });
 
 router.post('/get/staff', function(req, res) {
-	dataform.getStaff(req, res);
+	dataform.getStaffById(req, res);
+});
+
+router.post('/get/staff/jabatan', function(req, res) {
+	dataform.getStaffJabatanById(req, res);
 });
 
 router.post('/get/jabatan', function(req, res) {
-	dataform.getJabatan(req, res);
+	dataform.getJabatanById(req, res);
+});
+
+router.post('/get/jabatan/staff/all', function(req, res) {
+	dataform.getJabatanStaffById(req, res);
 });
 
 router.post('/get/unitkerja', function(req, res) {
-	dataform.getUnitKerja(req, res);
+	dataform.getUnitKerjaById(req, res);
 });
 
 router.post('/get/kode-surat', function(req, res) {
-	dataform.getKodeSurat(req, res);
+	dataform.getKodeSuratById(req, res);
 });
 
 router.post('/get/jenis-surat', function(req, res) {
-	dataform.getJenisSurat(req, res);
+	dataform.getJenisSuratById(req, res);
 });
 
 router.post('/get/subjenis-surat', function(req, res) {
-	dataform.getSubJenisSurat(req, res);
+	dataform.getSubJenisSuratById(req, res);
 });
 
 router.post('/get/subsubjenis-surat/all', function(req, res) {
-	dataform.getSubSubJenisSurat(req, res);
+	dataform.getSubSubJenisSuratById(req, res);
 });
 
 // add

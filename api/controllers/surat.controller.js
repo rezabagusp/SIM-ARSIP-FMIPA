@@ -416,8 +416,9 @@ function SuratControllers() {
 											surat_id: id,
 											staff_id: penerima[i].id,
 											status_disposisi_penerima: 0
-										}).then((hasil) => {
-											if(j == penerima.length-1) {
+										})
+										.then((hasil) => {
+											if(j == penerima.length - 1) {
 												mailer.sendSurat(id, 0, res);
 											}
 											j++

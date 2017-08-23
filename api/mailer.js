@@ -109,6 +109,7 @@ class Mailer{
                                     }]
                                 })
                                 .then((staff) => {
+                                    console.log('check receivers', this.receivers)
                                     let staffs = JSON.parse(JSON.stringify(staff))
                                     if (staff == 0) {
                                         res.json({status: false, message: 'Staff penerima email tidak ditemukan!', err_code: 404});

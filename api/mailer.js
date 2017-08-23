@@ -22,12 +22,12 @@ var transporter = nodemailer.createTransport({
     port: 465,
     secure: true, // secure:true for port 465, secure:false for port 587
     auth: {
-        user: 'miqdadfawwaz95@gmail.com',   // put your email here
-        pass: 'bismill4h'    // put your email password here
+        user: 'miqdadfawwaz95@gmail.com', // put your email here
+        pass: 'bismill4h' // put your email password here
     }
 });
 
-class Mailer {
+class Mailer{
     constructor() {
         this.sender = '"SIMARSIP FMIPA" <miqdadfawwaz95@gmail.com>'
         this.receivers = []
@@ -126,15 +126,14 @@ class Mailer {
                 }
             })
     }
-
     send(res) {
         // setup email data with unicode symbols
         var mailOptions = {
-            from: sender, // sender address
-            to: receivers, // list of receivers
-            subject: subject, // Subject line
-            html: html, // html body
-            attachments: attachments
+            from: this.sender, // sender address
+            to: this.receivers, // list of receivers
+            subject: this.subject, // Subject line
+            html: this.html, // html body
+            attachments: this.attachments
         }
 
         // send mail with defined transport object

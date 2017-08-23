@@ -1,19 +1,19 @@
-
 <div class="animated fadeIn">
-  
   <div class="row">
   <!-- datatables for list suratmasuk -->
     <div class="col-sm-6 col-md-12">
       <div class="card card-accent-primary">
         <div class="card-header">
           <b>Daftar Lampiran</b>
-          <button type="button" class="btn btn-success btn-sm pull-right" style="border-radius:5px" data-toggle="modal" (click)="changeFormType(0);resetForm();entryLampiranModal.show()" >
+          <button type="button" class="btn btn-success btn-sm pull-right" 
+          style="border-radius:5px" data-toggle="modal" 
+          (click)="changeFormType(0);resetForm();entryLampiranModal.show()" >
             <i class="fa fa-plus"></i>&nbsp; Tambah Lampiran
           </button>          
         </div>
         <div class="card-block">
           <div class="col-lg-12">
-            <table datatable class="row-border hover" [dtOptions]="dtOptions"  [dtTrigger]="dtTrigger">
+            <table datatable class="row-border hover" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
               <thead>
                 <tr>
                   <th>No</th>                  
@@ -32,8 +32,18 @@
                   <td>{{lampiran.tanggal_entri_lampiran | date:'medium'}}</td>                  
                   <td>{{lampiran.file_lampiran}}</td>
                   <td>
-                    <span><a href="javascript:void(0)" (click)="delete(lampiran.id);" ><i class="fa fa-trash-o" aria-hidden="true" title="Hapus"></i>Delete</a></span> &nbsp;
-                    <span><a href="javascript:void(0)" (click)="changeFormType(1); clickRow(lampiran); editLampiranModal.show()" ><i class="fa fa-pencil-square-o" aria-hidden="true" title="Edit"></i>Update</a> </span>
+                    <span>
+                      <a href="javascript:void(0)" 
+                      (click)="delete(lampiran.id);" >
+                        <i class="fa fa-trash-o" aria-hidden="true" title="Hapus"></i>Delete
+                      </a>
+                    </span> &nbsp;
+                    <span>
+                      <a href="javascript:void(0)" 
+                      (click)="changeFormType(1); clickRow(lampiran); editLampiranModal.show()">
+                        <i class="fa fa-pencil-square-o" aria-hidden="true" title="Edit"></i>Update
+                      </a>
+                    </span>
                   </td>                    
                 </tr>
               </tbody>
@@ -81,9 +91,11 @@
               </div>
           </div><br>          
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="cek()">cek</button>
+            <button type="button" class="btn btn-secondary" (click)="cek()">Cek</button>
             <button type="button" class="btn btn-secondary" (click)="entryLampiranModal.hide()">Batal</button>
-            <button type="submit" class="btn btn-primary" [disabled]="!form.valid || !fileValid" (click)="entryLampiranModal.hide()" >Simpan</button>            
+            <button type="submit" class="btn btn-primary" 
+            [disabled]="!form.valid || !fileValid" 
+            (click)="entryLampiranModal.hide()" >Simpan</button>            
           </div>          
         </form>
       </div>
@@ -126,7 +138,6 @@
               </div>
           </div><br>          
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="cek()">cek</button>
             <button type="button" class="btn btn-secondary" (click)="editLampiranModal.hide()">Batal</button>
             <button type="submit" class="btn btn-primary" [disabled]="!form.valid">Simpan</button>            
           </div>          

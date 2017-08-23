@@ -30,6 +30,7 @@ export class LampiranComponent implements OnInit {
 
   // client
   public list_lampiran;
+  private idLampiran: number;
 
   // data tables
   dtOptions: DataTables.Settings = {};
@@ -108,27 +109,31 @@ export class LampiranComponent implements OnInit {
 
   edit(){
     let creds = JSON.stringify({
+                                id_lampiran: this.idLampiran,
                                 judul_lampiran:this.form.value.judul_lampiran,
                                 tanggal_lampiran: this.form.value.tanggal_lampiran,
-                                tanggal_entri_lampiran: this.form.value.tanggal_entri_lampiran,
+                                tanggal_entri_lampiran: this.today,
                                 file_lampiran: this.lampiran                                
-                              })
+                              });
+    console.log(creds);
     this.adminService.editLampiran(this.data.url_edit_lampiran, this.data.token, creds)
     .subscribe(
       data =>{
+        console.log(data);
         if(data.status){
           this.dtTrigger.next();
-          this.data.showSuccess(data.message)
+          this.data.showSuccess(data.message);
+          this.ngOnInit();
         }
         else
           this.data.showError(data.message)
       }
-    )
-    
+    )   
   }
 
   clickRow(data){
-    console.log('data click', data)
+    console.log('data click', data);
+    this.idLampiran = data.id;
     this.form.controls.judul_lampiran.setValue(data.judul_lampiran,  { onlySelf: true });
     this.form.controls.tanggal_lampiran.setValue( new Date(data.tanggal_lampiran).toISOString().substring(0, 10) ,  { onlySelf: true });
     this.lampiran = data.file_lampiran;    
@@ -152,8 +157,8 @@ export class LampiranComponent implements OnInit {
 
   deleteConfirm(){
     return swal({
-        title: 'apakah anda yakin ?',
-        text: "data tidak dapat dikembalikan",
+        title: 'Apakah anda yakin ?',
+        text: "Data tidak dapat dikembalikan",
         type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -176,11 +181,6 @@ export class LampiranComponent implements OnInit {
       }
     )
   }
-
-  cek(){
-    console.log('form', this.form)
-  }
-
   onChangeFile(fileinput:any){
     var sementara = <Array<File>> fileinput.target.files
     var ext = sementara[0].type;
@@ -216,8 +216,6 @@ export class LampiranComponent implements OnInit {
         this.data.showError('error upload')
       })
     }
-  }
-
-  
+  }  
 }
 

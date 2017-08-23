@@ -1,3 +1,4 @@
+import { UserService } from './../../../../pelayanan-mahasiswa/angular/src/app/_services/user.service';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { LocationStrategy, HashLocationStrategy, CommonModule } from '@angular/common';
@@ -27,8 +28,7 @@ import { AuthModule } from './auth/auth.module';
 // admin
 import { AdminModule } from './admin/admin.module';
 // superadmin
-
-
+import { SuperAdminModule } from './super-admin/super-admin.module';
 // Modal Component
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ModalsComponent } from './modals/modals.component';
@@ -58,7 +58,8 @@ import { AuthGuard } from './_guards/auth.guard';
     ModalModule,    
     //app
     AuthModule,
-    AdminModule
+    AdminModule,
+    SuperAdminModule
   ],
   declarations: [
     AppComponent,
@@ -74,12 +75,13 @@ import { AuthGuard } from './_guards/auth.guard';
   ],
   providers: [{
     provide: LocationStrategy,
-    useClass: HashLocationStrategy
+    useClass: HashLocationStrategy,
   },
   AuthGuard,
   AuthenticationService,
   AdminService,
-  UploadService
+  UploadService,
+  UserService
 ],
   schemas: [NO_ERRORS_SCHEMA],
   bootstrap: [ AppComponent ]

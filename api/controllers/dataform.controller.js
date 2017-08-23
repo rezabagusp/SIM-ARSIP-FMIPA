@@ -80,7 +80,7 @@ function DataformControllers() {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else {
 			Perihal
-				.findOne(id)
+				.findById(id)
 				.then(function(result) {
 					if (result == 0) {
 						res.json({status: false, message: 'Perihal tidak ditemukan!', err_code: 404});
@@ -219,11 +219,7 @@ function DataformControllers() {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else {
 			Staff
-				.findOne({
-					where: {
-						id: id
-					}
-				})
+				.findById(id)
 				.then(function(result) {
 					if (result == 0) {
 						res.json({status: false, message: 'Staff tidak ditemukan!', err_code: 404});
@@ -263,7 +259,7 @@ function DataformControllers() {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else {
 			Staff
-				.findAll({
+				.findOne({
 					where: {
 						id: id
 					},
@@ -446,11 +442,7 @@ function DataformControllers() {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else {
 			Jabatan
-				.findOne({
-					where: {
-						id: id
-					}
-				})
+				.findById(id)
 				.then(function(result) {
 					if (result == 0) {
 						res.json({status: false, message: 'Jabatan tidak ditemukan!', err_code: 404});
@@ -490,7 +482,7 @@ function DataformControllers() {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else {
 			Jabatan
-				.findAll({
+				.findOne({
 					where: {
 						id: id
 					},
@@ -624,147 +616,6 @@ function DataformControllers() {
 		}
 	}
 
-	this.getKodeSurat = function(req, res) {
-		Kode_surat
-			.findAll()
-			.then(function(result) {
-				if (result == 0) {
-					res.json({status: false, message: 'Kode surat tidak ditemukan!', err_code: 404});
-				} else {
-					res.json({status: true, message: 'Ambil kode surat berhasil!', data: result});
-				}
-			})
-			.catch(function(err) {
-				res.json({status: false, message: 'Ambil kode surat gagal!', err_code: 400, err: err});
-			})
-	}
-
-	this.getKodeSuratById = function(req, res) {
-		var id = req.body.id_kode_surat;
-
-		if (id == undefined) {
-			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
-		} else {
-			Kode_surat
-				.findById(id)
-				.then(function(result) {
-					if (result == 0) {
-						res.json({status: false, message: 'Jabatan tidak ditemukan!', err_code: 404});
-					} else {
-						res.json({status: true, message: 'Ambil jabatan berhasil!', data: result});
-					}
-				})
-				.catch(function(err) {
-					res.json({status: false, message: 'Ambil jabatan gagal!', err_code: 400, err: err});
-				})
-		}
-	}
-
-	this.addKodeSurat = function(req, res) {
-
-	}
-
-	this.updateKodeSurat = function(req, res) {
-
-	}
-
-	this.deleteKodeSurat = function(req, res) {
-		
-	}
-
-	this.getJenisSurat = function(req, res) {
-		Jenis_surat
-			.findAll()
-			.then(function(result) {
-				if (result == 0) {
-					res.json({status: false, message: 'Jenis surat tidak ditemukan!', err_code: 404});
-				} else {
-					res.json({status: true, message: 'Ambil jenis surat berhasil!', data: result});
-				}
-			})
-			.catch(function(err) {
-				res.json({status: false, message: 'Ambil jenis surat gagal!', err_code: 400, err: err});
-			})
-	}
-
-	this.getJenisSuratById = function(req, res) {
-
-	}
-
-	this.addJenisSurat = function(req, res) {
-
-	}
-
-	this.updateJenisSurat = function(req, res) {
-
-	}
-
-	this.deleteJenisSurat = function(req, res) {
-		
-	}
-
-	this.getSubJenisSurat = function(req, res) {
-		Sub_jenis_surat
-			.findAll()
-			.then(function(result) {
-				if (result == 0) {
-					res.json({status: false, message: 'Sub jenis surat tidak ditemukan!', err_code: 404});
-				} else {
-					res.json({status: true, message: 'Ambil sub jenis surat berhasil!', data: result});
-				}
-			})
-			.catch(function(err) {
-				res.json({status: false, message: 'Ambil sub jenis surat gagal!', err_code: 400, err: err});
-			})
-	}
-
-	this.getSubJenisSuratById = function(req, res) {
-
-	}
-
-	this.addSubJenisSurat = function(req, res) {
-
-	}
-
-	this.updateSubJenisSurat = function(req, res) {
-
-	}
-
-	this.deleteSubJenisSurat = function(req, res) {
-		
-	}
-
-	this.getSubSubJenisSurat = function(req, res) {
-		Sub_sub_jenis_surat
-			.findAll()
-			.then(function(result) {
-				if (result == 0) {
-					res.json({status: false, message: 'Sub sub jenis surat tidak ditemukan!', err_code: 404});
-				} else {
-					res.json({status: true, message: 'Ambil sub sub jenis surat berhasil!', data: result});
-				}
-			})
-			.catch(function(err) {
-				res.json({status: false, message: 'Ambil sub sub jenis surat gagal!', err_code: 400, err: err});
-			})
-	}
-
-	this.getSubSubJenisSuratById = function(req, res) {
-
-	}
-
-	this.addSubSubJenisSurat = function(req, res) {
-
-	}
-
-	this.updateSubSubJenisSurat = function(req, res) {
-
-	}
-
-	this.deleteSubSubJenisSurat = function(req, res) {
-		
-	}
-
 	this.getUnitKerja = function(req, res) {
 		Unit_kerja
 			.findAll()
@@ -777,23 +628,109 @@ function DataformControllers() {
 			})
 			.catch(function(err) {
 				res.json({status: false, message: 'Ambil unit kerja gagal!', err_code: 400, err: err});
-			})
+			});
 	}
 
 	this.getUnitKerjaById = function(req, res) {
+		var id = req.body.id_unit_kerja;
 
+		if (id == undefined) {
+			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else {
+			Unit_kerja
+				.findById(id)
+				.then(function(result) {
+					if (result == 0) {
+						res.json({status: false, message: 'Unit kerja tidak ditemukan!', err_code: 404});
+					} else {
+						res.json({status: true, message: 'Unit kerja berhasil ditemukan!', data: result});
+					}
+				})
+				.catch(function(err) {
+					res.json({status: false, message: 'Unit kerja gagal ditemukan!', err_code: 400, err: err});
+				});
+		}
 	}
 
 	this.addUnitKerja = function(req, res) {
+		var nama = req.body.nama_unit_kerja,
+        	akronim = req.body.akronim_unit_kerja,
+        	kode = req.body.kode_unit_kerja;
 
+        if (nama == undefined || akronim == undefined || kode == undefined) {
+        	res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+        } else {
+        	Unit_kerja
+        		.create({
+        			nama_unit_kerja: nama,
+        			akronim_unit_kerja: akronim,
+        			kode_unit_kerja: kode
+        		})
+        		.then(function(result) {
+        			res.json({status: true, message: 'Tambah unit kerja berhasil!'});
+        		})
+        		.catch(function(err) {
+        			res.json({status: false, message: 'Tambah unit kerja gagal!', err_code: 400, err: err});
+        		});
+        }
 	}
 
 	this.updateUnitKerja = function(req, res) {
+		var id = req.body.id_unit_kerja,
+			nama = req.body.nama_unit_kerja,
+        	akronim = req.body.akronim_unit_kerja,
+        	kode = req.body.kode_unit_kerja;
 
+        if (id == undefined || nama = undefined || akronim == undefined || kode == undefined) {
+        	Unit_kerja
+        		.update({
+        			nama_unit_kerja: nama,
+        			akronim_unit_kerja: akronim,
+        			kode_unit_kerja: kode
+        		}, {
+        			where: {
+        				id: id
+        			}
+        		})
+        		.then(function(result) {
+        			res.json({status: true, message: 'Ubah unit kerja berhasil!'});
+        		})
+        		.catch(function(err) {
+        			res.json({status: false, message: 'Ubah unit kerja gagal!', err_code: 400, err: err});
+        		});
+        }
 	}
 
 	this.deleteUnitKerja = function(req, res) {
-		
+		var id = req.body.id_unit_kerja;
+
+		if (id == undefined) {
+			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else {
+			Unit_kerja
+				.findById(id)
+				.then(function(result) {
+					if (result == 0) {
+						res.json({status: false, message: 'Unit kerja tidak ditemukan!', err_code: 404});
+					} else {
+						Unit_kerja
+							.destroy({
+								where: {
+									id: id
+								}
+							})
+							.then(function(result) {
+								res.json({status: true, message: 'Hapus unit kerja berhasil!'});
+							})
+							.catch(function(err) {
+								res.json({status: false, message: 'Hapus unit kerja gagal!', err_code: 400, err: err});
+							});
+					}
+				})
+				.catch(function(err) {
+					res.json({status: false, message: 'Unit kerja gagal ditemukan!', err_code: 400, err: err});
+				});
+		}
 	}
 }
 

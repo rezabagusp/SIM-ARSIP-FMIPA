@@ -22,13 +22,12 @@ var transporter = nodemailer.createTransport({
     port: 465,
     secure: true, // secure:true for port 465, secure:false for port 587
     auth: {
-<<<<<<< HEAD
         user: 'miqdadfawwaz95@gmail.com',   // put your email here
         pass: 'bismill4h'    // put your email password here
     }
 });
 
-class Mailer{
+class Mailer {
     constructor() {
         this.sender = '"SIMARSIP FMIPA" <miqdadfawwaz95@gmail.com>'
         this.receivers = []
@@ -127,19 +126,6 @@ class Mailer{
                 }
             })
     }
-=======
-        user: 'expresscoba@gmail.com',   // put your email here
-        pass: 'cobacoba'    // put your email password here
-    }
-});
-
-function Mailer() {
-    var sender = '"SIMARSIP FMIPA" <expresscoba@gmail.com>',
-        receivers = 'm.aslam.abdurrohim@gmail.com',
-        subject = 'Surat masuk | SIMARSIP',
-        attachments = [],
-        html = 'Hai';
->>>>>>> 3bfcda8c57721df25b33dd6b2bba40867babde79
 
     this.send = function(res) {
         // setup email data with unicode symbols

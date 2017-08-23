@@ -681,7 +681,9 @@ function DataformControllers() {
         	akronim = req.body.akronim_unit_kerja,
         	kode = req.body.kode_unit_kerja;
 
-        if (id == undefined || nama = undefined || akronim == undefined || kode == undefined) {
+        if (id == undefined || nama == undefined || akronim == undefined || kode == undefined) {
+        	res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+        } else {
         	Unit_kerja
         		.update({
         			nama_unit_kerja: nama,

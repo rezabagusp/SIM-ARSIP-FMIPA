@@ -22,7 +22,6 @@ var transporter = nodemailer.createTransport({
     port: 465,
     secure: true, // secure:true for port 465, secure:false for port 587
     auth: {
-<<<<<<< HEAD
         user: 'miqdadfawwaz95@gmail.com',   // put your email here
         pass: 'bismill4h'    // put your email password here
     }
@@ -110,6 +109,7 @@ class Mailer{
                                     }]
                                 })
                                 .then((staff) => {
+                                    console.log('check receivers', this.receivers)
                                     let staffs = JSON.parse(JSON.stringify(staff))
                                     if (staff == 0) {
                                         res.json({status: false, message: 'Staff penerima email tidak ditemukan!', err_code: 404});
@@ -127,28 +127,14 @@ class Mailer{
                 }
             })
     }
-=======
-        user: 'expresscoba@gmail.com',   // put your email here
-        pass: 'cobacoba'    // put your email password here
-    }
-});
-
-function Mailer() {
-    var sender = '"SIMARSIP FMIPA" <expresscoba@gmail.com>',
-        receivers = 'm.aslam.abdurrohim@gmail.com',
-        subject = 'Surat masuk | SIMARSIP',
-        attachments = [],
-        html = 'Hai';
->>>>>>> 3bfcda8c57721df25b33dd6b2bba40867babde79
-
-    this.send = function(res) {
+    send(res) {
         // setup email data with unicode symbols
         var mailOptions = {
-            from: sender, // sender address
-            to: receivers, // list of receivers
-            subject: subject, // Subject line
-            html: html, // html body
-            attachments: attachments
+            from: this.sender, // sender address
+            to: this.receivers, // list of receivers
+            subject: this.subject, // Subject line
+            html: this.html, // html body
+            attachments: this.attachments
         }
 
         // send mail with defined transport object

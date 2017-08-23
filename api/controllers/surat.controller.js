@@ -342,6 +342,7 @@ function SuratControllers() {
 			kepentingan = req.body.kepentingan_surat,
 			status = req.body.status_surat,
 			file = req.body.file_surat,
+			asal = req.body.asal_surat,
 			keterangan = req.body.keterangan_surat,
 			lampiran = req.body.lampiran_surat,
 			pengirim = req.body.pengirim_surat,
@@ -365,20 +366,21 @@ function SuratControllers() {
 			Surat
 				.create({
 					nomor_surat: nomor,
-					unit_kerja_surat: unit_kerja,
-					hal_surat: hal,
-					tahun_surat: tahun,
+        			unit_kerja_surat: unit_kerja,
+			        hal_surat: hal,
+			        tahun_surat: tahun,
 			        tanggal_surat: tanggal,
 			        tanggal_terima_surat: tanggal_terima,
 			        tanggal_entri_surat: tanggal_entri,
-			        status_surat: status,
-			        tipe_surat: tipe,
 			        sifat_surat: sifat,
 			        kepentingan_surat: kepentingan,
-			        file_surat: file,
+			        asal_surat: asal,
+			        tipe_surat: tipe,
 			        keterangan_surat: keterangan,
+			        file_surat: file,
+			        status_surat: status,
 			        perihal_id: perihal,
-			        posisi_surat: posisi
+			        posisi_surat: posisi  
 				})
 				.then(function(result) {
 					// Ambil id surat
@@ -418,11 +420,11 @@ function SuratControllers() {
 											res.json({status: false, message: 'Pemasangan surat masuk dengan penerima gagal!', err_code: 400, err: err});
 										});
 								}
-								mailer.sendSurat(id, 0, res);
+								res.json({status: true, message: 'Tambah surat masuk berhasil!'});
 							})
 							.catch(function(err) {
 								res.json({status: false, message: 'Pemasangan surat masuk dengan pengirim gagal!', err_code: 400, err: err});
-							})
+							});
 					} else if (tipe == 'keluar' && penerima !== null && penerima.length > 0) {
 						Surat_keluar_pengirim
 							.create({
@@ -437,7 +439,7 @@ function SuratControllers() {
 											nama_penerima: penerima[i].nama
 										})
 								}
-								res.json({status: true, message: "Tambah surat keluar berhasil!"});
+								res.json({status: true, message: 'Tambah surat keluar berhasil!'});
 							})
 							.catch(function(err) {
 								res.json({status: false, message: 'Pemasangan surat keluar dengan pengirim dan penerima gagal!', err_code: 400, err: err});
@@ -447,6 +449,17 @@ function SuratControllers() {
 				.catch(function(err) {
 					res.json({status: false, message: 'Tambah surat gagal!', err_code: 400, err: err});
 				});
+		}
+	}
+
+	this.send = function(req, res) {
+		var id = req.body.id_surat,
+			status = req.body.status_disposisi_penerima;
+
+		if (id == undefined) {
+			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else {
+			mailer.send(res);
 		}
 	}
 

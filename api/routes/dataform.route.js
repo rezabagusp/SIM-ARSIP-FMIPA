@@ -7,6 +7,10 @@ router.get('/*', function(req, res) {
   res.json({status: false, message: 'None API Implemented'});
 });
 
+router.post('/', function(req, res) {
+  res.json({status: false, message: 'None API Implemented'});
+});
+
 // get
 router.post('/get/perihal/all', function(req, res) {
 	dataform.getPerihal(req, res);
@@ -85,6 +89,10 @@ router.post('/edit/staff', function(req, res) {
 
 router.post('/edit/jabatan', function(req, res) {
 	dataform.updateJabatan(req, res);
+});
+
+router.post('/edit/unitkerja', function(req, res) {
+	dataform.updateUnitKerja(req, res);
 });
 
 //delete

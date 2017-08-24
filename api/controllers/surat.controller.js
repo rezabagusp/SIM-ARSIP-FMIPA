@@ -33,13 +33,6 @@ Surat.hasOne(Surat_keluar_pengirim, {foreignKey: 'surat_id'});
 Surat_masuk_penerima.belongsTo(Staff, {foreignKey: 'staff_id'});
 Surat_keluar_pengirim.belongsTo(Staff, {foreignKey: 'staff_id'});
 
-/*Surat_masuk_penerima.belongsTo(Surat, {foreignKey: 'surat_id'});
-Surat_masuk_pengirim.belongsTo(Surat, {foreignKey: 'surat_id'});
-Surat_masuk_penerima.belongsTo(Staff, {foreignKey: 'staff_id'});
-Surat_keluar_pengirim.belongsTo(Surat, {foreignKey: 'surat_id'});
-Surat_keluar_penerima.belongsTo(Surat, {foreignKey: 'surat_id'});
-Surat_keluar_pengirim.belongsTo(Staff, {foreignKey: 'staff_id'});*/
-
 var validateNomorSurat = function(nomor) {
 	var regex = /^[0-9]+\/IT3(\.[0-9]+)*\/[A-Z]{2,2}(\.[0-9]{2,2}){0,4}\/[0-9]{4,4}$/;
 	return nomor.match(regex);
@@ -637,14 +630,15 @@ function SuratControllers() {
 			tanggal = req.body.tanggal_surat,
 			tanggal_terima = req.body.tanggal_terima_surat,
 			tanggal_entri = req.body.tanggal_entri_surat,
-			kepentingan = req.body.kepentingan_surat,
 			tipe = req.body.tipe_surat,
 			sifat = req.body.sifat_surat,
+			kepentingan = req.body.kepentingan_surat,
 			status = req.body.status_surat,
 			file = req.body.file_surat,
+			asal = req.body.asal_surat,
 			keterangan = req.body.keterangan_surat,
-			posisi = req.body.posisi_surat,
-			lampiran = req.body.lampiran_surat;
+			lampiran = req.body.lampiran_surat,
+			posisi = req.body.posisi_surat;
 
 		if (id == undefined || nomor == undefined || perihal  == undefined || tanggal  == undefined || tanggal_terima  == undefined || tanggal_entri  == undefined || tipe  == undefined || file  == undefined || status  == undefined) {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
@@ -670,20 +664,21 @@ function SuratControllers() {
 						Surat
 							.update({
 								nomor_surat: nomor,
-								unit_kerja_surat: unit_kerja,
-								hal_surat: hal,
-								tahun_surat: tahun,
+			        			unit_kerja_surat: unit_kerja,
+						        hal_surat: hal,
+						        tahun_surat: tahun,
 						        tanggal_surat: tanggal,
 						        tanggal_terima_surat: tanggal_terima,
 						        tanggal_entri_surat: tanggal_entri,
-						        status_surat: status,
-						        tipe_surat: tipe,
 						        sifat_surat: sifat,
 						        kepentingan_surat: kepentingan,
-						        file_surat: file,
+						        asal_surat: asal,
+						        tipe_surat: tipe,
 						        keterangan_surat: keterangan,
+						        file_surat: file,
+						        status_surat: status,
 						        perihal_id: perihal,
-						        posisi_surat: posisi
+						        posisi_surat: posisi  
 							}, {
 								where: {
 									id: id
@@ -695,10 +690,11 @@ function SuratControllers() {
 										surat_id: null
 									}, {
 										where: {
-											surat_id: null
+											surat_id: id
 										}
 									})
 									.then(function(result) {
+										let j = 0;
 										if (lampiran !== null && lampiran.length > 0) {
 											for (var i = 0; i < lampiran.length; i++) {
 												Lampiran
@@ -721,7 +717,7 @@ function SuratControllers() {
 							})
 							.catch(function(err) {
 								res.json({status: false, message: 'Surat gagal diupdate!', err_code: 400, err: err});
-							})
+							});
 					}
 				})
 				.catch(function(err) {
@@ -760,6 +756,7 @@ function SuratControllers() {
 								if (penerima == null || penerima.length < 0) {
 									res.json({status: false, message: 'Penerima tidak boleh kosong!', err_code: 400});
 								} else {
+									let j = 0;
 									for (var i = 0; i < penerima.length; i++) {
 										Surat_masuk_penerima
 											.create({
@@ -767,14 +764,18 @@ function SuratControllers() {
 												staff_id: penerima[i].id,
 												status_disposisi_penerima: status
 											})
+											.then((hasil) => {
+												if(j == penerima.length - 1) {
+													mailer.sendSurat(id, status, res);
+												}
+												j++
+											})
 											.catch(function(err) {
 												res.json({status: false, message: 'Penerima disposisi gagal ditambahkan!', err_code: 400, err: err});
 											})
 									}
-									mailer.sendSurat(id, status, res);
 								}
 							})
-							
 							.catch(function(err) {
 								res.json({status: false, message: 'Ambil status disposisi gagal!', err_code: 400, err: err});
 							});
@@ -783,7 +784,6 @@ function SuratControllers() {
 				.catch(function(err) {
 					res.json({status: false, message: 'Surat gagal ditemukan!', err_code})
 				});
-			
 		}
 	}
 }

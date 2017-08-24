@@ -45,12 +45,13 @@ class Mailer{
     }
 
     setHtml(surat, status) {
+        this.html += '<p>Ada surat masuk untuk Anda di SIMARSIP. Silahkan cek lampiran email ini. Surat fisik ada di Tata Usaha. Terima kasih.<p>'
         if (status > 0) {
-                this.html += `
-                <p>Surat berikut adalah surat yang didisposisikan kepada Anda.</p>
+            this.html += `
+                <p>Info: Surat berikut adalah surat yang didisposisikan kepada Anda.</p>
                 <br>
                 `
-            }
+        }
         this.html += `
             <p>Nomor: ` + surat.dataValues.nomor_surat + `/` + surat.dataValues.unit_kerja_surat + `/` + surat.dataValues.hal_surat + `/` + surat.dataValues.tahun_surat + `</p>
             <p>Perihal: ` + surat.dataValues.perihal.dataValues.nama_perihal + `</p>

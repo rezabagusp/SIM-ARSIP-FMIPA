@@ -12,6 +12,10 @@ router.post('/add', function(req, res) {
 });
 
 router.post('/get', function(req, res) {
+	lampiran.getOne(req, res);
+});
+
+router.post('/get/all', function(req, res) {
 	lampiran.getAll(req, res);
 });
 

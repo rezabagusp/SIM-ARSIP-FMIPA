@@ -3,6 +3,7 @@ var path = require('path');
 
 var sequelize = require('../connection');
 
+var Surat = sequelize.import(__dirname + '/../models/surat.model');
 var Perihal = sequelize.import(__dirname + '/../models/perihal.model');
 var Staff = sequelize.import(__dirname + '/../models/staff.model');
 var Jabatan = sequelize.import(__dirname + '/../models/jabatan.model');
@@ -156,23 +157,35 @@ function DataformControllers() {
 						Surat
 							.findAll({
 								where: {
-									perihal_surat: id
+									perihal_id: id
 								}
 							})
 							.then(function(result) {
 								if (result !== 0 || result !== null) {
 									Surat
 										.update({
-											perihal_surat: null
+											perihal_id: null
 										}, {
 											where: {
-												perihal_surat: id
+												perihal_id: id
 											}
 										})
 										.catch(function(err) {
 											res.json({status: false, message: 'Update perihal surat gagal!', err_code: 400, err: err});
 										});
 								}
+								Perihal
+									.destroy({
+										where: {
+											id: id
+										}
+									})
+									.then(function(result) {
+										res.json({status: true, message: 'Hapus perihal berhasil!'});
+									})
+									.catch(function(err) {
+										res.json({status: false, message: 'Hapus perihal gagal!', err_code: 400, err: err});
+									});
 							})
 							.catch(function(err) {
 								res.json({status: false, message: 'Surat gagal ditemukan!', err_code: 400, err: err});
@@ -350,11 +363,12 @@ function DataformControllers() {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else {
 			Staff
-				.findOne(id)
+				.findById(id)
 				.then(function(result) {
 					if (result == 0 || result == null) {
 						res.json({status: false, message: 'Staff tidak ditemukan!', err_code: 404});
 					} else {
+						console.log(result);
 						Surat_masuk_penerima
 							.findAll({
 								where: {
@@ -373,45 +387,43 @@ function DataformControllers() {
 											res.json({status: false, message: 'Pasangan surat masuk dengan penerima staff gagal dihapus!', err_code: 400, err: err});
 										});
 								}
+								Surat_keluar_pengirim
+									.findAll({
+										where: {
+											staff_id: id
+										}
+									})
+									.then(function(result) {
+										if (result !== 0 || result !== null) {
+											Surat_keluar_pengirim
+												.destroy({
+													where: {
+														staff_id: id
+													}
+												})
+												.catch(function(err) {
+													res.json({status: false, message: 'Pasangan surat keluar dengan pengirim staff gagal dihapus!', err_code: 400, err: err});
+												});
+										}
+										Staff
+											.destroy({
+												where: {
+													id: id
+												}
+											})
+											.then(function(result) {
+												res.json({status: true, message: 'Staff berhasil dihapus!'});
+											})
+											.catch(function(err) {
+												res.json({status: false, message: 'Staff gagal dihapus!', err_code: 400, err: err});
+											});
+									})
+									.catch(function(err) {
+										res.json({status: false, message: 'Pasangan surat keluar dengan pengirim staff gagal ditemukan!', err_code: 400, err: err});
+									});
 							})
 							.catch(function(err) {
 								res.json({status: false, message: 'Pasangan surat masuk dengan penerima staff gagal ditemukan!', err_code: 400, err: err});
-							});
-
-						Surat_keluar_pengirim
-							.findAll({
-								where: {
-									staff_id: id
-								}
-							})
-							.then(function(result) {
-								if (result !== 0 || result !== null) {
-									Surat_keluar_pengirim
-										.destroy({
-											where: {
-												staff_id: id
-											}
-										})
-										.catch(function(err) {
-											res.json({status: false, message: 'Pasangan surat keluar dengan pengirim staff gagal dihapus!', err_code: 400, err: err});
-										});
-								}
-							})
-							.catch(function(err) {
-								res.json({status: false, message: 'Pasangan surat keluar dengan pengirim staff gagal ditemukan!', err_code: 400, err: err});
-							});
-
-						Staff
-							.destroy({
-								where: {
-									id: id
-								}
-							})
-							.then(function(result) {
-								res.json({status: true, message: 'Staff berhasil dihapus!'});
-							})
-							.catch(function(err) {
-								res.json({status: false, message: 'Staff gagal dihapus!', err_code: 400, err: err});
 							});
 					}
 				})

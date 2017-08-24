@@ -101,7 +101,7 @@ router.post('/delete/perihal', function(req, res) {
 });
 
 router.post('/delete/staff', function(req, res) {
-	dataform.deletePenerima(req, res);
+	dataform.deleteStaff(req, res);
 });
 
 router.post('/delete/jabatan', function(req, res) {

@@ -7,16 +7,17 @@ import { DataService } from './../../../_services/data.service';
 import { AdminService } from './../../../_services/admin.service';
 
 @Component({
-  selector: 'app-perihal',
-  templateUrl: './perihal.component.html',
-  styleUrls: ['./perihal.component.css']
+  selector: 'app-unit-kerja',
+  templateUrl: './unit-kerja.component.html',
+  styleUrls: ['./unit-kerja.component.css']
 })
-export class PerihalComponent implements OnInit {
-  @ViewChild('perihalModal') modal: ModalDirective;
-  public perihalForm:FormGroup;
-  public perihalData;
+export class UnitKerjaComponent implements OnInit {
+  @ViewChild('unitKerjaModal') modal: ModalDirective;
+
+  public unitKerjaForm: FormGroup;
   public dtOptions: DataTables.Settings = {};
   public dtTrigger: Subject<any> = new Subject();
+  public unitKerjaData;
 
   constructor(
     private fb: FormBuilder,
@@ -25,8 +26,10 @@ export class PerihalComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.perihalForm = this.fb.group({
-      namaPerihal: ['', Validators.required]
+    this.unitKerjaForm = this.fb.group({
+      namaUnitKerja: ['', Validators.required],
+      akronimUnitKerja: ['', Validators.required],
+      kodeUnitKerja: ['', Validators.required]
     });
     this.dtOptions = {
       pagingType: 'full_numbers',
@@ -35,44 +38,42 @@ export class PerihalComponent implements OnInit {
       lengthChange: false,
       autoWidth: true
     };
-    this.getPerihalData();
+    this.getUnitKerjaData();
   }
 
-  public getPerihalData() {
-    let url = this.dataService.url_perihal_get;
+  public getUnitKerjaData() {
+    let url = this.dataService.url_unitkerja_all_get;
     this.adminService.postAddSuperAdmin(url, null)
       .subscribe( data => {
         if (data.status) {
-          this.perihalData = data.data;
+          this.unitKerjaData = data.data;
+          console.log(data);
           this.dtTrigger.next();
-        }
-        if (!data.status) {
+          this.dataService.showSuccess(data.message);
+        } else {
           this.dataService.showError(data.message);
         }
       });
   }
 
-  public onSubmit() {
-    let url = this.dataService.url_perihal_add;
+  public onSubmit () {
+    let url = this.dataService.url_unitkerja_add;
     let data = {
-      nama_perihal: this.perihalForm.value.namaPerihal,
-    }
+      nama_unit_kerja: this.unitKerjaForm.value.namaUnitKerja,
+      akronim_unit_kerja: this.unitKerjaForm.value.akronimUnitKerja,
+      kode_unit_kerja: this.unitKerjaForm.value.kodeUnitKerja
+    };
     let body = JSON.stringify(data);
     this.adminService.postAddSuperAdmin(url, body)
-      .subscribe(data => {
+      .subscribe( data => {
         if (data.status) {
-          this.dataService.showSuccess(data.message);
-          this.getPerihalData();
           this.modal.hide();
-        }
-        if (!data.status) {
+          this.dataService.showSuccess(data.message);
+          this.getUnitKerjaData();
+        } else {
           this.dataService.showError(data.message);
         }
-      });
+      })
   }
 
-  clickRow(data) {
-    console.log('row', data)
-    this.perihalForm.controls.namaStaff.setValue('', { onlySelf: true });
-  }  
 }

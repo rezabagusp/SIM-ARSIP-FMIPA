@@ -36,6 +36,14 @@ export class DataService {
   public url_jabatan_add = 'http://localhost:3000/api/dataform/add/jabatan';
   public url_perihal_add = 'http://localhost:3000/api/dataform/add/perihal';
 
+  public url_staff_jabatan_all_get = 'http://localhost:3000/api/dataform/get/jabatan/staff/all';
+  public url_unitkerja_all_get = 'http://localhost:3000/api/dataform/get/unitkerja/all';
+  public url_unitkerja_add = 'http://localhost:3000/api/dataform/add/unitkerja';
+
+  public url_staff_edit = 'http://localhost:3000/api/dataform/edit/staff';
+  public url_staff_delete = 'http://localhost:3000/api/dataform/delete/staff';
+
+
   public token;
   public nama_user;
   public status;

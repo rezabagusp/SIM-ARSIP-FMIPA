@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { Subject } from 'rxjs/Subject';
+import { ModalDirective } from 'ngx-bootstrap/modal/modal.component';
 
 import { DataService } from './../../../_services/data.service';
 import { AdminService } from './../../../_services/admin.service';
@@ -11,11 +12,15 @@ import { AdminService } from './../../../_services/admin.service';
   styleUrls: ['./staff.component.css']
 })
 export class StaffComponent implements OnInit {
+  @ViewChild('staffModal') staffModal: ModalDirective;
+  @ViewChild('staffModalEdit') staffModalEdit: ModalDirective;
+
   public staffForm: FormGroup;
   public listJabatanStaff;
   public dtOptions: DataTables.Settings = {};
   public dtTrigger: Subject<any> = new Subject();
-  public staffData: Array<object>;
+  public staffData;
+  public idStaff;
 
   constructor(
     private fb: FormBuilder,
@@ -41,11 +46,16 @@ export class StaffComponent implements OnInit {
   }
 
   public getStaffData() {
-    let url = 'http://localhost:3000/api/dataform/get/staff/all';
+    let url = 'http://localhost:3000/api/dataform/get/staff/jabatan/all';
     this.adminService.postAddSuperAdmin(url, null)
       .subscribe(data => {
-        this.staffData = data.data;
-        this.dtTrigger.next();
+        if (data.status) {
+          this.staffData = data.data;
+          this.dtTrigger.next();
+        }
+        if (!data.status) {
+          this.dataService.showError(data.message);
+        }
       });
   }
 
@@ -78,7 +88,8 @@ export class StaffComponent implements OnInit {
       .subscribe(data => {
         if (data.status) {
           this.dataService.showSuccess(data.message);
-          this.getListJabatanStaff();
+          this.staffModal.hide();
+          this.getStaffData();
         }
         if (!data.status) {
           this.dataService.showError(data.message);
@@ -86,4 +97,75 @@ export class StaffComponent implements OnInit {
       });
   }
 
+  public updateStaff(){
+    let creds = JSON.stringify({
+      id_staff:this.idStaff,
+      nama_staff: this.staffForm.value.namaStaff,
+      jabatan_id: this.staffForm.value.jabatanStaff[0].id,
+      email_staff: this.staffForm.value.emailStaff
+    })
+    console.log('cek udate', creds )
+    this.adminService.postSuperAdmin(this.dataService.url_staff_edit, this.dataService.token, creds)
+    .subscribe(
+      data =>{
+        if(data.status){
+          this.dataService.showSuccess(data.message)
+          this.ngOnInit();
+          this.staffModalEdit.hide();
+        }
+        else
+          this.dataService.showError(data.message)
+      }
+    )
+  }
+
+  public getSelectedJabatan(id){
+    console.log('id get selected ', id)
+    for(let x in this.listJabatanStaff){
+      console.log(this.listJabatanStaff[x].id)
+      if(this.listJabatanStaff[x].id === id)
+        console.log('match')
+         return this.listJabatanStaff[x]
+    }
+  }
+
+  public deleteStaff(id){
+    let creds = JSON.stringify({
+      id_staff: id 
+    })
+    console.log(creds)
+    this.deleteConfirm()
+    .then((hasil)=>{
+      this.adminService.postSuperAdmin(this.dataService.url_staff_delete, this.dataService.token, creds)
+        .subscribe(data => {
+          if (data.status) {
+            this.dataService.showSuccess(data.message)
+            this.ngOnInit();
+          }
+          else
+            this.dataService.showError(data.message)
+        })      
+    })
+  }
+
+  public deleteConfirm() {
+    return swal({
+      title: 'Apakah anda yakin?',
+      text: "anda tidak dapat mengembalikan data!",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, hapus!'
+    })
+  }
+  
+  public clickRow(data) {
+    console.log('row', data)
+    this.staffForm.controls.namaStaff.setValue(data.nama_staff, { onlySelf: true });
+    this.staffForm.controls.jabatanStaff.setValue([this.getSelectedJabatan(data.jabatan.id)], { onlySelf: true });
+    this.staffForm.controls.emailStaff.setValue(data.email_staff, { onlySelf: true });
+    this.idStaff = data.id
+    this.staffModalEdit.show();
+  }
 }

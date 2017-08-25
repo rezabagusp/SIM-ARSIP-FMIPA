@@ -50,7 +50,8 @@
                       </a>
                     </span> &nbsp;
                     <span>
-                      <a href="javascript:void(0)" (click)="clickRow(data);editSuratModal.show(); getUpdateSurat(data.id)">
+                      <a href="javascript:void(0)" (click)="clickRow(data);editSuratModal.show(); 
+                      getUpdateSurat(data.id)">
                         <i class="fa fa-pencil-square-o" aria-hidden="true" title="Edit"></i>
                       </a>
                     </span> &nbsp;   
@@ -90,6 +91,7 @@
                 <label class="col-md-3 form-control-label">Nomor <span style="color:red;">*</span></label>
                 <div class="col-md-9">
                   <input type="text" id="nomor" name="nomor_surat" formControlName="nomor_surat" class="form-control" placeholder="nomor">
+                  <small class="text-muted">Contoh: 197/IT3.7/PP.00.00.00/2017</small>
                 </div>
               </div>          
               <div class="form-group row">
@@ -282,7 +284,8 @@
 </div><!-- /.modal -->
 
 <!--edit surat -->
-<div bsModal #editSuratModal="bs-modal" class="modal fade" style="" tabindex="-1" role="dialog" aria-labelledby="editSuratModal" aria-hidden="true">
+<div bsModal #editSuratModal="bs-modal" class="modal fade" style="" 
+  tabindex="-1" role="dialog" aria-labelledby="editSuratModal" aria-hidden="true">
   <div class="modal-dialog modal-lg" style="width: 1024" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -292,7 +295,7 @@
         </button> 
       </div>
       <div class="modal-body">
-        <form [formGroup]="form" class="form-horizontal" novalidate>
+        <form [formGroup]="form" class="form-horizontal" *ngIf="form_type === 1">
           <div class="row">
             <div class="col-md-12">
               <div class="garis">
@@ -306,7 +309,7 @@
                 </div>
               </div>          
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="password-input">Tanggal surat</label>
+                <label class="col-md-3 form-control-label">Tanggal surat</label>
                 <div class="col-md-9">
                   <date-picker
                   *ngIf="form_type === 1" 
@@ -326,9 +329,10 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Pengirim</label>
+                <label class="col-md-3 form-control-label" for="pengirim">Pengirim</label>
                 <div class="col-md-9">
-                  <input type="text" id="pengirim" name="pengirim" formControlName="pengirim" class="form-control" placeholder="Pengirim">
+                  <input type="text" id="pengirim"
+                  formControlName="pengirim" class="form-control">
                 </div>
               </div>
               <div class="form-group row">

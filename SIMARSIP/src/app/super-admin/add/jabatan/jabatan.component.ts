@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
+import { ModalDirective } from 'ngx-bootstrap/modal/modal.component';
 
 import { DataService } from './../../../_services/data.service';
 import { AdminService } from './../../../_services/admin.service';
@@ -12,11 +13,13 @@ import { AdminService } from './../../../_services/admin.service';
   styleUrls: ['./jabatan.component.css']
 })
 export class JabatanComponent implements OnInit {
+  @ViewChild('jabatanModal') modal: ModalDirective;
   public jabatanForm:FormGroup;
   // datatables
   public dtOptions: DataTables.Settings = {};
   public dtTrigger: Subject<any> = new Subject();
   public jabatanData;
+  public numberCols: Array<number> = [];
 
   constructor(
     private fb: FormBuilder,
@@ -66,6 +69,7 @@ export class JabatanComponent implements OnInit {
       .subscribe(data => {
         if(data.status) {
           this.dataService.showSuccess(data.message);
+          this.modal.hide();
           this.getJabatanData();
         }
       })

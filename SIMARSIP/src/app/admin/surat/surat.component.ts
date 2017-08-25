@@ -1,16 +1,14 @@
 import { ToastrService } from 'toastr-ng2';
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Subject, Subscription } from 'rxjs/Rx'; // dipake buat datatables
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-
 import { Router, ActivatedRoute, Params } from '@angular/router';
-
 // service 
 import { UploadService } from './../../_services/upload.service';
 import { DataService } from './../../_services/data.service';
 import { AdminService } from './../../_services/admin.service';
-
+import { ModalDirective } from 'ngx-bootstrap/modal/modal.component';
 
 @Component({
   selector: 'app-surat',
@@ -18,7 +16,7 @@ import { AdminService } from './../../_services/admin.service';
   styleUrls: ['./surat.component.scss'],
 })
 export class SuratComponent implements OnInit {
-
+  @ViewChild('entrySuratModal') entrySuratModal: ModalDirective;
   public form: FormGroup;
   public form_type=0;
 
@@ -155,8 +153,15 @@ export class SuratComponent implements OnInit {
   }
 
   clickRow(data){
-    console.log('click row', data)
-    //this.form.controls.lampiran.setValue(this.list_lampiran,  { onlySelf: true }); 
+    console.log(data);
+    this.form.controls.nomor_surat.setValue(data.nomor_surat, { onlySelf: true });
+    this.form.controls.tanggal_surat.setValue(new Date(data.tanggal_surat).toISOString().substring(0, 10));
+    // this.form.controls.perihal_surat.setValue([data.perihal.nama_perihal]);
+    if (this.tipe_surat === 'masuk' ) {
+      this.form.controls['pengirim'].setValue(data.surat_masuk_pengirim.nama_pengirim);
+      console.log(this.form.value.pengirim);
+    }
+    // this.form.controls.lampiran_surat.setValue(data.lampiran_surat);
   }  
 
   // CRUD
@@ -229,7 +234,13 @@ export class SuratComponent implements OnInit {
     console.log(creds);
     this.adminService.entrySurat(this.data.url_surat_add, creds)
       .subscribe(data => {
-        console.log(data);
+        if (data.status) {
+          this.data.showSuccess(data.message);
+          this.getSurat();
+          this.entrySuratModal.hide();
+        } else {
+          this.data.showError(data.message);
+        }
       });
   }
 
@@ -258,15 +269,11 @@ export class SuratComponent implements OnInit {
       id_surat : id
     });
     this.initForm();
-    console.log(creds);
+    this.form_type = 1;
     this.adminService.getDataDetail(url, creds)
       .subscribe(data => {
         this.list_surat_update = data;
-        // this.form.controls.nomor_surat.setValue(data.data.nomor_surat);
-        // this.form.controls.tanggal_surat.setValue(data.data.tanggal_surat);
-        // this.form.controls.perihal_surat.setValue([data.data.perihal]);
-        // this.form.controls.pengirim_surat.setValue(data.pengirim_surat);
-        // this.form.controls.lampiran_surat.setValue(data.lampiran_surat);
+        
         console.log(this.list_surat_update);
       });
   }
@@ -397,15 +404,7 @@ export class SuratComponent implements OnInit {
           console.log('Berhasil disposisi, ini datanaya: ', data);
         });
   }
-
   getDisposisiId(id: number) {
     this.id_disposisi = id;
-  }
-
-
-
-
-
-
-   
+  }   
 }

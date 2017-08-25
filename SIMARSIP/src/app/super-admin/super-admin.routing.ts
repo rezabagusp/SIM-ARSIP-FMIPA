@@ -5,6 +5,7 @@ import { FullLayoutComponent } from '../layouts/full-layout.component';
 import { PerihalComponent } from './add/perihal/perihal.component';
 import { StaffComponent } from './add/staff/staff.component';
 import { JabatanComponent } from './add/jabatan/jabatan.component';
+import { UnitKerjaComponent } from './add/unit-kerja/unit-kerja.component';
 
 import { AuthGuard } from '../_guards/auth.guard';
 
@@ -39,6 +40,13 @@ const routes: Routes = [
                 component: PerihalComponent,
                 data: {
                     title: 'Tambah Perihal'
+                }
+            },
+            {
+                path: 'add-unit-kerja',
+                component: UnitKerjaComponent,
+                data: {
+                    title: 'Tambah Unit Kerja'
                 }
             }
         ]

@@ -1,4 +1,3 @@
-import { Pages } from './../../../../../ng2-admin/src/app/pages/pages.component';
 import { ToastrService } from 'toastr-ng2';
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Http, Response } from '@angular/http';
@@ -21,6 +20,9 @@ import { LOCALE_ID } from '@angular/core';
 })
 export class SuratComponent implements OnInit {
   @ViewChild('entrySuratModal') entrySuratModal: ModalDirective;
+  @ViewChild('editSuratModal') editSuratModal: ModalDirective;  
+  @ViewChild('disposisiModal') disposisiModal: ModalDirective;  
+
   public form: FormGroup;
   public form_type=0;
 
@@ -179,12 +181,6 @@ export class SuratComponent implements OnInit {
         } 
       });
   }
-
-  // state for chexbox for disposisi: for surat masuk only
-  stateDisposisi(){
-    if (this.hidden==true) this.hidden=false;
-    else this.hidden= true;
-  }
   
   deleteConfirm(){
     return swal({
@@ -205,6 +201,7 @@ export class SuratComponent implements OnInit {
     this.form.controls.nomor_surat.setValue(data.nomor_surat, { onlySelf: true });
     this.form.controls.tanggal_surat.setValue(new Date(data.tanggal_surat).toISOString().substring(0, 10), { onlySelf: true });
     this.form.controls.tanggal_terima_surat.setValue(new Date(data.tanggal_terima_surat).toISOString().substring(0, 10), { onlySelf: true });    
+    this.form.controls.tanggal_entri.setValue(data.tanggal_entri_surat, { onlySelf: true });   
     this.form.controls.perihal.setValue(this.getSelectedPerihal(data.perihal_id), { onlySelf: true });
     this.form.controls.sifat_surat.setValue(this.getSelectedValue(this.list_sifat_surat, data.sifat_surat), { onlySelf: true });
     this.form.controls.status_surat.setValue(this.getSelectedValue(this.list_status_surat, data.status_surat), { onlySelf: true });
@@ -212,7 +209,9 @@ export class SuratComponent implements OnInit {
     this.form.controls.posisi_surat.setValue(data.posisi_surat, { onlySelf: true });
     this.form.controls.asal_surat.setValue(this.getSelectedValue(this.list_asal_surat, data.asal_surat), { onlySelf: true });
     this.form.controls.kepentingan_surat.setValue(this.getSelectedValue(this.list_kepentingan_surat, data.kepentingan_surat), { onlySelf: true });
+    this.form.controls.lampiran.setValue(this.getSelectedLampiran(data.lampirans));    
     this.form.controls.file_surat.setValue(data.file_surat, { onlySelf: true });
+    this.form.controls.penerima.setValue(data.surat_masuk_penerimas.map(el=>{ return el['staff']}))
   }  
   getSelectedPerihal(id){
     let obj = this.list_perihal.filter(el=>{
@@ -223,6 +222,13 @@ export class SuratComponent implements OnInit {
     
     return obj;
   }
+  getSelectedLampiran(lampirans){
+    lampirans.forEach(element => {
+      element.text = element.judul_lampiran
+    });
+
+    return lampirans
+  } 
   // for field input sifat, status, asal, kepentingan 
   getSelectedValue(list, value){
     let obj = list.filter(el=>{
@@ -283,7 +289,6 @@ export class SuratComponent implements OnInit {
         }),
         penerima_surat: [
           {
-
           }
         ],
         pengirim_surat: this.form.value.tujuan_orang.map((el) => {
@@ -301,18 +306,19 @@ export class SuratComponent implements OnInit {
           this.ngOnInit();
           this.entrySuratModal.hide();
         } else {
+          this.form.controls.penerima.setValue([], { onlySelf: true });// set penerima back to null
           this.data.showError(data.message);
         }
       });
   }
-  updateSurat(){
+  editSurat(){
       let creds = JSON.stringify({
         id_surat: this.form.value.id_surat,
         nomor_surat: this.form.value.nomor_surat,
         perihal_surat: this.form.value.perihal[0].id,
         tanggal_surat: this.form.value.tanggal_surat,
         tanggal_terima_surat: this.form.value.tanggal_terima_surat,
-        tanggal_entri_surat: new Date(),
+        tanggal_entri_surat: this.form.value.tanggal_entri,
         kepentingan_surat: this.form.value.kepentingan_surat[0].text,
         tipe_surat: this.tipe_surat,
         sifat_surat: this.form.value.sifat_surat[0].text,
@@ -335,10 +341,20 @@ export class SuratComponent implements OnInit {
 
       });
 
-      console.log('udpdate',creds)
-      // this.adminService.postAdmin(this.data.url_surat_edit, this.data.token, creds)
+      console.log('edit',creds)
+      this.adminService.postAdmin(this.data.url_surat_edit, this.data.token, creds)
+      .subscribe(
+        data =>{
+          if(data.status){
+            this.data.showSuccess(data.message)
+            this.ngOnInit();
+            this.editSuratModal.hide();
+          }
+          else
+            this.data.showError(data.message)
+        }
+      )
   }
-
   deleteSurat(id: number){
     this.deleteConfirm()
     .then(()=>{
@@ -347,6 +363,7 @@ export class SuratComponent implements OnInit {
       this.adminService.deleteSurat(this.data.url_surat_delete, creds)
       .subscribe(
         data =>{
+          console.log(data)
           if(data.status){
             this.data.showSuccess(data.message);
             this.ngOnInit();
@@ -357,38 +374,6 @@ export class SuratComponent implements OnInit {
       )      
     })
   }
-  
-  onChangeFile(fileinput:any){
-    var sementara = fileinput.target.files
-    console.log(sementara[0].name)
-    var ext = sementara[0].type;
-    var size = Number(sementara[0].size);
-    if(ext !=='application/pdf' ){
-        swal(
-          'Perhatian',
-          'file harus *.pdf',
-          'warning'
-        )
-    }  
-    else{
-      console.log('masuk')
-      this.filesToUpload = fileinput.target.files;
-      this.upload.uploadFile(this.data.url_surat_upload, this.data.token, this.filesToUpload[0])
-      .then(data =>{
-        console.log(data)
-        if(JSON.parse(JSON.stringify(data)).status){
-          this.fileValid = true;
-          let nama_surat = JSON.parse(JSON.stringify(data)).data
-          this.form.controls.file_surat.setValue(nama_surat)
-          console.log('nama suratnya', this.form.value.file_surat)
-        }
-        else   
-          this.data.showError(JSON.parse(JSON.stringify(data)).message);
-      }).catch((err)=>{
-          this.data.showError('error upload')
-      })
-    }
-  }  
 
   // Data form 
   getTujuanJabatan(){
@@ -457,6 +442,7 @@ export class SuratComponent implements OnInit {
       }
     )
   }
+  // *end of Data form 
 
   getPreviewData(id: number) {
     this.dataForPreview.shift();
@@ -469,7 +455,6 @@ export class SuratComponent implements OnInit {
     });
     return null;
   }
-
   onDisposisi() {
       let url = this.data.url_surat_disposisi;
       let id_staff = this.form.value.tujuan_orang.map((el) => {
@@ -493,6 +478,8 @@ export class SuratComponent implements OnInit {
     this.id_disposisi = id;
   }   
   
+
+
   cek(){
     console.log(this.form)
     var coba = []
@@ -509,6 +496,37 @@ export class SuratComponent implements OnInit {
 
   }
   
+  onChangeFile(fileinput:any){
+    var sementara = fileinput.target.files
+    console.log(sementara[0].name)
+    var ext = sementara[0].type;
+    var size = Number(sementara[0].size);
+    if(ext !=='application/pdf' ){
+        swal(
+          'Perhatian',
+          'file harus *.pdf',
+          'warning'
+        )
+    }  
+    else{
+      console.log('masuk')
+      this.filesToUpload = fileinput.target.files;
+      this.upload.uploadFile(this.data.url_surat_upload, this.data.token, this.filesToUpload[0])
+      .then(data =>{
+        console.log(data)
+        if(JSON.parse(JSON.stringify(data)).status){
+          this.fileValid = true;
+          let nama_surat = JSON.parse(JSON.stringify(data)).data
+          this.form.controls.file_surat.setValue(nama_surat)
+          console.log('nama suratnya', this.form.value.file_surat)
+        }
+        else   
+          this.data.showError(JSON.parse(JSON.stringify(data)).message);
+      }).catch((err)=>{
+          this.data.showError('error upload')
+      })
+    }
+  }    
   // method for append tujuan_orang & tujuan_jabatan as penerima
   setPenerima(){
     this.form.value.penerima.push.apply(this.form.value.penerima, this.form.value.tujuan_jabatan)

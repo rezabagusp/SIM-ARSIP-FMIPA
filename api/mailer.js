@@ -31,7 +31,7 @@ class Mailer{
     constructor() {
         this.sender = '"SIMARSIP FMIPA" <miqdadfawwaz95@gmail.com>'
         this.receivers = []
-        this.subject = 'Surat Masuk di SIMARSIP'
+        this.subject = ''
         this.attachments = []
         this.html = ''
     }
@@ -39,12 +39,12 @@ class Mailer{
     redefined() {
         this.sender = '"SIMARSIP FMIPA" <miqdadfawwaz95@gmail.com>'
         this.receivers = []
-        this.subject = 'Surat Masuk di SIMARSIP'
+        this.subject = ''
         this.attachments = []
         this.html = ''
     }
 
-    setHtml(surat, status) {
+    setHtmlSurat(surat, status) {
         this.html += '<p>Ada surat masuk untuk Anda di SIMARSIP. Silahkan cek lampiran email ini. Surat fisik ada di Tata Usaha. Terima kasih.<p>'
         if (status > 0) {
             this.html += `
@@ -53,18 +53,51 @@ class Mailer{
                 `
         }
         this.html += `
-            <p>Nomor: ` + surat.dataValues.nomor_surat + `/` + surat.dataValues.unit_kerja_surat + `/` + surat.dataValues.hal_surat + `/` + surat.dataValues.tahun_surat + `</p>
+            <p>Nomor: ` + surat.dataValues.nomor_surat + `</p>
             <p>Perihal: ` + surat.dataValues.perihal.dataValues.nama_perihal + `</p>
             <p>Pengirim: ` + surat.dataValues.surat_masuk_pengirim.dataValues.nama_pengirim + `</p>
             <p>Tanggal surat: ` + surat.dataValues.tanggal_surat + `</p>
             <p>Tingkat kepentingan: ` + surat.dataValues.kepentingan_surat + `</p>
             <p>Sifat: ` + surat.dataValues.sifat_surat + `</p><br>
             <p>Catatan: ` + surat.dataValues.keterangan_surat + `</p><br>
+            <p>Terima kasih.</p>
+            <p>SIMARSIP FMIPA</p>
         `
+    }
+
+    setHtmlLupaPassword(user, token) {
+        this.html += `
+            <p>Kepada` + user.dataValues.nama_user + `, kami menerima permintaan untuk mengganti password SIMARSIP FMIPA Anda.</p>
+            <p>Klik <a href="http://localhost:4200/">disini</a> untuk mengganti password Anda.</p>
+            <p>Abaikan email ini apabila permintaan itu bukan dari Anda. Terima kasih.</p>
+            <p>SIMARSIP FMIPA</p>
+        `
+    }
+
+    sendLupaPassword(id, token, res) {
+        this.redefined();
+        this.subject = 'Lupa Password | SIMARSIP';
+
+        /*Get user first*/
+        User
+            .findById(id)
+            .then((user) => {
+                if (user == 0 || user == null) {
+                    res.json({status: false, message: 'User tidak ditemukan!', err_code: 404});
+                } else {
+                    this.setHtmlLupaPassword(user, token);
+                    this.send(res);
+                }
+            })
+            .catch((err) => {
+                res.json({status: false, message: 'User gagal ditemukan!', err_code: 400, err: err});
+            });
     }
 
     sendSurat(id, status, res) {
         this.redefined();
+        this.subject = 'Surat Masuk | SIMARSIP';
+
         /*Get surat and lampiran first*/
         Surat
             .findOne({
@@ -79,10 +112,10 @@ class Mailer{
                 }]
             })
             .then((surat) => {
-                if (surat == 0) {
+                if (surat == 0 || surat == null) {
                     res.json({status: false, message: 'Surat masuk tidak ditemukan!', err_code: 400});
                 } else {
-                    this.setHtml(surat, status)
+                    this.setHtmlSurat(surat, status)
                     this.attachments.push({filename: surat.dataValues.file_surat, path: __dirname + '/public/uploads/surat/' + surat.dataValues.file_surat});
                     Lampiran
                         .findAll({
@@ -92,7 +125,7 @@ class Mailer{
                             attributes: ['file_lampiran']
                         })
                         .then((lampiran) => {
-                            if (lampiran !== 0) {
+                            if (lampiran !== 0 && lampiran !== null) {
                                 for(let i = 0; i < lampiran.length; i++) {
                                     this.attachments.push({filename: lampiran[i].dataValues.file_lampiran, path: __dirname + '/public/uploads/lampiran/' + lampiran[i].dataValues.file_lampiran})
                                 }
@@ -112,7 +145,7 @@ class Mailer{
                                 .then((staff) => {
                                     console.log('check receivers', this.receivers)
                                     let staffs = JSON.parse(JSON.stringify(staff))
-                                    if (staff == 0) {
+                                    if (staff == 0 || staff == null) {
                                         res.json({status: false, message: 'Staff penerima email tidak ditemukan!', err_code: 404});
                                     } else {
                                         for(let i = 0; i < staff.length; i++) {
@@ -121,7 +154,7 @@ class Mailer{
                                     }
                                     this.send(res);
                                 })
-                                .catch(function(err) {
+                                .catch((err) => {
                                     res.json({status: false, message: 'Staff penerima email gagal ditemukan!', err:err})
                                 })
                         })   

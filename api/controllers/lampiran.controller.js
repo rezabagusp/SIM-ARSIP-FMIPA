@@ -124,10 +124,7 @@ function LampiranControllers() {
 			      	filename = filename + '-' + Date.now() + '.pdf';
 			      	cb(null, filename);
 			  	}
-			}),
-			limits: {
-				fileSize: 1 * 1024 * 1024
-			}
+			})
 		}).any();
 
 		upload(req, res, function(err) {

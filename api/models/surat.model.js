@@ -4,10 +4,8 @@ var Posisi = sequelize.import(__dirname + '/../models/posisi.model');
 
 module.exports = function(sequelize, DataType) {
     return sequelize.define('surat', {
-	    nomor_surat: { type: DataType.INTEGER, allowNull: false },
-        unit_kerja_surat: { type: DataType.STRING, allowNull: false },
-        hal_surat: { type: DataType.STRING, allowNull: false },
-        tahun_surat: { type: DataType.INTEGER, allowNull: false },
+	    nomor_surat: { type: DataType.STRING, allowNull: false },
+        judul_surat: DataType.STRING,
         tanggal_surat: { type: DataType.DATE, allowNull: false },
         tanggal_terima_surat: { type: DataType.DATE, allowNull: false },
         tanggal_entri_surat: { type: DataType.DATE, allowNull: false },

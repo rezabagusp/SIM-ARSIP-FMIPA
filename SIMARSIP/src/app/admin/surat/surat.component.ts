@@ -74,7 +74,6 @@ export class SuratComponent implements OnInit {
     this.hidden = true;
     this.activatedRoute.params.subscribe((params: Params)=>{
       this.tipe_surat = params['tipe_surat'];
-      console.log(this.tipe_surat)
     })    
   }
 
@@ -115,7 +114,6 @@ export class SuratComponent implements OnInit {
   changeFormType(value){
     if (this.form_type!=value)
       this.form_type=value;
-    console.log('status, ', this.form_type);
   }
 
   getSurat(){
@@ -123,13 +121,13 @@ export class SuratComponent implements OnInit {
     this.adminService.getAllSurat(this.data.url_surat_get, creds)
     .subscribe(data =>{
         if(data.status){
-          console.log(data);
           this.list_surat = data.data;
           this.dtTrigger.next();
         }
         else{
           this.data.showError(data.message);
-        } 
+        }
+        console.log(this.list_surat); 
       });
   }
 
@@ -153,15 +151,12 @@ export class SuratComponent implements OnInit {
   }
 
   clickRow(data){
-    console.log(data);
     this.form.controls.nomor_surat.setValue(data.nomor_surat, { onlySelf: true });
     this.form.controls.tanggal_surat.setValue(new Date(data.tanggal_surat).toISOString().substring(0, 10));
     // this.form.controls.perihal_surat.setValue([data.perihal.nama_perihal]);
     if (this.tipe_surat === 'masuk' ) {
       this.form.controls['pengirim'].setValue(data.surat_masuk_pengirim.nama_pengirim);
-      console.log(this.form.value.pengirim);
     }
-    // this.form.controls.lampiran_surat.setValue(data.lampiran_surat);
   }  
 
   // CRUD
@@ -231,7 +226,6 @@ export class SuratComponent implements OnInit {
         })
       });
     }
-    console.log(creds);
     this.adminService.entrySurat(this.data.url_surat_add, creds)
       .subscribe(data => {
         if (data.status) {
@@ -247,17 +241,15 @@ export class SuratComponent implements OnInit {
   deleteSurat(id: number){
     this.deleteConfirm()
     .then(()=>{
-      let creds = JSON.stringify({ id_surat: id })
-      console.log(creds);
+      let creds = JSON.stringify({ id_surat: id });
       this.adminService.deleteSurat(this.data.url_surat_delete, creds)
       .subscribe(
         data =>{
           if(data.status){
-            this.data.showSuccess(data.message)
-            console.log('kedelet coy');
+            this.data.showSuccess(data.message);
           }
           else
-            this.data.showError(data.message)
+            this.data.showError(data.message);
         }
       )      
     })
@@ -273,8 +265,6 @@ export class SuratComponent implements OnInit {
     this.adminService.getDataDetail(url, creds)
       .subscribe(data => {
         this.list_surat_update = data;
-        
-        console.log(this.list_surat_update);
       });
   }
   
@@ -286,7 +276,6 @@ export class SuratComponent implements OnInit {
       let formData: FormData = new FormData();
       formData.append('uploadFile', file, file.name);
       // this.file_surat = file;
-      console.log(file);
       this.file_surat = file;
       this.form.controls.file_surat.setValue(file.name );
       if (file.type !== 'application/pdf') {
@@ -314,10 +303,9 @@ export class SuratComponent implements OnInit {
           this.list_tujuan_jabatan = data.data;
           for(let x in this.list_tujuan_jabatan)
             this.list_tujuan_jabatan[x].text = this.list_tujuan_jabatan[x].nama_jabatan;
-          console.log(this.list_tujuan_jabatan)
         }
         else 
-          this.data.showError(data.message)
+          this.data.showError(data.message);
       }
     ) 
   }
@@ -347,8 +335,7 @@ export class SuratComponent implements OnInit {
         if(data.status){
           this.list_perihal = data.data;
           for(let x in this.list_perihal)
-            this.list_perihal[x].text = this.list_perihal[x].nama_perihal;
-          console.log(this.list_perihal);              
+            this.list_perihal[x].text = this.list_perihal[x].nama_perihal;            
         }
         else 
           this.data.showError(data.message);
@@ -364,8 +351,7 @@ export class SuratComponent implements OnInit {
         if(data.status){
           this.list_lampiran = data.data;
           for(let x in this.list_lampiran)
-            this.list_lampiran[x].text = this.list_lampiran[x].judul_lampiran;
-          console.log('lampiran', this.list_lampiran);              
+            this.list_lampiran[x].text = this.list_lampiran[x].judul_lampiran;             
         }
         else 
           this.data.showError(data.message);        
@@ -378,7 +364,6 @@ export class SuratComponent implements OnInit {
     let dataPreview = this.list_surat.map(element => {
       if (element.id === id) {
         this.dataForPreview.push(element);
-        console.log('Ini hasil data preview', this.dataForPreview);
         return this.dataForPreview;
       }
     });
@@ -398,7 +383,6 @@ export class SuratComponent implements OnInit {
         penerima_surat: id_staff
       }
       let data = JSON.stringify(creds);
-      console.log(data);
       this.adminService.postDisposisi(url, data)
         .subscribe(data => {
           console.log('Berhasil disposisi, ini datanaya: ', data);

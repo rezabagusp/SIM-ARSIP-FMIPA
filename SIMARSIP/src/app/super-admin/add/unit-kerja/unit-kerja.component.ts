@@ -13,7 +13,9 @@ import { AdminService } from './../../../_services/admin.service';
 })
 export class UnitKerjaComponent implements OnInit {
   @ViewChild('unitKerjaModal') modal: ModalDirective;
+  @ViewChild('unitKerjaModalEdit') modalEdit: ModalDirective;
 
+  private idUnitKerja: number;
   public unitKerjaForm: FormGroup;
   public dtOptions: DataTables.Settings = {};
   public dtTrigger: Subject<any> = new Subject();
@@ -47,16 +49,14 @@ export class UnitKerjaComponent implements OnInit {
       .subscribe( data => {
         if (data.status) {
           this.unitKerjaData = data.data;
-          console.log(data);
           this.dtTrigger.next();
-          this.dataService.showSuccess(data.message);
         } else {
           this.dataService.showError(data.message);
         }
       });
   }
 
-  public onSubmit () {
+  public onSubmit() {
     let url = this.dataService.url_unitkerja_add;
     let data = {
       nama_unit_kerja: this.unitKerjaForm.value.namaUnitKerja,
@@ -73,7 +73,38 @@ export class UnitKerjaComponent implements OnInit {
         } else {
           this.dataService.showError(data.message);
         }
-      })
+      });
+  }
+
+  public onUpdate() {
+    const url = this.dataService.url_unitkerja_edit;
+    const token = this.dataService.token;
+    let data = {
+      id_unit_kerja: this.idUnitKerja,
+      nama_unit_kerja: this.unitKerjaForm.value.namaUnitKerja,
+      akronim_unit_kerja: this.unitKerjaForm.value.akronimUnitKerja,
+      kode_unit_kerja: this.unitKerjaForm.value.kodeUnitKerja
+    };
+    let body = JSON.stringify(data);
+    console.log(body);
+    this.adminService.postSuperAdmin(url, token, body)
+      .subscribe(data => {
+        if (data.status) {
+          this.modalEdit.hide();
+          this.dataService.showSuccess(data.message);
+          this.getUnitKerjaData();
+        } else {
+          this.dataService.showError(data.message);
+        }
+      });
+  }
+
+  public clickRow(data) {
+    this.idUnitKerja = data.id;
+    this.unitKerjaForm.controls.namaUnitKerja.setValue(data.nama_unit_kerja);
+    this.unitKerjaForm.controls.akronimUnitKerja.setValue(data.akronim_unit_kerja);
+    this.unitKerjaForm.controls.kodeUnitKerja.setValue(data.kode_unit_kerja);
+    this.modalEdit.show();
   }
 
 }

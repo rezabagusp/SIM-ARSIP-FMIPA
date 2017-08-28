@@ -1,4 +1,3 @@
-import { UserService } from './../../../../pelayanan-mahasiswa/angular/src/app/_services/user.service';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { LocationStrategy, HashLocationStrategy, CommonModule } from '@angular/common';
@@ -80,8 +79,7 @@ import { AuthGuard } from './_guards/auth.guard';
   AuthGuard,
   AuthenticationService,
   AdminService,
-  UploadService,
-  UserService
+  UploadService
 ],
   schemas: [NO_ERRORS_SCHEMA],
   bootstrap: [ AppComponent ]

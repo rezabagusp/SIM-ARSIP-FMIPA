@@ -14,12 +14,10 @@ export class AuthenticationService {
   constructor(private http: Http) {
     this.token = localStorage.getItem('token');
   }
-
   login(nama_user: string, password_user: string, remember_me: boolean) {
     let send = JSON.stringify({nama_user: nama_user, password_user:password_user, remember_me: remember_me });
     let header= new Headers();
     header.append('Content-type', 'application/json' );
-
     return this.http.post(this.url_login, send, {headers:header})
       .map((response: Response) => {
         //login succesful if there is token response

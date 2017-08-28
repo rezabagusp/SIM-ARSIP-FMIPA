@@ -12,6 +12,7 @@ import { AdminService } from './../../../_services/admin.service';
   styleUrls: ['./staff.component.css']
 })
 export class StaffComponent implements OnInit {
+
   @ViewChild('staffModal') staffModal: ModalDirective;
   @ViewChild('staffModalEdit') staffModalEdit: ModalDirective;
 
@@ -103,14 +104,13 @@ export class StaffComponent implements OnInit {
       nama_staff: this.staffForm.value.namaStaff,
       jabatan_id: this.staffForm.value.jabatanStaff[0].id,
       email_staff: this.staffForm.value.emailStaff
-    })
-    console.log('cek udate', creds )
+    });
     this.adminService.postSuperAdmin(this.dataService.url_staff_edit, this.dataService.token, creds)
     .subscribe(
       data =>{
         if(data.status){
           this.dataService.showSuccess(data.message)
-          this.ngOnInit();
+          this.getStaffData();
           this.staffModalEdit.hide();
         }
         else
@@ -121,29 +121,29 @@ export class StaffComponent implements OnInit {
 
   public getSelectedJabatan(id){
     console.log('id get selected ', id)
-    for(let x in this.listJabatanStaff){
-      console.log(this.listJabatanStaff[x].id)
-      if(this.listJabatanStaff[x].id === id)
-        console.log('match')
-         return this.listJabatanStaff[x]
+    for(let jabatan of this.listJabatanStaff){
+      if(jabatan.id === id) {
+        console.log('match');
+        return jabatan;
+      }
     }
   }
 
   public deleteStaff(id){
     let creds = JSON.stringify({
       id_staff: id 
-    })
-    console.log(creds)
+    });
     this.deleteConfirm()
     .then((hasil)=>{
       this.adminService.postSuperAdmin(this.dataService.url_staff_delete, this.dataService.token, creds)
         .subscribe(data => {
           if (data.status) {
-            this.dataService.showSuccess(data.message)
-            this.ngOnInit();
+            this.dataService.showSuccess(data.message);
+            this.getStaffData();
           }
-          else
-            this.dataService.showError(data.message)
+          else {
+            this.dataService.showError(data.message);
+          }
         })      
     })
   }
@@ -151,7 +151,7 @@ export class StaffComponent implements OnInit {
   public deleteConfirm() {
     return swal({
       title: 'Apakah anda yakin?',
-      text: "anda tidak dapat mengembalikan data!",
+      text: "Anda tidak dapat mengembalikkan data!",
       type: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -161,7 +161,6 @@ export class StaffComponent implements OnInit {
   }
   
   public clickRow(data) {
-    console.log('row', data)
     this.staffForm.controls.namaStaff.setValue(data.nama_staff, { onlySelf: true });
     this.staffForm.controls.jabatanStaff.setValue([this.getSelectedJabatan(data.jabatan.id)], { onlySelf: true });
     this.staffForm.controls.emailStaff.setValue(data.email_staff, { onlySelf: true });

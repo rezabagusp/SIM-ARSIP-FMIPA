@@ -2,7 +2,8 @@ var express = require('express'),
 	multer = require('multer'),
 	path = require('path'),
 	fs = require('fs'),
-	mailer = require('../mailer');
+	mailer = require('../mailer'),
+	jwt = require('../token');
 
 var sequelize = require('../connection');
 
@@ -40,10 +41,6 @@ var validateNomorSurat = function(nomor) {
 
 var splitNomorSurat = function(nomor, result) {
 	return nomor.split('/');
-}
-
-var splitHalSurat = function(hal, result) {
-	return nomor.split('.');
 }
 
 function SuratControllers() {
@@ -784,6 +781,42 @@ function SuratControllers() {
 				.catch(function(err) {
 					res.json({status: false, message: 'Surat gagal ditemukan!', err_code})
 				});
+		}
+	}
+
+	this.updateStatus = function(req, res) {
+		var id = req.body.id_surat;
+
+		if (id == undefined) {
+			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else {
+			Surat
+				.findById(id)
+				.then(function(result) {
+					if (result == 0 || result == null) {
+						res.json({status: false, message: 'Surat tidak ditemukan!', err_code: 400});
+					} else {
+						if (result.dataValues.status_surat == 'aktif') {
+							var status = 'inaktif';
+						} else {
+							var status = 'aktif';
+						}
+						Surat
+							.update({
+								status_surat: status
+							}, {
+								where: {
+									id: id
+								}
+							})
+							.then(function(result) {
+								res.json({status: true, message: 'Update status surat berhasil!'});
+							});
+					}
+				})
+				.catch(function(err) {
+					res.json({status: false, message: 'Surat gagal ditemukan!', err_code: 400, err: err});
+				})
 		}
 	}
 }

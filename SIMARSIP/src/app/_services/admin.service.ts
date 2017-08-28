@@ -186,6 +186,15 @@ export class AdminService {
                 return data || {};
             });        
     }
+    postAdmin(url, token, creds){
+        let header = new Headers();
+        header.append('Content-type', 'application/json');
+        return this.http.post(url, creds, {headers: header})
+            .map((response: Response) => {
+                let data = response.json();
+                return data || {};
+            });        
+    }
     
 
 }

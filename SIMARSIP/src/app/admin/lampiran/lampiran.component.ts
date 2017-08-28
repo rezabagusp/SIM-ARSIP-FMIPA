@@ -24,7 +24,7 @@ export class LampiranComponent implements OnInit {
 
   //upload file
   public max_size = Math.pow(10,6);
-  public filesToUpload: Array<File>;
+  public filesToUpload: FileList;
   public fileValid: boolean = false;
   public lampiran: string;
 
@@ -146,10 +146,12 @@ export class LampiranComponent implements OnInit {
       this.adminService.deleteLampiran(this.data.url_delete_lampiran, this.data.token, creds )
       .subscribe(
         data =>{
-          if(data.status)
-            this.data.showSuccess(data.message)
+          if(data.status){
+            this.data.showSuccess(data.message);
+            this.ngOnInit();
+          }
           else
-            this.data.showError(data.message)
+            this.data.showError(data.message);
         }
       )
     })
@@ -182,28 +184,22 @@ export class LampiranComponent implements OnInit {
     )
   }
   onChangeFile(fileinput:any){
-    var sementara = <Array<File>> fileinput.target.files
+    var sementara = fileinput.target.files
+    console.log(sementara[0].name)
     var ext = sementara[0].type;
-    this.filesToUpload = <Array<File>> fileinput.target.files;
     var size = Number(sementara[0].size);
-    console.log(this.filesToUpload)
     if(ext !=='application/pdf' ){
         swal(
           'Perhatian',
-          'file harus *.jpeg/ *.pdf/ *.pdf',
+          'file harus *.pdf',
           'warning'
         )
-    }
-    else if(size > this.max_size)
-        swal(
-          'Perhatian',
-          'ukuran file max 1 MB',
-          'warning'
-        )      
+    }  
     else{
-      this.filesToUpload = <Array<File>> fileinput.target.files;
-      this.upload.uploadFile(this.data.url_upload_file, this.data.token, this.filesToUpload).
-      then(data =>{
+      console.log('masuk')
+      this.filesToUpload = fileinput.target.files;
+      this.upload.uploadFile(this.data.url_upload_file, this.data.token, this.filesToUpload[0])
+      .then(data =>{
         console.log(data)
         if(JSON.parse(JSON.stringify(data)).status){
           this.fileValid = true;
@@ -211,7 +207,7 @@ export class LampiranComponent implements OnInit {
           console.log(this.lampiran)
         }
         else   
-          this.data.showError('error upload');
+          this.data.showError(JSON.parse(JSON.stringify(data)).message);
       }).catch((err)=>{
         this.data.showError('error upload')
       })

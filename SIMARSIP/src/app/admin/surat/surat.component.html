@@ -22,7 +22,6 @@
                   <th>Tgl entri</th>
                   <th>Perihal</th>
                   <th>Pengirim</th>
-                  <th>Tujuan</th>
                   <th>Status simpan</th>
                   <th>Sifat</th>                  
                   <th>Aksi</th>
@@ -34,9 +33,8 @@
                   <td>{{data.tanggal_surat | date}}</td>
                   <td>{{data.tanggal_entri_surat | date:'medium'}}</td>
                   <td>{{data.perihal.nama_perihal}}</td>
-                  <td>tess</td>
-                  <td>list nama tujuan</td>
-                  <td>gudang arsip</td>
+                  <td>{{data.surat_masuk_pengirim?.nama_pengirim}}</td>
+                  <td>{{data.posisi_surat}}</td>
                   <td>{{data.sifat_surat}}</td>                  
                   <td>
                     <span>
@@ -50,8 +48,7 @@
                       </a>
                     </span> &nbsp;
                     <span>
-                      <a href="javascript:void(0)" (click)="clickRow(data);editSuratModal.show(); 
-                      getUpdateSurat(data.id)">
+                      <a href="javascript:void(0)" (click)="changeFormType(1);clickRow(data);editSuratModal.show()">
                         <i class="fa fa-pencil-square-o" aria-hidden="true" title="Edit"></i>
                       </a>
                     </span> &nbsp;   
@@ -81,7 +78,7 @@
         </button> 
       </div>
       <div class="modal-body">
-        <form [formGroup]="form" class="form-horizontal" novalidate>
+        <form [formGroup]="form" class="form-horizontal" *ngIf="form_type == 0" novalidate>
           <div class="row">
             <div class="col-md-6">
               <div class="garis">
@@ -90,18 +87,24 @@
               <div class="form-group row">
                 <label class="col-md-3 form-control-label">Nomor <span style="color:red;">*</span></label>
                 <div class="col-md-9">
-                  <input type="text" id="nomor" name="nomor_surat" formControlName="nomor_surat" class="form-control" placeholder="nomor">
+                  <input type="text" id="nomor_surat" name="nomor_surat" formControlName="nomor_surat" class="form-control" placeholder="nomor">
                   <small class="text-muted">Contoh: 197/IT3.7/PP.00.00.00/2017</small>
                 </div>
               </div>          
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="password-input">Tanggal surat <span style="color:red;">*</span></label>
+                <label class="col-md-3 form-control-label" for="tanggal_surat">Tanggal surat <span style="color:red;">*</span></label>
                 <div class="col-md-9">
                   <date-picker *ngIf = "form_type==0" [showClearButton]="false" formControlName="tanggal_surat" name="tanggal_surat"></date-picker>                  
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="text-input"> Perihal <span style="color:red;">*</span></label>
+                <label class="col-md-3 form-control-label" for="tanggal_terima_surat">Tanggal terima surat <span style="color:red;">*</span></label>
+                <div class="col-md-9">
+                  <date-picker *ngIf = "form_type==0" [showClearButton]="false" formControlName="tanggal_terima_surat" name="tanggal_terima_surat"></date-picker>                  
+                </div>
+              </div>              
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="perihal"> Perihal <span style="color:red;">*</span></label>
                 <div class="col-md-9">
                   <ng-select 
                     formControlName="perihal"
@@ -111,7 +114,7 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="text-input">Sifat surat <span style="color:red;">*</span> </label>
+                <label class="col-md-3 form-control-label" for="sifat_surat">Sifat surat <span style="color:red;">*</span> </label>
                 <div class="col-md-9">
                   <ng-select 
                   formControlName="sifat_surat"
@@ -121,24 +124,44 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="email-input">Pengirim <span style="color:red;">*</span></label>
+                <label class="col-md-3 form-control-label" for="status_surat">Status surat <span style="color:red;">*</span> </label>
                 <div class="col-md-9">
-                  <input type="text" id="pengirim" name="pengirim" formControlName="pengirim" class="form-control" placeholder="Pengirim" (change)="onChangeFile($event)" accept="application/pdf" single required>
+                  <ng-select 
+                  formControlName="status_surat"
+                  [items]="list_status_surat"
+                  placeholder="Pilih sifat surat">
+                </ng-select>
+                </div>
+              </div>              
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="pengirim">Pengirim <span style="color:red;">*</span></label>
+                <div class="col-md-9">
+                  <input type="text" id="pengirim" name="pengirim" formControlName="pengirim" class="form-control" placeholder="Nama pengirim" (change)="onChangeFile($event)" accept="application/pdf" single required>
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="password-input">Upload surat <span style="color:red;">*</span></label>
+                <label class="col-md-3 form-control-label" for="posisi_surat">Posisi surat <span style="color:red;">*</span></label>
                 <div class="col-md-9">
-                  <input type="file" id="file" name="file" class="form-control" (change)="onChangeFile($event)" accept="application/pdf"  single required>
+                  <input type="text" id="posisi_surat" name="posisi_surat" formControlName="posisi_surat" class="form-control" placeholder="Posisi surat saat ini">
                 </div>
-              </div>
+              </div>    
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="asal_surat">Asal surat <span style="color:red;">*</span> </label>
+                <div class="col-md-9">
+                  <ng-select 
+                  formControlName="asal_surat"
+                  [items]="list_asal_surat"
+                  placeholder="Pilih asal surat">
+                </ng-select>
+                </div>
+              </div>                          
               </div>
               <div class="col-md-6">
               <div class="garis">
                 <p><span style="font-size:17px">Relasi Surat </span></p>
               </div>
               <div *ngIf = "tipe_surat==='masuk' " class="form-group row">
-                <label class="col-md-3 form-control-label" for="password-input">Tujuan <span style="color:red;">*</span><span class="text-muted">(Jabatan)</span> </label>
+                <label class="col-md-3 form-control-label" for="tujuan_jabatan">Tujuan<span class="text-muted">(Jabatan)</span> </label>
                   <div class="col-md-9">
                   <ng-select  [multiple]="true"
                               formControlName="tujuan_jabatan"
@@ -147,8 +170,8 @@
                   </ng-select>
                 </div>
               </div>
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="password-input">Tujuan<span style="color:red;">*</span> <span class="text-muted">(Orang)</span></label>
+              <div *ngIf = "tipe_surat==='masuk' "class="form-group row">
+                <label class="col-md-3 form-control-label" for="tujuan_orang">Tujuan <span class="text-muted">(Orang)</span></label>
                 <div class="col-md-9">
                   <ng-select  [multiple]="true"
                               [items]="list_tujuan_orang"
@@ -158,20 +181,43 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="password-input">Lampiran</label>
+                <label class="col-md-3 form-control-label" for="lampiran">Lampiran</label>
                 <div class="col-md-9">
                   <ng-select  [multiple]="true"
                               [items]="list_lampiran"
                               formControlName="lampiran"
-                              placeholder="   ketik atau pilih lampiran">
+                              placeholder="   ketik / pilih lampiran">
                   </ng-select>
                 </div>
+              </div>
+              <div *ngIf = "tipe_surat==='masuk' " class="form-group row">
+                <label class="col-md-3 form-control-label" for="kepentingan_surat">Kepentingan <span style="color:red;">*</span> </label>
+                <div class="col-md-9">
+                  <ng-select 
+                  formControlName="kepentingan_surat"
+                  [items]="list_kepentingan_surat"
+                  placeholder="pilih tingkat kepentingan">
+                </ng-select>
+                </div>
+              </div>                
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="keterangan_surat">Keterangan </label>
+                <div class="col-md-9">
+                  <input type="text" id="keterangan_surat" name="keterangan_surat" formControlName="keterangan_surat" class="form-control" placeholder="Keterangan untuk penerima">
+                </div>
               </div>    
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="file">Upload surat <span style="color:red;">*</span></label>
+                <div class="col-md-9">
+                  <input type="file" id="file" name="file" class="form-control" (change)="onChangeFile($event)" accept="application/pdf"  single required>
+                </div>
+              </div>                                    
             </div>    
           </div>
           <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cek()">cek</button>            
             <button type="button" class="btn btn-secondary" (click)="entrySuratModal.hide()">Tutup</button>
-            <button type="button" class="btn btn-primary" (click)="entrySurat()">Simpan</button>
+            <button type="button" class="btn btn-primary" [disabled]="!form.valid"(click)="entrySurat()">Simpan</button>
           </div>                 
         </form>
       </div>
@@ -190,7 +236,7 @@
         </button> 
       </div>
       <div class="modal-body">
-        <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+        <form class="form-horizontal">
           <div *ngFor="let data of dataForPreview">
             <div class="row">
               <div class="col-md-6">
@@ -199,28 +245,49 @@
                 </div>  
                 <div class="form-group row">
                   <label class="col-md-3 form-control-label"><strong>Nomor</strong></label>
-                  <div class="col-md-8 push-1">
-                      {{data.nomor_surat}}
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label class="col-md-3 form-control-label" for="password-input"><strong>Tanggal surat</strong></label>
-                  <div class="col-md-8 push-1">
-                      {{data.tanggal_surat | date}}
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label class="col-md-3 form-control-label" for="password-input"><strong>Tanggal entri</strong></label>
-                  <div class="col-md-8 push-1">
-                      {{data.tanggal_entri_surat | date: 'medium'}}
+                  <div class="col-md-1">
+                    :
+                  </div>                
+                  <div class="col-md-7">
+                    {{data.nomor_surat}}
                   </div>
                 </div>
                 <div class="form-group row">
                   <label class="col-md-3 form-control-label" for="text-input"><strong>Perihal</strong></label>
-                  <div class="col-md-8 push-1">
-                      Masih di aslam
+                  <div class="col-md-1">
+                    :
+                  </div>                               
+                  <div class="col-md-7">
+                      {{data.perihal?.nama_perihal}}
+                  </div>
+                </div>                
+                <div class="form-group row">
+                  <label class="col-md-3 form-control-label" for="password-input"><strong>Tanggal surat</strong></label>
+                  <div class="col-md-1">
+                    :
+                  </div>                  
+                  <div class="col-md-7">
+                      {{data.tanggal_surat | date:'fullDate'}}
                   </div>
                 </div>
+                <div class="form-group row">
+                  <label class="col-md-3 form-control-label" for="password-input"><strong>Tanggal entri</strong></label>
+                  <div class="col-md-1">
+                    :
+                  </div>                               
+                  <div class="col-md-7">
+                      {{data.tanggal_entri_surat | date: 'fullDate'}}> <br/>Pukul : {{data.tanggal_entri_surat | date:'shortTime'}}
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 form-control-label" for="password-input"><strong>Tanggal terima</strong></label>
+                  <div class="col-md-1">
+                    :
+                  </div>                               
+                  <div class="col-md-7">
+                      {{data.tanggal_terima_surat | date: 'fullDate'}}>
+                  </div>
+                </div>                
                 <div class="form-group row">
                   <label class="col-md-3 form-control-label" for="email-input">
                     <div *ngIf="data.tipe_surat === 'keluar'">
@@ -230,17 +297,38 @@
                       <strong>Pengirim</strong>
                     </div>
                   </label>
-                  <div class="col-md-8 push-1">
+                  <div class="col-md-1">
+                    :
+                  </div>                               
+                  <div class="col-md-7">
                     <div *ngIf="data.tipe_surat === 'keluar'">
                       <div *ngFor="let element of data.surat_keluar_penerimas">
                          {{element.nama_penerima}} <br>
                       </div>
                     </div>
                     <div *ngIf="data.tipe_surat === 'masuk' ">
-                      {{data.surat_masuk_pengirim.nama_pengirim}}
+                      {{data.surat_masuk_pengirim?.nama_pengirim}}
                     </div>
                   </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 form-control-label" for="password-input"><strong>Sifat</strong></label>                
+                  <div class="col-md-1">
+                    :
+                  </div>                               
+                  <div class="col-md-7">
+                      {{data.sifat_surat}}          
+                  </div>
                 </div>                  
+                <div class="form-group row">
+                  <label class="col-md-3 form-control-label" for="password-input"><strong>Status</strong></label>                
+                  <div class="col-md-1">
+                    :
+                  </div>                               
+                  <div class="col-md-7">
+                      {{data.status_surat}}          
+                  </div>
+                </div>                                                     
               </div>
               <div class="col-md-6">
                 <div class="garis">
@@ -248,29 +336,51 @@
                 </div>
                 <div class="form-group row">
                   <label class="col-md-3 form-control-label" for="password-input"><strong>Tujuan</strong></label>
-                  <div class="col-md-8 push-1">
-                      Masih di aslam
+                  <div class="col-md-1">
+                    :
+                  </div>                               
+                  <div class="col-md-7">
+                      <ng-container *ngFor = "let tujuan of data.surat_masuk_penerimas; let i = index">
+                        {{tujuan.staff.nama_staff}}, 
+                      </ng-container>
                   </div>
                 </div>
                 <div class="form-group row">
                   <label class="col-md-3 form-control-label" for="password-input"><strong>Tujuan disposisi</strong></label>                
-                  <div class="col-md-8 push-1">
-                      Masih di aslam            
+                  <div class="col-md-1">
+                    :
+                  </div>                               
+                  <div class="col-md-7">
+                      <ng-container *ngFor = "let tujuan of data.surat_masuk_penerimas; let i = index">
+                        <ng-container *ngIf="tujuan.status_disposisi_penerima != 0">
+                          {{tujuan.staff.nama_staff}},  
+                        </ng-container>
+                      </ng-container>                              
                   </div>
-                </div>
+                </div><br/><br/>
                 <div class="form-group row">
-                  <label class="col-md-3 form-control-label" for="password-input"><strong>Status</strong></label>                
-                  <div class="col-md-8 push-1">
-                      {{data.status_surat}}          
+                  <label class="col-md-3 form-control-label" for="password-input"><strong>Lampiran</strong></label>                
+                  <div class="col-md-1">
+                    :
+                  </div>                               
+                  <div class="col-md-7">
+                      <ng-container *ngFor = "let lampiran of data.lampirans; let i = index">
+                        <ng-container *ngIf="lampiran.nama_lampiran != 0">
+                          {{lampiran.judul_lampiran}},  
+                        </ng-container>
+                      </ng-container>                              
                   </div>
-                </div>              
+                </div>    
                 <div class="form-group row">
                   <label class="col-md-3 form-control-label" for="lampiran"><strong>Surat</strong></label>
-                  <div class="col-md-8 push-1">
-                      {{data.file_surat}} 
-                      <a href="assets/fourier1d.pdf" target="_blank">Read more</a>
+                  <div class="col-md-1">
+                    :
+                  </div>                               
+                  <div class="col-md-7">
+                      <a href="assets/fourier1d.pdf" target="_blank">{{data.file_surat}} </a>
                   </div>
-                </div>
+                </div>  
+                                            
               </div>
             </div>   
           </div>
@@ -278,6 +388,8 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="previewModal.hide()">Tutup</button>
+        <button type="button" class="btn btn-secondary" (click)="cek()">cek</button>
+        
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -295,31 +407,33 @@
         </button> 
       </div>
       <div class="modal-body">
-        <form [formGroup]="form" class="form-horizontal" *ngIf="form_type === 1">
+        <form [formGroup]="form" class="form-horizontal" *ngIf="form_type == 1">
           <div class="row">
             <div class="col-md-12">
               <div class="garis">
                 <p> <span style="font-size:17px">Informasi Surat</span></p>
               </div>             
               <div class="form-group row">
-                <label class="col-md-3 form-control-label">Nomor</label>
+                <label class="col-md-3 form-control-label">Nomor <span style="color:red;">*</span></label>
                 <div class="col-md-9">
-                  <input type="text" id="nomor" name="nomor_surat" 
-                  formControlName="nomor_surat" class="form-control" placeholder="nomor">
+                  <input type="text" id="nomor_surat" name="nomor_surat" formControlName="nomor_surat" class="form-control" placeholder="nomor">
+                  <small class="text-muted">Contoh: 197/IT3.7/PP.00.00.00/2017</small>
                 </div>
               </div>          
               <div class="form-group row">
-                <label class="col-md-3 form-control-label">Tanggal surat</label>
+                <label class="col-md-3 form-control-label" for="tanggal_surat">Tanggal surat <span style="color:red;">*</span></label>
                 <div class="col-md-9">
-                  <date-picker
-                  *ngIf="form_type === 1" 
-                  [showClearButton]="false" 
-                  formControlName="tanggal_surat" 
-                  name="tanggal_surat"></date-picker>                  
+                  <date-picker *ngIf = "form_type==1" [showClearButton]="false" formControlName="tanggal_surat" name="tanggal_surat"></date-picker>                  
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="text-input">Perihal</label>
+                <label class="col-md-3 form-control-label" for="tanggal_terima_surat">Tanggal terima surat <span style="color:red;">*</span></label>
+                <div class="col-md-9">
+                  <date-picker *ngIf = "form_type==1" [showClearButton]="false" formControlName="tanggal_terima_surat" name="tanggal_terima_surat"></date-picker>                  
+                </div>
+              </div>              
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="perihal"> Perihal <span style="color:red;">*</span></label>
                 <div class="col-md-9">
                   <ng-select 
                     formControlName="perihal"
@@ -329,37 +443,84 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="pengirim">Pengirim</label>
+                <label class="col-md-3 form-control-label" for="sifat_surat">Sifat surat <span style="color:red;">*</span> </label>
                 <div class="col-md-9">
-                  <input type="text" id="pengirim"
-                  formControlName="pengirim" class="form-control">
+                  <ng-select 
+                  formControlName="sifat_surat"
+                  [items]="list_sifat_surat"
+                  placeholder="Pilih sifat surat">
+                </ng-select>
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="password-input">Upload surat</label>
+                <label class="col-md-3 form-control-label" for="status_surat">Status surat <span style="color:red;">*</span> </label>
                 <div class="col-md-9">
-                  <input type="file" id="file" name="file" class="form-control" (change)="onChangeFile($event)" accept="application/pdf"  single required >
-                  <small class="help-block" style="color:crimson">Silahkan upload ulang jika ingin mengganti file surat</small>                   
+                  <ng-select 
+                  formControlName="status_surat"
+                  [items]="list_status_surat"
+                  placeholder="Pilih sifat surat">
+                </ng-select>
+                </div>
+              </div>              
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="pengirim">Pengirim <span style="color:red;">*</span></label>
+                <div class="col-md-9">
+                  <input type="text" id="pengirim" name="pengirim" formControlName="pengirim" class="form-control" placeholder="Nama pengirim" (change)="onChangeFile($event)" accept="application/pdf" single required>
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="password-input">Lampiran</label>
+                <label class="col-md-3 form-control-label" for="posisi_surat">Posisi surat <span style="color:red;">*</span></label>
+                <div class="col-md-9">
+                  <input type="text" id="posisi_surat" name="posisi_surat" formControlName="posisi_surat" class="form-control" placeholder="Posisi surat saat ini">
+                </div>
+              </div>    
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="asal_surat">Asal surat <span style="color:red;">*</span> </label>
+                <div class="col-md-9">
+                  <ng-select 
+                  formControlName="asal_surat"
+                  [items]="list_asal_surat"
+                  placeholder="Pilih asal surat">
+                </ng-select>
+                </div>
+              </div>     
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="kepentingan_surat">Kepentingan surat <span style="color:red;">*</span> </label>
+                <div class="col-md-9">
+                  <ng-select 
+                  formControlName="kepentingan_surat"
+                  [items]="list_kepentingan_surat"
+                  placeholder="Pilih tingkat kepentingan surat">
+                </ng-select>
+                </div>
+              </div>  
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="lampiran">Lampiran</label>
                 <div class="col-md-9">
                   <ng-select  [multiple]="true"
                               [items]="list_lampiran"
                               formControlName="lampiran"
-                              placeholder="   ketik atau pilih lampiran">
+                              placeholder="   ketik / pilih lampiran">
                   </ng-select>
                 </div>
-              </div>   
-            </div>                
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="editSuratModal.hide()">Tutup</button>
-            <button type="button" class="btn btn-primary">Simpan</button>
-          </div>                 
+              </div>                                         
+              <div class="form-group row">
+                <label class="col-md-3 form-control-label" for="file">Upload surat <span style="color:red;">*</span></label>
+                <div class="col-md-9">
+                  <input type="file" id="file" name="file" class="form-control" (change)="onChangeFile($event)" accept="application/pdf"  single required>
+                </div>
+              </div>                            
+              </div>
+              <div class="col-md-6">                        
+            </div>              
+          </div>               
         </form>
       </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cek()">cek</button>            
+        <button type="button" class="btn btn-secondary" (click)="editSuratModal.hide()">Tutup</button>
+        <button type="button" class="btn btn-primary" [disabled]="!form.valid" (click)="editSurat()">Simpan</button>
+      </div>        
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->

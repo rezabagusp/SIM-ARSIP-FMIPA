@@ -18,10 +18,10 @@
                 <tr>
                   <th>No</th>                  
                   <th>judul</th>
-                  <th>tanggal lampiran</th>
-                  <th>tanggal entri</th>
-                  <th>file</th>
-                  <th>aksi</th>
+                  <th>Tanggal lampiran</th>
+                  <th>Tanggal entri</th>
+                  <th>File</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -91,7 +91,6 @@
               </div>
           </div><br>          
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="cek()">Cek</button>
             <button type="button" class="btn btn-secondary" (click)="entryLampiranModal.hide()">Batal</button>
             <button type="submit" class="btn btn-primary" 
             [disabled]="!form.valid || !fileValid" 

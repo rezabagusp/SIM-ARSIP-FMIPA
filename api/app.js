@@ -12,7 +12,8 @@ var index = require('./routes/index'),
     user = require('./routes/user.route'),
     surat = require('./routes/surat.route'),
     lampiran = require('./routes/lampiran.route'),
-    dataform = require('./routes/dataform.route');
+    dataform = require('./routes/dataform.route')
+    retensi = require('./routes/retensi.route');
 
 var app = express();
 
@@ -32,6 +33,8 @@ app.use('/api/lampiran', lampiran);
 app.use('/api/lampiran/*', lampiran);
 app.use('/api/dataform', dataform);
 app.use('/api/dataform/*', dataform);
+app.use('/api/retensi', retensi);
+app.use('/api/retensi/*', retensi);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

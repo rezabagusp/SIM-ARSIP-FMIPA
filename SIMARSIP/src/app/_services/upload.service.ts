@@ -14,13 +14,12 @@ export class UploadService {
   constructor(private http: Http){
   }
 
-	uploadFile(url, token, files: Array<File>){
+	uploadFile(url, token, files: File){
 		return new Promise((resolve, reject) => {
 			var formData: any = new FormData();
 			var xhr = new XMLHttpRequest();
-			for(var i = 0; i < files.length; i++) {
-				formData.append("file_lampiran" ,files[i],files[i].name);
-			}
+
+			formData.append("file_lampiran" ,files,files.name);			
 
 			xhr.onreadystatechange = function () {
 				if (xhr.readyState == 4) {

@@ -23,7 +23,7 @@ function Token() {
                 }
             });
         } else {
-            res.json({status: false, message: 'No token provided'});
+            res.json({status: false, message: 'No token provided', err_code: 401});
         }
     }
 

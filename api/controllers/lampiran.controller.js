@@ -11,9 +11,13 @@ var Lampiran = sequelize.import(__dirname + '/../models/lampiran.model');
 function LampiranControllers() {
 	this.getAll = function(req, res) {	
 		Lampiran
-			.findAll()
+			.findAll({
+				order: [
+					['createdAt', 'DESC']
+				]
+			})
 			.then(function(result) {
-				if (result == null) {
+				if (result == 0 || result == null) {
 					res.json({status: false, message: 'Lampiran tidak ditemukan!', err_code: 404});
 				}
 				res.json({status: true, message: 'Ambil semua lampiran berhasil!', data: result});
@@ -37,7 +41,9 @@ function LampiranControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0) {
+						res.json({status: true, message: 'Lampiran tidak ditemukan!', data: result});
+					} else if (result == null) {
 						res.json({status: false, message: 'Lampiran tidak ditemukan!', err_code: 404});
 					} else {
 						res.json({status: true, message: 'Ambil satu lampiran berhasil!', data: result});
@@ -63,8 +69,10 @@ function LampiranControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
-						res.json({status: true, message: 'Lampiran tidak ditemukan!', err_code: 404});
+					if (result == 0) {
+						res.json({status: true, message: 'Lampiran tidak ditemukan!', data: result});
+					} else if (result == null) {
+						res.json({status: false, message: 'Lampiran tidak ditemukan!', err_code: 404, err: err});
 					} else {
 						res.json({status: true, message: 'Ambil lampiran dari surat berhasil!', data: result});
 					}
@@ -158,7 +166,7 @@ function LampiranControllers() {
       				}
       			})
       			.then(function(result) {
-      				if (result == null) {
+      				if (result == 0 || result == null) {
       					res.json({status: false, message: 'Lampiran tidak ditemukan!', err_code: 404});
       				} else {
       					Lampiran
@@ -198,7 +206,7 @@ function LampiranControllers() {
 					}
 				})
 				.then(function(result) {
-					if (result == null) {
+					if (result == 0 || result == null) {
 						res.json({status: false, message: 'Lampiran tidak ditemukan!', err_code: 404});
 					} else {
 						var filename = result.dataValues.file_lampiran;
@@ -214,12 +222,12 @@ function LampiranControllers() {
 							})
 							.catch(function(err) {
 								res.json({status: false, message: 'Lampiran gagal dihapus!', err_code: 400, err: err});
-							})
+							});
 					}
 				})
 				.catch(function(err) {
 					res.json({status: false, message: 'Lampiran gagal ditemukan!', err_code: 400, err: err});
-				})
+				});
 			
 		}
 	}

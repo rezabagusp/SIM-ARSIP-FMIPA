@@ -31,6 +31,7 @@ class Mailer{
     constructor() {
         this.sender = '"SIMARSIP FMIPA" <miqdadfawwaz95@gmail.com>'
         this.receivers = []
+        this.priority = ''
         this.subject = ''
         this.attachments = []
         this.html = ''
@@ -39,12 +40,20 @@ class Mailer{
     redefined() {
         this.sender = '"SIMARSIP FMIPA" <miqdadfawwaz95@gmail.com>'
         this.receivers = []
+        this.priority = ''
         this.subject = ''
         this.attachments = []
         this.html = ''
     }
 
-    setHtmlSurat(surat, status) {
+    setHtmlSurat(surat, status, keterangan) {
+        if (surat.dataValues.kepentingan_surat == 'Segera') {
+            this.priority = 'high'
+            this.subject = '[PENTING] Surat Masuk | SIMARSIP FMIPA'
+        } else {
+            this.priority = 'normal'
+            this.subject = 'Surat Masuk | SIMARSIP FMIPA'
+        }
         this.html += '<p>Ada surat masuk untuk Anda di SIMARSIP. Silahkan cek lampiran email ini. Surat fisik ada di Tata Usaha. Terima kasih.<p>'
         if (status > 0) {
             this.html += `
@@ -54,12 +63,13 @@ class Mailer{
         }
         this.html += `
             <p>Nomor: ` + surat.dataValues.nomor_surat + `</p>
+            <p>Judul: ` + surat.dataValues.judul_surat + `</p>
             <p>Perihal: ` + surat.dataValues.perihal.dataValues.nama_perihal + `</p>
             <p>Pengirim: ` + surat.dataValues.surat_masuk_pengirim.dataValues.nama_pengirim + `</p>
             <p>Tanggal surat: ` + surat.dataValues.tanggal_surat + `</p>
             <p>Tingkat kepentingan: ` + surat.dataValues.kepentingan_surat + `</p>
             <p>Sifat: ` + surat.dataValues.sifat_surat + `</p><br>
-            <p>Catatan: ` + surat.dataValues.keterangan_surat + `</p><br>
+            <p>Catatan: ` + keterangan + `</p><br>
             <p>Terima kasih.</p>
             <p>SIMARSIP FMIPA</p>
         `
@@ -76,7 +86,7 @@ class Mailer{
 
     sendLupaPassword(id, token, res) {
         this.redefined();
-        this.subject = 'Lupa Password | SIMARSIP';
+        this.subject = 'Lupa Password | SIMARSIP FMIPA';
 
         /*Get user first*/
         User
@@ -94,9 +104,8 @@ class Mailer{
             });
     }
 
-    sendSurat(id, status, res) {
+    sendSurat(id, status, keterangan, res) {
         this.redefined();
-        this.subject = 'Surat Masuk | SIMARSIP';
 
         /*Get surat and lampiran first*/
         Surat
@@ -115,7 +124,7 @@ class Mailer{
                 if (surat == 0 || surat == null) {
                     res.json({status: false, message: 'Surat masuk tidak ditemukan!', err_code: 400});
                 } else {
-                    this.setHtmlSurat(surat, status)
+                    this.setHtmlSurat(surat, status, keterangan)
                     this.attachments.push({filename: surat.dataValues.file_surat, path: __dirname + '/public/uploads/surat/' + surat.dataValues.file_surat});
                     Lampiran
                         .findAll({
@@ -166,6 +175,7 @@ class Mailer{
         var mailOptions = {
             from: this.sender, // sender address
             to: this.receivers, // list of receivers
+            priority: this.priority,
             subject: this.subject, // Subject line
             html: this.html, // html body
             attachments: this.attachments
@@ -174,7 +184,7 @@ class Mailer{
         // send mail with defined transport object
         transporter.sendMail(mailOptions, function(err, info) {
             if (err) {
-                res.json({status: false, message: 'Tambah surat gagal! Email gagal dikirimkan!', err_code: 400, err: err});
+                res.json({status: false, message: 'Tambah surat berhasil! Email gagal dikirimkan!', err_code: 400, err: err});
             } else {
                 res.json({status: true, message: 'Tambah surat berhasil! Email berhasil dikirimkan!', data: info});
             }

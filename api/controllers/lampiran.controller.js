@@ -17,10 +17,13 @@ function LampiranControllers() {
 				]
 			})
 			.then(function(result) {
-				if (result == 0 || result == null) {
+				if (result == null) {
 					res.json({status: false, message: 'Lampiran tidak ditemukan!', err_code: 404});
+				} else if (result == 0) {
+					res.json({status: true, message: 'Lampiran tidak ditemukan!', data: result});
+				} else {
+					res.json({status: true, message: 'Ambil semua lampiran berhasil!', data: result});
 				}
-				res.json({status: true, message: 'Ambil semua lampiran berhasil!', data: result});
 			})
 			.catch(function(err) {
 				res.json({staus: false, message: 'Ambil semua lampiran gagal!', err_code: 400, err: err});

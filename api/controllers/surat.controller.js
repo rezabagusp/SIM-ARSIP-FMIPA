@@ -333,7 +333,7 @@ function SuratControllers() {
 			penerima = req.body.penerima_surat,
 			kirim = req.body.kirim_surat;
 
-		if (nomor == undefined || perihal  == undefined || tanggal  == undefined || tanggal_terima  == undefined || !tanggal_entri  == undefined || tipe  == undefined || status  == undefined || file  == undefined || pengirim == undefined || penerima == undefined) {
+		if (nomor == undefined || perihal  == undefined || tanggal  == undefined || tanggal_entri  == undefined || tipe  == undefined || file  == undefined || pengirim == undefined || penerima == undefined) {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else if (asal == 'Internal' && !validateNomorSurat(nomor)) {
 			res.json({status: false, message: 'Format nomor surat internal tidak sesuai!', err_code: 400});
@@ -421,7 +421,7 @@ function SuratControllers() {
 							Surat_keluar_pengirim
 								.create({
 									surat_id: id,
-									staff_id: pengirim[0].nama
+									staff_id: pengirim[0].id
 								})
 								.catch(function(err) {
 									res.json({status: false, message: 'Pemasangan surat keluar dengan pengirim gagal!', err_code: 400, err: err});
@@ -432,7 +432,12 @@ function SuratControllers() {
 								Surat_keluar_penerima
 									.create({
 										surat_id: id,
-										nama_penerima: penerima[i].id
+										nama_penerima: penerima[i].nama
+									})
+									.then(function(result){
+										if (i == (penerima.length - 1)) {
+											res.json({status: true, message: 'Tambah surat keluar berhasil!'});
+										}
 									})
 									.catch(function(err) {
 										res.json({status: false, message: 'Pemasangan surat keluar dengan penerima gagal!', err_code: 400, err: err});
@@ -622,6 +627,7 @@ function SuratControllers() {
 	this.update = function(req, res) {
 		var id = req.body.id_surat,
 			nomor = req.body.nomor_surat,
+			judul = req.body.judul_surat,
 			perihal = req.body.perihal_surat,
 			tanggal = req.body.tanggal_surat,
 			tanggal_terima = req.body.tanggal_terima_surat,
@@ -651,6 +657,7 @@ function SuratControllers() {
 						Surat
 							.update({
 								nomor_surat: nomor,
+								judul_surat: judul,
 						        tanggal_surat: tanggal,
 						        tanggal_terima_surat: tanggal_terima,
 						        tanggal_entri_surat: tanggal_entri,

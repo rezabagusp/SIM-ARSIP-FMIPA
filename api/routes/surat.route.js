@@ -27,6 +27,14 @@ router.post('/get/tipe', function(req, res) {
 	surat.getByTipe(req, res);
 });
 
+router.post('/count/all', function(req, res) {
+	surat.countAll(req, res);
+});
+
+router.post('/count/tipe', function(req, res) {
+	surat.countByTipe(req, res);
+});
+
 router.post('/get/nomor', function(req, res) {
 	surat.getByNomor(req, res);
 });

@@ -44,6 +44,38 @@ var splitNomorSurat = function(nomor, result) {
 }
 
 function SuratControllers() {
+	this.countAll = function(req, res) {
+		Surat
+			.count()
+			.then(function(result) {
+				res.json({status: true, message: 'Hitung surat berhasil!', data: result});
+			})
+			.catch(function(err) {
+				res.json({status: false, message: 'Hitung surat gagal!', err_code: 400, err: err});
+			})
+	}
+
+	this.countByTipe = function(req, res) {
+		var tipe = req.body.tipe_surat;
+
+		if (tipe == undefined) {
+			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
+		} else {
+			Surat
+				.count({
+					where: {
+						tipe_surat: tipe
+					}
+				})
+				.then(function(result) {
+					res.json({status: true, message: 'Hitung surat dengan tipe berhasil!!', data: result});
+				})
+				.catch(function(err) {
+					res.json({status: false, message: 'Hitung surat dengan tipe gagal!', err_code: 400, err: err});
+				})
+		}
+	}
+	
 	// fungsi ambil surat sudah ditest
 	this.getOne = function(req, res) {
 		var id = req.body.id_surat;

@@ -26,7 +26,7 @@
             <td>{{ unitKerja.kode_unit_kerja }}</td>
             <td style="text-align: center">
               <button class="btn btn-danger btn-sm">Hapus</button>
-              <button class="btn btn-primary btn-sm" (click)="clickRow(unitKerja)">Edit</button>
+              <button class="btn btn-primary btn-sm">Edit</button>
             </td>
           </tr>
         </tbody>
@@ -34,7 +34,7 @@
     </div>
   </div>
 </div>
-<!-- Entri modal -->
+
 <div bsModal #unitKerjaModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" 
   aria-labelledby="unitKerjaModal" aria-hidden="true"
   [config]="{backdrop: 'static'}">
@@ -66,41 +66,6 @@
             formControlName="kodeUnitKerja">
           </div>
           <button class="btn btn-primary pull-right" (click)="onSubmit()">Tambah</button>
-        </form>
-      </div>
-    </div>
-    <!-- /.modal-content -->
-  </div>
-  <!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
-<!-- Edit modal -->
-<div bsModal #unitKerjaModalEdit="bs-modal" class="modal fade" tabindex="-1" role="dialog" 
-  aria-labelledby="unitKerjaModalEdit" aria-hidden="true"
-  [config]="{backdrop: 'static'}">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 style="text-align:center;">Tambah Unit Kerja</h4>
-        <button type="button" class="close" (click)="unitKerjaModalEdit.hide()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form [formGroup]="unitKerjaForm">
-          <div class="form-group">
-            <label for="namaUnitKerja">Nama unit kerja</label>
-            <input type="text" class="form-control" id="namaUnitKerja" placeholder="Masukkan nama unit kerja" formControlName="namaUnitKerja">
-          </div>
-          <div class="form-group">
-            <label for="akronimUnitKerja">Akronim unit kerja</label>
-            <input type="text" class="form-control" id="akronimUnitKerja" placeholder="Masukkan akronim unit kerja" formControlName="akronimUnitKerja">
-          </div>
-          <div class="form-group">
-            <label for="kodeUnitKerja">Kode unit kerja</label>
-            <input type="text" class="form-control" id="kodeUnitKerja" placeholder="Masukkan kode unit kerja" formControlName="kodeUnitKerja">
-          </div>
-          <button class="btn btn-primary pull-right" (click)="onUpdate()">Edit</button>
         </form>
       </div>
     </div>

@@ -13,11 +13,10 @@
         </div>
         <div class="card-block">
           <div class="col-lg-12">
-            <table datatable class="row-border hover" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+            <table datatable class="row-border compact" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
               <thead>
-                <tr>
-                  <th>No</th>                  
-                  <th>judul</th>
+                <tr>                
+                  <th>Judul lampiran</th>
                   <th>Tanggal lampiran</th>
                   <th>Tanggal entri</th>
                   <th>File</th>
@@ -26,11 +25,10 @@
               </thead>
               <tbody>
                 <tr *ngFor="let lampiran of list_lampiran; let i = index">
-                  <td>{{i+1}}</td>
                   <td>{{lampiran.judul_lampiran}}</td>
-                  <td>{{lampiran.tanggal_lampiran | date}}</td>
-                  <td>{{lampiran.tanggal_entri_lampiran | date:'medium'}}</td>                  
-                  <td>{{lampiran.file_lampiran}}</td>
+                  <td>{{lampiran.tanggal_lampiran | date:'dd/MM/yyyy'}}</td>
+                  <td>{{lampiran.tanggal_entri_lampiran | date:'dd/MM/yyyy'}}, {{lampiran.tanggal_entri_lampiran | date:'shortTime'}}</td>                  
+                  <td><a href="assets/fourier1d.pdf" target="_blank" >{{lampiran.file_lampiran}}</a> </td>
                   <td>
                     <span>
                       <a href="javascript:void(0)" 
@@ -57,7 +55,7 @@
 </div>
 
 <!-- form entri lampiran -->
-<div bsModal #entryLampiranModal="bs-modal" class="modal fade" style="" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div bsModal #entryLampiranModal="bs-modal" [config]="{'backdrop':'static'}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="entryLampiranModal" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -66,7 +64,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" >
         <form [formGroup]="form" (submit)="submit()" class="form-horizontal" novalidate>
           <div class="form-group row">
             <label class="col-md-3 form-control-label" for="text-input">Judul</label>
@@ -93,8 +91,7 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" (click)="entryLampiranModal.hide()">Batal</button>
             <button type="submit" class="btn btn-primary" 
-            [disabled]="!form.valid || !fileValid" 
-            (click)="entryLampiranModal.hide()" >Simpan</button>            
+            [disabled]="!form.valid || !fileValid" >Simpan</button>            
           </div>          
         </form>
       </div>
@@ -102,7 +99,7 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div bsModal #editLampiranModal="bs-modal" class="modal fade" style="" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div bsModal #editLampiranModal="bs-modal" [config]="{backdrop:'static'}" class="modal fade" style="" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">

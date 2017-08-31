@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Subject } from 'rxjs/Rx'; // use for datatables\
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
@@ -7,14 +7,20 @@ import { AdminService } from './../../_services/admin.service';
 import { DataService } from './../../_services/data.service';
 import { UploadService } from './../../_services/upload.service';
 
+import { ModalDirective } from 'ngx-bootstrap/modal/modal.component';
+import { LOCALE_ID } from '@angular/core';
 
 @Component({
   selector: 'app-lampiran',
   templateUrl: './lampiran.component.html',
-  styleUrls: ['./../surat/surat.component.scss']
+  styleUrls: ['./../surat/surat.component.scss'],
+  providers: [{ provide: LOCALE_ID, useValue: "id" }], //replace "en-US" with your locale]  
+  
 })
 export class LampiranComponent implements OnInit {
-  
+  @ViewChild('editLampiranModal') editLampiranModal: ModalDirective;
+  @ViewChild('entryLampiranModal') entryLampiranModal: ModalDirective;    
+
   // define angular dateikcer for work 0 add, 1 edit
   form_type = 0;
 
@@ -56,7 +62,8 @@ export class LampiranComponent implements OnInit {
     this.dtOptions = {
       pagingType: 'full_numbers',
       pageLength: 10,
-      retrieve: true
+      retrieve: true,
+      order: [2, 'desc']      
     };    
     this.initForm();
     this.getAllLampiran();
@@ -73,7 +80,6 @@ export class LampiranComponent implements OnInit {
     this.fileValid=false; // for add lampiran only
     this.form.controls.judul_lampiran.setValue('' ,  { onlySelf: true });    
     this.form.controls.tanggal_lampiran.setValue( new Date().toISOString().substring(0, 10) ,  { onlySelf: true });
-
   }
 
   changeFormType(value){
@@ -97,7 +103,9 @@ export class LampiranComponent implements OnInit {
         if(data.status){
           this.dtTrigger.next();
           this.ngOnInit();
+          this.resetForm();
           this.data.showSuccess(data.message)
+          this.entryLampiranModal.hide();
         }
         else{
           this.data.showError(data.message)
@@ -124,6 +132,8 @@ export class LampiranComponent implements OnInit {
           this.dtTrigger.next();
           this.data.showSuccess(data.message);
           this.ngOnInit();
+          this.resetForm();
+          this.editLampiranModal.hide();
         }
         else
           this.data.showError(data.message)

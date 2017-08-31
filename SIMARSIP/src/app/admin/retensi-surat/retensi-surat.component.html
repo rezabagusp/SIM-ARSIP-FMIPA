@@ -12,23 +12,27 @@
             <table datatable class="row-border hover" [dtOptions]="dtOptions"  [dtTrigger]="dtTrigger" (click)="large2Modal.show()">
               <thead>
                 <tr>
-                  <th>Nomor</th>       
-                  <th>Tgl surat</th>
-                  <th>Tgl entri</th>
-                  <th>Perihal</th>
-                  <th>Jenis surat</th>
-                  <th>Status</th>            
+                  <th>Nomor Surat</th>       
+                  <th>Tanggal Surat</th>
+                  <th>Tanggal Terima</th>
+                  <th>Tipe Surat</th>
+                  <th>Status</th>
+                  <th>Aksi</th>            
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let data of datalist">
-                  <td>{{data.id}}</td>
+                  <td>173</td>
                   <td>17/8/1945</td>
                   <td>27/8/1945</td>
-                  <td>{{data.completed}}</td>
-                  <td>Jenis surat</td>
+                  <td>Masuk</td>
                   <td>
-                      <span class="badge badge-danger">INAKTIF</span>                      
+                    <span class="badge badge-danger">INAKTIF</span>
+                    <span class="badge badge-success">AKTIF</span>                    
+                  </td>
+                  <td>
+                    <button class="btn btn-success btn-sm">Aktif</button>
+                    <button class="btn btn-danger btn-sm">Inaktif</button>
                   </td>                 
                 </tr>
               </tbody>

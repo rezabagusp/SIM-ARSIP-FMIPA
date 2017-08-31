@@ -33,20 +33,17 @@ export class DataService {
   public url_kode_surat_get = 'http://localhost:3000/api/dataform/get/kode-surat'  
   public url_subjenis_surat_get = 'http://localhost:3000/api/dataform/get/subjenis_surat'
   public url_subsubjenis_surat_get = 'http://localhost:3000/api/dataform/get/subsubjenis-surat'
-  // Super admin
+  
+  public url_staff_add = 'http://localhost:3000/api/dataform/add/staff';
+  public url_jabatan_add = 'http://localhost:3000/api/dataform/add/jabatan';
+  public url_perihal_add = 'http://localhost:3000/api/dataform/add/perihal';
+
+  public url_staff_jabatan_all_get = 'http://localhost:3000/api/dataform/get/jabatan/staff/all';
   public url_unitkerja_all_get = 'http://localhost:3000/api/dataform/get/unitkerja/all';
   public url_unitkerja_add = 'http://localhost:3000/api/dataform/add/unitkerja';
-  public url_unitkerja_edit = 'http://localhost:3000/api/dataform/edit/unitkerja';
-  public url_staff_add = 'http://localhost:3000/api/dataform/add/staff';
+
   public url_staff_edit = 'http://localhost:3000/api/dataform/edit/staff';
   public url_staff_delete = 'http://localhost:3000/api/dataform/delete/staff';
-  public url_staff_jabatan_all_get = 'http://localhost:3000/api/dataform/get/jabatan/staff/all';
-  public url_jabatan_add = 'http://localhost:3000/api/dataform/add/jabatan';
-  public url_jabatan_edit = 'http://localhost:3000/api/dataform/edit/jabatan';
-  public url_jabatan_delete = 'http://localhost:3000/api/dataform/delete/jabatan';
-  public url_perihal_add = 'http://localhost:3000/api/dataform/add/perihal';
-  public url_perihal_edit = 'http://localhost:3000/api/dataform/edit/perihal';
-  public url_perihal_delete = 'http://localhost:3000/api/dataform/delete/perihal';
 
 
 

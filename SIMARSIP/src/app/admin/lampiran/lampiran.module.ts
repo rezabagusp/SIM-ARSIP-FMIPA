@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LampiranRoutingModule } from './lampiran.routing';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -18,6 +18,7 @@ import { LampiranComponent } from './lampiran.component';
     imports: [
         CommonModule, 
         FormsModule, 
+        ReactiveFormsModule,
         LampiranRoutingModule, 
         DataTablesModule,
         SelectModule,

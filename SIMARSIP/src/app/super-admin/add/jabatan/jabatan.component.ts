@@ -14,16 +14,13 @@ import { AdminService } from './../../../_services/admin.service';
 })
 export class JabatanComponent implements OnInit {
   @ViewChild('jabatanModal') modal: ModalDirective;
-  @ViewChild('jabatanModalEdit') modalEdit: ModalDirective;
-
-  private idJabatan: number;
   public jabatanForm:FormGroup;
-  public jabatanData;
   // datatables
   public dtOptions: DataTables.Settings = {};
   public dtTrigger: Subject<any> = new Subject();
+  public jabatanData;
   public numberCols: Array<number> = [];
-  
+
   constructor(
     private fb: FormBuilder,
     private dataService: DataService,
@@ -44,7 +41,7 @@ export class JabatanComponent implements OnInit {
     this.getJabatanData();
   }
 
-  public getJabatanData() {
+  getJabatanData() {
     let url = this.dataService.url_jabatan_get;
     let token = this.dataService.token;
     this.adminService.getTujuanJabatan(url, token)
@@ -62,7 +59,7 @@ export class JabatanComponent implements OnInit {
       });
   }
 
-  public onSubmit() {
+  onSubmit() {
     let url = this.dataService.url_jabatan_add;
     let data = {
       nama_jabatan: this.jabatanForm.value.namaJabatan
@@ -76,63 +73,7 @@ export class JabatanComponent implements OnInit {
           this.getJabatanData();
         }
       })
-  }
-  public onUpdate() {
-    let url = this.dataService.url_jabatan_edit;
-    let token = this.dataService.token;
-    let data = {
-      id_jabatan: this.idJabatan,
-      nama_jabatan: this.jabatanForm.value.namaJabatan
-    };
-    let body = JSON.stringify(data);
-    this.adminService.postSuperAdmin(url, token, body)
-      .subscribe(data => {
-        if (data.status) {
-          this.modalEdit.hide();
-          this.dataService.showSuccess(data.message);
-          this.getJabatanData();
-        } else {
-          this.dataService.showError(data.message);
-        }
-      });
+
   }
 
-  public onDelete(id: number) {
-    let url = this.dataService.url_jabatan_delete;
-    let token = this.dataService.token;
-    let data = {
-      id_jabatan: id
-    }
-    let body = JSON.stringify(data);
-    this.deleteConfirm()
-      .then((res) => {
-        this.adminService.postSuperAdmin(url, token, data)
-          .subscribe(data => {
-            if (data.status) {
-              this.dataService.showSuccess(data.message);
-              this.getJabatanData();
-            } else {
-              this.dataService.showError(data.message);
-            }
-          })
-      })
-  }
-
-  private deleteConfirm() {
-    return swal({
-      title: 'Apakah anda yakin?',
-      text: "Anda tidak dapat mengembalikkan data!",
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Ya, hapus!'
-    })
-  }
-
-  public clickRow(data) {
-    this.idJabatan = data.id;
-    this.jabatanForm.controls.namaJabatan.setValue(data.nama_jabatan);
-    this.modalEdit.show();
-  }
 }

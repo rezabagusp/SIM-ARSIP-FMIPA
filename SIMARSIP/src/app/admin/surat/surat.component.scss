@@ -6,7 +6,7 @@
 .paksa{
     display: block;
 width: 100%;
-padding: 0.5rem 1rem;
+padding: -0.5rem 1rem;
 font-size: 0.875rem;
 line-height: 1.25;
 color: #607d8b;
@@ -28,7 +28,16 @@ transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
     animation: spin 2s linear infinite;
 }
 
+.set-width{
+    /* new custom width */
+    width: 1000px;
+    /* must be half of the width, minus scrollbar on the left (30px) */
+    left: -105px
+}
+
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+
 }

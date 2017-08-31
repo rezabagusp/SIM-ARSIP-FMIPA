@@ -13,9 +13,12 @@ export class FullLayoutComponent implements OnInit {
 
   public disabled = false;
   public status: {isopen: boolean} = {isopen: false};
+  private role;
 
-  constructor(private auth: AuthenticationService, private router:Router){
+  constructor(private auth: AuthenticationService, private router:Router, private data: DataService){
     console.log("layout dasar")
+    this.role = this.data.role;
+    console.log('decode', this.data.decode)
   }
   public toggled(open: boolean): void {
     console.log('Dropdown is now: ', open);

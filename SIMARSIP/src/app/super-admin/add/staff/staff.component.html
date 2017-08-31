@@ -33,7 +33,7 @@
     </div>
   </div>
 </div>
-<!-- Entri modal -->
+
 <div bsModal #staffModal="bs-modal" class="modal fade" 
   tabindex="-1" role="dialog" aria-labelledby="disposisiModal" aria-hidden="true"
   [config]="{backdrop: 'static'}">
@@ -70,9 +70,7 @@
   <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
-<!-- Edit modal -->
-<div bsModal #staffModalEdit="bs-modal" class="modal fade" tabindex="-1" 
-  role="dialog" aria-labelledby="disposisiModal" aria-hidden="true"
+<div bsModal #staffModalEdit="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="disposisiModal" aria-hidden="true"
   [config]="{backdrop: 'static'}">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -86,23 +84,19 @@
         <form [formGroup]="staffForm">
           <div class="form-group">
             <label for="namaStaff">Nama staff</label>
-            <input type="text" class="form-control" id="namaStaff" 
-            placeholder="Masukkan nama staff" formControlName="namaStaff">
+            <input type="text" class="form-control" id="namaStaff" placeholder="Masukkan nama staff" formControlName="namaStaff">
           </div>
           <div class="form-group">
             <label for="jabatanStaff">Jabatan staff</label>
-            <ng-select [items]="listJabatanStaff" placeholder="Pilih jabatan" 
-            formControlName="jabatanStaff">
+            <ng-select [items]="listJabatanStaff" placeholder="Pilih jabatan" formControlName="jabatanStaff">
             </ng-select>
           </div>
           <div class="form-group">
             <label for="emailStaff">Email staff</label>
-            <input type="email" class="form-control" id="exampleInputEmail1" 
-              aria-describedby="emailHelp" placeholder="Masukkan email staff"
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Masukkan email staff"
               formControlName="emailStaff">
           </div>
-          <button class="btn btn-primary pull-right" [disabled]="!staffForm.valid" 
-          (click)="updateStaff()">Simpan</button>
+          <button class="btn btn-primary pull-right" [disabled]="!staffForm.valid" (click)="updateStaff()">Simpan</button>
         </form>
       </div>
     </div>

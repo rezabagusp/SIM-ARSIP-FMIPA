@@ -1,3 +1,4 @@
+import { CekComponent } from './cek/cek.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { FullLayoutComponent } from '../layouts/full-layout.component';
@@ -51,6 +52,13 @@ const routes: Routes = [
           title: 'Ratensi Surat'
         }
       },
+      {
+        path: 'cek',
+        component: CekComponent,
+        data: {
+          title: 'Cek Component'
+        }
+      },      
       {
         path: 'sasaranmutu',
         loadChildren: './sasaran-mutu/sasaran-mutu.module#SasaranMutuModule'

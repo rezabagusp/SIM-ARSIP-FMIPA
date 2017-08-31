@@ -21,8 +21,8 @@
             <td>{{ perihal.id }}</td>
             <td>{{ perihal.nama_perihal }}</td>
             <td style="text-align: center">
-              <button class="btn btn-danger btn-sm" (click)="onDelete(perihal.id)">Hapus</button>
-              <button class="btn btn-primary btn-sm" (click)="clickRow(perihal)">Edit</button>
+              <button class="btn btn-danger btn-sm">Hapus</button>
+              <button class="btn btn-primary btn-sm">Edit</button>
             </td>
           </tr>
         </tbody>
@@ -30,7 +30,7 @@
     </div>
   </div>
 </div>
-<!-- Entri modal -->
+
 <div bsModal #perihalModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="disposisiModal" aria-hidden="true"
   [config]="{backdrop: 'static'}">
   <div class="modal-dialog modal-lg" role="document">
@@ -48,33 +48,6 @@
             <input type="text" class="form-control" id="namaPerihal" placeholder="Masukkan perihal" formControlName="namaPerihal">
           </div>
           <button class="btn btn-primary pull-right" (click)="onSubmit()">Tambah</button>
-        </form>
-      </div>
-    </div>
-    <!-- /.modal-content -->
-  </div>
-  <!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
-<!-- Edit modal -->
-<div bsModal #perihalModalEdit="bs-modal" class="modal fade" tabindex="-1" role="dialog" 
-  aria-labelledby="perihalModalEdit" aria-hidden="true"
-  [config]="{backdrop: 'static'}">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 style="text-align:center;">Tambah Perihal</h4>
-        <button type="button" class="close" (click)="perihalModalEdit.hide()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form [formGroup]="perihalForm">
-          <div class="form-group">
-            <label for="namaPerihal">Nama perihal</label>
-            <input type="text" class="form-control" id="namaPerihal" placeholder="Masukkan perihal" formControlName="namaPerihal">
-          </div>
-          <button class="btn btn-primary pull-right" (click)="onUpdate()">Edit</button>
         </form>
       </div>
     </div>

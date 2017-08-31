@@ -13,9 +13,6 @@ import { AdminService } from './../../../_services/admin.service';
 })
 export class PerihalComponent implements OnInit {
   @ViewChild('perihalModal') modal: ModalDirective;
-  @ViewChild('perihalModalEdit') modalEdit: ModalDirective;
-
-  private idPerihal: number;
   public perihalForm:FormGroup;
   public perihalData;
   public dtOptions: DataTables.Settings = {};
@@ -74,62 +71,8 @@ export class PerihalComponent implements OnInit {
       });
   }
 
-  public onUpdate() {
-    const url = this.dataService.url_perihal_edit;
-    const token = this.dataService.token;
-    let data = {
-      id_perihal: this.idPerihal,
-      nama_perihal: this.perihalForm.value.namaPerihal
-    }
-    let body = JSON.stringify(data);
-    this.adminService.postSuperAdmin(url, token, body)
-      .subscribe(data => {
-        if (data.status) {
-          this.modalEdit.hide();
-          this.dataService.showSuccess(data.message);
-          this.getPerihalData();
-        } else {
-          this.dataService.showError(data.message);
-        }
-      });
-  }
-
-  public onDelete(id: number) {
-    let url = this.dataService.url_perihal_delete;
-    let token = this.dataService.token;
-    let data = {
-      id_perihal: id
-    }
-    let body = JSON.stringify(data);
-    this.deleteConfirm()
-      .then((res) => {
-        this.adminService.postSuperAdmin(url, token, data)
-          .subscribe(data => {
-            if (data.status) {
-              this.dataService.showSuccess(data.message);
-              this.getPerihalData();
-            } else {
-              this.dataService.showError(data.message);
-            }
-          })
-      })
-  }
-
-  private deleteConfirm() {
-    return swal({
-      title: 'Apakah anda yakin?',
-      text: "Anda tidak dapat mengembalikkan data!",
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Ya, hapus!'
-    })
-  }
-
   clickRow(data) {
-    this.idPerihal = data.id;
-    this.perihalForm.controls.namaPerihal.setValue(data.nama_perihal);
-    this.modalEdit.show();
+    console.log('row', data)
+    this.perihalForm.controls.namaStaff.setValue('', { onlySelf: true });
   }  
 }

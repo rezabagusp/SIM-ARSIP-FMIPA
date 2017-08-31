@@ -626,6 +626,7 @@ function SuratControllers() {
 	this.update = function(req, res) {
 		var id = req.body.id_surat,
 			nomor = req.body.nomor_surat,
+			judul = req.body.judul_surat,
 			perihal = req.body.perihal_surat,
 			tanggal = req.body.tanggal_surat,
 			tanggal_terima = req.body.tanggal_terima_surat,
@@ -655,6 +656,7 @@ function SuratControllers() {
 						Surat
 							.update({
 								nomor_surat: nomor,
+								judul_surat: judul,
 						        tanggal_surat: tanggal,
 						        tanggal_terima_surat: tanggal_terima,
 						        tanggal_entri_surat: tanggal_entri,

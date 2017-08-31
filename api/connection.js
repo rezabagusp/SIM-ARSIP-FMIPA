@@ -1,6 +1,6 @@
 var Sequelize = require('sequelize');
 
-module.exports = new Sequelize('simarsip', 'root', '', {
+module.exports = new Sequelize('simarsip', 'root', 'gr1mr34p3r', {
 	host: 'localhost',
 	dialect: 'mysql',
 	pool: {

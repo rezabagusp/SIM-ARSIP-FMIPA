@@ -333,10 +333,8 @@ function SuratControllers() {
 			penerima = req.body.penerima_surat,
 			kirim = req.body.kirim_surat;
 
-		if (nomor == undefined || perihal  == undefined || tanggal  == undefined || tanggal_terima  == undefined || !tanggal_entri  == undefined || tipe  == undefined || status  == undefined || file  == undefined || pengirim == undefined || penerima == undefined) {
+		if (nomor == undefined || perihal  == undefined || tanggal  == undefined || tanggal_entri  == undefined || tipe  == undefined || status  == undefined || file  == undefined || pengirim == undefined || penerima == undefined) {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
-		} else if (asal == 'Internal' && !validateNomorSurat(nomor)) {
-			res.json({status: false, message: 'Format nomor surat internal tidak sesuai!', err_code: 400});
 		} else {
 			Surat
 				.create({
@@ -421,18 +419,24 @@ function SuratControllers() {
 							Surat_keluar_pengirim
 								.create({
 									surat_id: id,
-									staff_id: pengirim[0].nama
+									staff_id: pengirim[0].id
 								})
 								.catch(function(err) {
 									res.json({status: false, message: 'Pemasangan surat keluar dengan pengirim gagal!', err_code: 400, err: err});
 								});
 						}
+						
 						if (penerima !== 0 || penerima !== null) {
 							for (let i = 0; i < penerima.length; i++) {
 								Surat_keluar_penerima
 									.create({
 										surat_id: id,
-										nama_penerima: penerima[i].id
+										nama_penerima: penerima[i].nama
+									})
+									.then(function(result) {
+										if (i == (penerima.length - 1)) {
+											res.json({status: true, message: 'Tambah surat keluar berhasil!'});
+										}
 									})
 									.catch(function(err) {
 										res.json({status: false, message: 'Pemasangan surat keluar dengan penerima gagal!', err_code: 400, err: err});
@@ -635,7 +639,7 @@ function SuratControllers() {
 			lampiran = req.body.lampiran_surat,
 			posisi = req.body.posisi_surat;
 
-		if (id == undefined || nomor == undefined || perihal  == undefined || tanggal  == undefined || tanggal_terima  == undefined || tanggal_entri  == undefined || file  == undefined || status  == undefined) {
+		if (id == undefined || nomor == undefined || perihal  == undefined || tanggal  == undefined || tanggal_entri  == undefined || file  == undefined || status  == undefined) {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
 		} else {
 			Surat
@@ -765,11 +769,18 @@ function SuratControllers() {
 							})
 							.then(function(result) {
 								var status_disposisi = result + 1;
-								console.log(result)
 								if (penerima == null || penerima.length < 0) {
 									res.json({status: false, message: 'Penerima tidak boleh kosong!', err_code: 400});
 								} else {
 									for (let i = 0; i < penerima.length; i++) {
+										Surat_masuk_penerima
+											.findById(penerima[i].id)
+											.then(function(result) {
+
+											})
+											.catch(function(err) {
+												res.json({status: false, message: ''})
+											})
 										Surat_masuk_penerima
 											.create({
 												surat_id: id,
@@ -785,9 +796,9 @@ function SuratControllers() {
 													}
 												}
 											})
-											// .catch(function(err) {
-											// 	res.json({status: false, message: 'Penerima disposisi gagal ditambahkan!', err_code: 400, err: err});
-											// });
+											.catch(function(err) {
+											 	res.json({status: false, message: 'Penerima disposisi gagal ditambahkan!', err_code: 400, err: err});
+											});
 									}
 								}
 							})

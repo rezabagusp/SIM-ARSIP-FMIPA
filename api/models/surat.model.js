@@ -7,7 +7,7 @@ module.exports = function(sequelize, DataType) {
 	    nomor_surat: { type: DataType.STRING, allowNull: false },
         judul_surat: DataType.STRING,
         tanggal_surat: { type: DataType.DATE, allowNull: false },
-        tanggal_terima_surat: { type: DataType.DATE, allowNull: false },
+        tanggal_terima_surat: DataType.DATE,
         tanggal_entri_surat: { type: DataType.DATE, allowNull: false },
         tanggal_selesai_surat: DataType.DATE,
         sifat_surat: { type: DataType.ENUM('Rahasia', 'Umum'), defaultValue: 'Umum' },

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var surat = require('../controllers/surat.controller');
+var nilaimutu = require('./../controllers/nilaimutu.controller')
 
 router.get('/', function(req, res) {
   res.json({status: false, message: 'None API Implemented'});
@@ -74,5 +75,10 @@ router.post('/edit/disposisi', function(req, res) {
 router.post('/upload', function(req, res) {
 	surat.upload(req, res);
 });
+
+/*nilai mutu*/
+router.get('/nilaimutu/:id', (req, res) => {
+	nilaimutu.GetNilaiMutu(req, res)
+})
 
 module.exports = router;

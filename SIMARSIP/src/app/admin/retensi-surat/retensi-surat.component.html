@@ -9,31 +9,37 @@
         </div>
         <div class="card-block">
           <div class="col-lg-12">
-            <table datatable class="row-border hover" [dtOptions]="dtOptions"  [dtTrigger]="dtTrigger" (click)="large2Modal.show()">
-              <thead>
+            <table datatable class="row-border hover" style="display: inline-block; width: 100%; overflow:auto" [dtOptions]="dtOptions"  [dtTrigger]="dtTrigger">
+              <thead> 
                 <tr>
                   <th>Nomor Surat</th>       
                   <th>Tanggal Surat</th>
                   <th>Tanggal Terima</th>
                   <th>Tipe Surat</th>
                   <th>Status</th>
-                  <th>Aksi</th>            
+                  <th>Retensi Aktf</th>
+                  <th>Retensi Inktf</th>  
+                  <th></th>                
+<!--                   <th>Aksi</th>  -->           
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let data of datalist">
-                  <td>173</td>
-                  <td>17/8/1945</td>
-                  <td>27/8/1945</td>
-                  <td>Masuk</td>
-                  <td>
-                    <span class="badge badge-danger">INAKTIF</span>
-                    <span class="badge badge-success">AKTIF</span>                    
+                <tr *ngFor="let data of list_surat; let retensi of list_hal_surat">
+                  <td>{{data.nomor_surat}}</td>
+                  <td>{{data.tanggal_surat}}</td>  
+                  <td>{{data.tanggal_entri_surat}}</td>
+                  <td>{{data.tipe_surat}}</td>
+                  <td>                  
+                    <span *ngIf="data.status_surat =='Aktif' " class="badge badge-success">Aktif</span>
+                    <span *ngIf="data.status_surat !='Aktif' " class="badge badge-danger">Inaktif</span>                    
                   </td>
-                  <td>
+                  <td>{{data.hal_surat.retensi_aktif_hal_surat}}</td>
+                  <td>{{data.hal_surat.retensi_inaktif_hal_surat}}</td>                  
+                  <td><a href="javascript:void(0)" (click)="preview(data);large2Modal.show()">preview</a></td>
+<!--                   <td>
                     <button class="btn btn-success btn-sm">Aktif</button>
                     <button class="btn btn-danger btn-sm">Inaktif</button>
-                  </td>                 
+                  </td>    -->              
                 </tr>
               </tbody>
             </table>
@@ -66,39 +72,33 @@
               <div class="form-group row">
                 <label class="col-md-3 form-control-label"><strong>Nomor</strong></label>
                 <div class="col-md-8 push-1">
-                    nomor suratnya
+                    {{dataForPreview?.nomor_surat}}
                 </div>
               </div>
               <div class="form-group row">
                 <label class="col-md-3 form-control-label" for="password-input"><strong>Tanggal surat</strong></label>
                 <div class="col-md-8 push-1">
-                    20/08/1995
+                    {{dataForPreview?.tanggal_surat | date:'fullDate'}} 
                 </div>
               </div>
               <div class="form-group row">
                 <label class="col-md-3 form-control-label" for="password-input"><strong>Tanggal entri</strong></label>
                 <div class="col-md-8 push-1">
-                    30/08/1998
+                    {{dataForPreview?.tanggal_entri_surat | date:'fullDate'}} 
                 </div>
               </div>
               <div class="form-group row">
                 <label class="col-md-3 form-control-label" for="text-input"><strong>Perihal</strong></label>
                 <div class="col-md-8 push-1">
-                    Undangan pernikahan
+                    {{dataForPreview?.perihal.nama_perihal}}
                 </div>
               </div>
               <div class="form-group row">
                 <label class="col-md-3 form-control-label" for="email-input"><strong>Pengirim</strong></label>
                 <div class="col-md-8 push-1">
-                    Reza Bagus Permana
+                    {{dataForPreview?.surat_masuk_pengirim.nama_pengirim}}
                 </div>
               </div>                  
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="password-input"><strong>Jenis surat</strong></label>
-                  <div class="col-md-8 push-1">
-                    KK
-                  </div>
-              </div>
             </div>
             <div class="col-md-6">
               <div class="garis">
@@ -107,26 +107,37 @@
               <div class="form-group row">
                 <label class="col-md-3 form-control-label" for="password-input"><strong>Tujuan</strong></label>
                 <div class="col-md-8 push-1">
-                    list tujuan
+                  <ng-container *ngFor= "let tujuan of dataForPreview?.surat_masuk_penerimas">
+                     {{ tujuan.staff.nama_staff }},
+                  </ng-container>  
                 </div>
               </div>
               <div class="form-group row">
                 <label class="col-md-3 form-control-label" for="password-input"><strong>Tujuan disposisi</strong></label>                
                 <div class="col-md-8 push-1">
-                    list tujuan disposisi            
+                <ng-container *ngFor="let x of [0,1]; let i = index">
+                <span><strong>Lv {{i+1}}: </strong></span>
+                  <ng-container *ngFor= "let tujuan of dataForPreview?.surat_masuk_penerimas">
+                    <ng-container *ngIf = "tujuan.status_disposisi_penerima === 1">
+                      {{ tujuan.staff.nama_staff}}, 
+                    </ng-container>
+                    <ng-container *ngIf = "tujuan.status_disposisi_penerima === 2">
+                      {{tujuan.staff.nama_staff}}, 
+                    </ng-container>
+                  </ng-container> <hr><br/>  
+                </ng-container>            
                 </div>
-              </div>
+              </div><br/><br/>
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="password-input"><strong>Tujuan disposisi</strong></label>                
+                <label class="col-md-3 form-control-label" for="password-input"><strong>Sifat surat</strong></label>
                 <div class="col-md-8 push-1">
-                    Aktif/Inaktif            
+                    {{ dataForPreview?.status_surat }}          
                 </div>
               </div>              
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="lampiran"><strong>surat</strong></label>
+                <label class="col-md-3 form-control-label" for="lampiran"><strong>Surat</strong></label>
                 <div class="col-md-8 push-1">
-                    link to view surat at new tab 
-                    <a href="assets/fourier1d.pdf" target="_blank">Read more</a>
+                  <a href="assets/fourier1d.pdf" target="_blank">{{ dataForPreview?.file_surat}}</a> 
                 </div>
               </div>
             </div>

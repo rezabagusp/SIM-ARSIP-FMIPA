@@ -4,6 +4,14 @@ import { Http, Response } from '@angular/http';
 import { Subject } from 'rxjs/Rx'; // dipake buat datatables
 import { DatePickerOptions, DateModel } from 'ng2-datepicker'; // dipake buat datepicker 
 
+import { AdminService } from './../../_services/admin.service';
+import { DataService } from './../../_services/data.service';
+import { UploadService } from './../../_services/upload.service';
+
+import { ModalDirective } from 'ngx-bootstrap/modal/modal.component';
+import { LOCALE_ID } from '@angular/core';
+
+
 @Component({
   selector: 'app-retensi-surat',
   templateUrl: './retensi-surat.component.html',
@@ -14,7 +22,11 @@ export class RetensiSuratComponent implements OnInit {
   // hidden field disposisi
   private hidden:boolean;
   // datatables
-  datalist=[]
+  list_surat;
+  list_hal_surat;
+
+  dataForPreview;
+
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject();
   message=''; 
@@ -23,75 +35,52 @@ export class RetensiSuratComponent implements OnInit {
   dateEntri: DateModel;
   options: DatePickerOptions;
 
-  constructor(private http: Http, private toastrService:ToastrService) { 
-    this.hidden=true;
-    this.options = new DatePickerOptions();
-  }
-
-  someClickHandler(info: any): void {
-    this.message=info[0] + " " + info[1];
+  constructor(private data:DataService, private adminService:AdminService) { 
   }
 
   ngOnInit() {
-      this.dtOptions = {
+    this.getAllRetensiSurat();
+    this.dataTables();
+  }  
+
+  dataTables(){
+    this.dtOptions = {
       pagingType: 'full_numbers',
       pageLength: 10,
       retrieve: true,
-      rowCallback: (row: Node, data: any[] | Object, index: number) => {
-        const self = this;
-        // Unbind first in order to avoid any duplicate handler
-        // (see https://github.com/l-lin/angular-datatables/issues/87)
-        $('td', row).unbind('click');
-        $('td', row).bind('click', () => {
-          self.someClickHandler(data);
-        });
-        return row;
-      }      
-    };
-    this.http.get('https://jsonplaceholder.typicode.com/todos')
-      .map(this.extractData)
-      .subscribe(data => {
-        console.log(data);
-        this.datalist = data;
-        // Calling the DT trigger to manually render the table
-        this.dtTrigger.next();
-      });
-      
+    }  
+  } 
+
+  getAllRetensiSurat(){
+    let creds = null;
+    this.adminService.postAdmin(this.data.url_retensi_get_all, this.data.token, creds)
+    .subscribe(
+      data =>{
+        console.log(data)
+        if(data.status){
+          this.list_surat = data.surat;
+          this.list_hal_surat = data.hal_surat;
+          //console.log(this.list_hal_surat)
+          for (let x in this.list_surat){
+            this.list_surat[x].hal_surat = this.list_hal_surat[x]
+          }
+          console.log(this.list_surat)
+
+          this.dtTrigger.next();
+        }
+        else {
+          this.data.showError(data.message)
+        }
+      })
   }
-  private extractData(res: Response) {
-    return res.json();
-  }  
 
-  public items:Array<string> = ['Amsterdam@gmail.com', 'Antwerp@gmail.com', 'Athens@gmail.com', 'Barcelona@gmail.com',
-    'Berlin@gmail.com', 'Birmingham@gmail.com', 'Bradford@gmail.com', 'Bremen@gmail.com', 'Brussels@gmail.com', 'Bucharest@gmail.com',
-    'Budapest@gmail.com', 'Cologne@gmail.com', 'Copenhagen@gmail.com', 'Dortmund@gmail.com', 'Dresden@gmail.com', 'Dublin@gmail.com', 'Düsseldorf@gmail.com',
-    'Essen@gmail.com', 'Frankfurt@gmail.com', 'Genoa@gmail.com', 'Glasgow@gmail.com', 'Gothenburg@gmail.com', 'Hamburg', 'Hannover',
-    'Helsinki', 'Leeds', 'Leipzig', 'Lisbon', 'Łódź', 'London', 'Kraków', 'Madrid',
-    'Málaga', 'Manchester', 'Marseille', 'Milan', 'Munich', 'Naples', 'Palermo',
-    'Paris', 'Poznań', 'Prague', 'Riga', 'Rome', 'Rotterdam', 'Seville', 'Sheffield',
-    'Sofia', 'Stockholm', 'Stuttgart', 'The Hague', 'Turin', 'Valencia', 'Vienna',
-    'Vilnius', 'Warsaw', 'Wrocław', 'Zagreb', 'Zaragoza'];
-  
-  // ng select
-  private value:any = [];
-  private _disabledV:string = '0';
-  private disabled:boolean = false;
-
-  //auto complete model
-  private myData:any;
-
-  public refreshValue(value:any):void {
-    this.value = value;
-  }
- 
   cek(){
-    console.log("yang di pilil auto complete : " , this.myData);
-    console.log("yang di pilil auto single seldect : " , this.value);    
-    this.toastrService.success('sukses', 'sukselah')
+  
   }
-  state(){
-    if (this.hidden==true) this.hidden=false;
-    else this.hidden= true;
+
+  preview(data){
+    this.dataForPreview = data;
+    console.log('data preview', this.dataForPreview)
   }
   
   deleteConfirm(){

@@ -164,10 +164,8 @@ export class SuratComponent implements OnInit {
       penerima: [[] ],
       tujuan_jabatan: [[]],
       tujuan_orang: [[]],
+      tujuan_surat_keluar: [[]]
       //end of penerima
-
-      //surat keluar only
-      tujuan_surat_keluar: [[{'display':'reja'}, {'display':'redfdja'}]]
 
     });
     this.checkbox = true;
@@ -245,7 +243,7 @@ export class SuratComponent implements OnInit {
   }
 
   getLampiran(){
-    this.adminService.getAllLampiran(this.data.url_get_all_lampiran, this.data.token)
+    this.adminService.getAllLampiran(this.data.url_get_surat_null_lampiran, this.data.token)
     .subscribe(
       data =>{
         if(data.status){

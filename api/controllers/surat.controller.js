@@ -16,14 +16,14 @@ var Surat_masuk_penerima = sequelize.import(__dirname + '/../models/surat_masuk_
 var Surat_masuk_pengirim = sequelize.import(__dirname + '/../models/surat_masuk_pengirim.model');
 var Surat_keluar_pengirim = sequelize.import(__dirname + '/../models/surat_keluar_pengirim.model');
 var Surat_keluar_penerima = sequelize.import(__dirname + '/../models/surat_keluar_penerima.model');
-var Kode_surat = sequelize.import(__dirname + '/../models/kode_surat.model');
-var Jenis_surat = sequelize.import(__dirname + '/../models/jenis_surat.model');
-var Sub_jenis_surat = sequelize.import(__dirname + '/../models/sub_jenis_surat.model');
-var Sub_sub_jenis_surat = sequelize.import(__dirname + '/../models/sub_sub_jenis_surat.model');
+// var Kode_surat = sequelize.import(__dirname + '/../models/kode_surat.model');
+// var Jenis_surat = sequelize.import(__dirname + '/../models/jenis_surat.model');
+// var Sub_jenis_surat = sequelize.import(__dirname + '/../models/sub_jenis_surat.model');
+// var Sub_sub_jenis_surat = sequelize.import(__dirname + '/../models/sub_sub_jenis_surat.model');
 
-Jenis_surat.belongsTo(Kode_surat, {foreignKey: 'kode_surat_id'});
-Sub_jenis_surat.belongsTo(Jenis_surat, {foreignKey: 'jenis_surat_id'});
-Sub_sub_jenis_surat.belongsTo(Sub_jenis_surat, {foreignKey: 'sub_jenis_surat_id'});
+// Jenis_surat.belongsTo(Kode_surat, {foreignKey: 'kode_surat_id'});
+// Sub_jenis_surat.belongsTo(Jenis_surat, {foreignKey: 'jenis_surat_id'});
+// Sub_sub_jenis_surat.belongsTo(Sub_jenis_surat, {foreignKey: 'sub_jenis_surat_id'});
 
 Surat.hasMany(Lampiran, {foreignKey: 'surat_id'});
 Surat.belongsTo(Perihal, {foreignKey: 'perihal_id'});
@@ -151,7 +151,7 @@ function SuratControllers() {
 				})
 				.catch(function(err) {
 					res.json({status: false, message: 'Ambil surat gagal!', err_code: 400, err: err});
-				})
+				});
 		}
 	}
 
@@ -367,8 +367,6 @@ function SuratControllers() {
 
 		if (nomor == undefined || perihal  == undefined || tanggal  == undefined || tanggal_entri  == undefined || tipe  == undefined || file  == undefined || pengirim == undefined || penerima == undefined) {
 			res.json({status: false, message: 'Request tidak lengkap!', err_code: 400});
-		} else if (asal == 'Internal' && !validateNomorSurat(nomor)) {
-			res.json({status: false, message: 'Format nomor surat internal tidak sesuai!', err_code: 400});
 		} else {
 			Surat
 				.create({

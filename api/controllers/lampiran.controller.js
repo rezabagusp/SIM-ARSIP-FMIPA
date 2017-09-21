@@ -86,6 +86,28 @@ function LampiranControllers() {
 		}
 	}
 
+	// fungsi ambil lampiran id surat berhasil
+	this.getBySuratNull = function(req, res) {
+		Lampiran
+			.findAll({
+				where: {
+					surat_id: null
+				}
+			})
+			.then(function(result) {
+				if (result == 0) {
+					res.json({status: true, message: 'Lampiran tidak ditemukan!', data: result});
+				} else if (result == null) {
+					res.json({status: false, message: 'Lampiran tidak ditemukan!', err_code: 404, err: err});
+				} else {
+					res.json({status: true, message: 'Ambil lampiran dari surat berhasil!', data: result});
+				}
+			})
+			.catch(function(err) {
+				res.json({status: false, message: 'Ambil lampiran dari surat gagal!', err_code: 400, err: err});
+			})
+	}
+
 	// fungsi tambah lampiran sudah di test
 	this.add = function(req, res) {
 		var judul = req.body.judul_lampiran,

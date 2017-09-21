@@ -23,6 +23,10 @@ router.post('/get/surat', function(req, res) {
 	lampiran.getBySurat(req, res);
 });
 
+router.post('/get/surat/null', function(req, res) {
+	lampiran.getBySuratNull(req, res);
+});
+
 router.post('/delete', function(req, res) {
 	lampiran.delete(req, res);
 });

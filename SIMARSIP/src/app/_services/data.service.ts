@@ -12,10 +12,11 @@ export class DataService {
   public url_upload_file = 'http://localhost:3000/api/lampiran/upload';
   public url_add_lampiran = 'http://localhost:3000/api/lampiran/add';
   public url_get_all_lampiran = 'http://localhost:3000/api/lampiran/get/all';
+  public url_get_surat_null_lampiran = 'http://localhost:3000/api/lampiran/get/surat/null';
   public url_edit_lampiran = 'http://localhost:3000/api/lampiran/edit';
   public url_delete_lampiran = 'http://localhost:3000/api/lampiran/delete';
   
-  // surat
+  //admin
   public url_surat_add = 'http://localhost:3000/api/surat/add';
   public url_surat_upload = 'http://localhost:3000/api/surat/upload'
   public url_surat_delete = 'http://localhost:3000/api/surat/delete';
@@ -23,6 +24,9 @@ export class DataService {
   public url_surat_disposisi = 'http://localhost:3000/api/surat/edit/disposisi';
   public url_surat_get = 'http://localhost:3000/api/surat/get/tipe';
   public url_surat_get_detail = 'http://localhost:3000/api/surat/get';
+
+  public url_retensi_get_all = 'http://localhost:3000/api/retensi/get/all';
+
 
   //data form
   public url_perihal_get = 'http://localhost:3000/api/dataform/get/perihal/all'
@@ -34,6 +38,7 @@ export class DataService {
   public url_subjenis_surat_get = 'http://localhost:3000/api/dataform/get/subjenis_surat'
   public url_subsubjenis_surat_get = 'http://localhost:3000/api/dataform/get/subsubjenis-surat'
   
+  //super admin
   public url_staff_add = 'http://localhost:3000/api/dataform/add/staff';
   public url_jabatan_add = 'http://localhost:3000/api/dataform/add/jabatan';
   public url_perihal_add = 'http://localhost:3000/api/dataform/add/perihal';
@@ -44,6 +49,7 @@ export class DataService {
 
   public url_staff_edit = 'http://localhost:3000/api/dataform/edit/staff';
   public url_staff_delete = 'http://localhost:3000/api/dataform/delete/staff';
+
 
 
 

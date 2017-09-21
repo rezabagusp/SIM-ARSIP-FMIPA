@@ -14,13 +14,12 @@
         </div>
         <div class="card-block">
           <div class="col-lg-12">
-            <table datatable class="row-border compact" [dtOptions]="dtOptions"  [dtTrigger]="dtTrigger">
+            <table id="default-order" datatable class="row-border compact" [dtOptions]="dtOptions"  [dtTrigger]="dtTrigger">
               <thead>
                 <tr>
                   <th>Nomor Surat</th>       
                   <th>Tanggal surat</th>
                   <th>Tanggal terima</th>
-                  <!-- <th>Tgl entri</th> -->
                   <th>Perihal</th>
                   <th>Pengirim</th>
                   <th>Sifat</th>   
@@ -37,7 +36,7 @@
                   <td *ngIf = "tipe_surat==='Masuk' " >{{data.surat_masuk_pengirim?.nama_pengirim}}</td>                  
                   <td *ngIf = "tipe_surat==='Keluar' ">{{data.surat_keluar_pengirim?.staff?.nama_staff}}</td>
                   <td>{{data.sifat_surat}}</td>                  
-                   <td>{{data.posisi_surat}}</td>                   
+                  <td>{{data.posisi_surat}}</td>                   
                   <td>
                     <span>
                       <a href="javascript:void(0)" (click)="previewModal.show(); getPreviewData(data.id)">
@@ -87,98 +86,95 @@
                 <p> <span style="font-size:17px">Informasi Surat</span></p>
               </div>             
               <div class="form-group row">
-                <label class="col-md-3 form-control-label">Nomor <span style="color:red;">*</span></label>
+                <label class="col-md-3 form-control-label">Nomor Surat <span style="color:red;">*</span></label>
                 <div class="col-md-9">
-                  <input type="text" id="nomor_surat" name="nomor_surat" formControlName="nomor_surat" class="form-control" placeholder="nomor">
+                  <input type="text" id="nomor_surat" name="nomor_surat" formControlName="nomor_surat" class="form-control" placeholder="Masukkan nomor surat">
                   <small class="text-muted">Contoh: 197/IT3.7/PP.00.00.00/2017</small>
                 </div>
               </div>   
               <div class="form-group row">
-                <label class="col-md-3 form-control-label">Judul </label>
+                <label class="col-md-3 form-control-label">Judul</label>
                 <div class="col-md-9">
                   <input type="text" id="judul_surat" name="judul_surat" formControlName="judul_surat" class="form-control" placeholder="Masukan judul surat">
                 </div>
               </div>                       
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="tanggal_surat">Tanggal surat <span style="color:red;">*</span></label>
+                <label class="col-md-3 form-control-label" for="tanggal_surat">Tanggal Surat <span style="color:red;">*</span></label>
                 <div class="col-md-9">
                   <date-picker *ngIf = "form_type==0" [showClearButton]="false" formControlName="tanggal_surat" name="tanggal_surat"></date-picker>                  
                 </div>
               </div>
               <div *ngIf = "tipe_surat==='Masuk' " class="form-group row">
-                <label class="col-md-3 form-control-label" for="tanggal_terima_surat">Tanggal terima surat</label>
+                <label class="col-md-3 form-control-label" for="tanggal_terima_surat">Tanggal Terima Surat</label>
                 <div class="col-md-9">
                   <date-picker *ngIf = "form_type==0" [showClearButton]="false" formControlName="tanggal_terima_surat" name="tanggal_terima_surat"></date-picker>                  
                 </div>
               </div>              
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="perihal"> Perihal <span style="color:red;">*</span></label>
+                <label class="col-md-3 form-control-label" for="perihal">Perihal <span style="color:red;">*</span></label>
                 <div class="col-md-9">
                   <ng-select 
                     formControlName="perihal"
                     [items]="list_perihal"
-                    placeholder="   pilih perihal">
+                    placeholder="Pilih perihal">
                   </ng-select>
                 </div>
               </div>              
               <div *ngIf = "tipe_surat==='Masuk' " class="form-group row">
                 <label class="col-md-3 form-control-label" for="pengirim">Pengirim <span style="color:red;">*</span></label>
                 <div class="col-md-9">
-                  <input type="text" id="pengirim" name="pengirim" formControlName="pengirim" class="form-control" placeholder="Nama pengirim" (change)="onChangeFile($event)" accept="application/pdf" single required>
+                  <input type="text" id="pengirim" name="pengirim" formControlName="pengirim" class="form-control" placeholder="Masukkan nama pengirim" (change)="onChangeFile($event)" accept="application/pdf" single required>
                 </div>
               </div>            
               <div *ngIf = "tipe_surat==='Keluar' "class="form-group row">
                 <label class="col-md-3 form-control-label" for="tujuan_orang">Pengirim </label>
                 <div class="col-md-9">
-                  <ng-select 
-                              [items]="list_tujuan_orang"
+                  <ng-select  [items]="list_tujuan_orang"
                               formControlName="tujuan_orang"
-                              placeholder="   pilih pengirim berdasarkan orang">
+                              placeholder="Pilih pengirim berdasarkan nama staff">
                   </ng-select>
                 </div>
               </div>              
               <div class="form-group row">
                 <label class="col-md-3 form-control-label" for="status_surat">Sifat surat <span style="color:red;">*</span> </label>
                 <div class="col-md-9">
-                  <ng-select 
-                  formControlName="sifat_surat"
-                  [items]="list_sifat_surat"
-                  placeholder="Pilih sifat surat">
+                  <ng-select  formControlName="sifat_surat"
+                              [items]="list_sifat_surat"
+                              placeholder="Pilih sifat surat">
                 </ng-select>
                 </div>
               </div>               
               <div *ngIf = "tipe_surat==='Masuk' " class="form-group row">
                 <label class="col-md-3 form-control-label" for="asal_surat">Asal surat <span style="color:red;">*</span> </label>
                 <div class="col-md-9">
-                  <ng-select 
-                  formControlName="asal_surat"
-                  [items]="list_asal_surat"
-                  placeholder="Pilih asal surat">
-                </ng-select>
+                  <ng-select  formControlName="asal_surat"
+                              [items]="list_asal_surat"
+                              placeholder="Pilih asal surat">
+                  </ng-select>
                 </div>
               </div>                          
               </div>
               <div class="col-md-6">
               <div class="garis">
-                <p><span style="font-size:17px">Relasi Surat </span></p>
+                <p><span style="font-size:17px">Relasi Surat</span></p>
               </div>
               <div *ngIf = "tipe_surat==='Masuk' " class="form-group row">
-                <label class="col-md-3 form-control-label" for="tujuan_jabatan">Tujuan<span class="text-muted">(Jabatan)</span>  </label>
+                <label class="col-md-3 form-control-label" for="tujuan_jabatan">Tujuan <span class="text-muted">(Jabatan)</span>  </label>
                   <div class="col-md-9">
                   <ng-select  [multiple]="true"
                               formControlName="tujuan_jabatan"
                               [items]="list_tujuan_jabatan"
-                              placeholder="   pilih tujuan jabatan">
+                              placeholder="Pilih berdasarkan jabatan staff">
                   </ng-select>
                 </div>
               </div>
               <div *ngIf = "tipe_surat==='Masuk' "class="form-group row">
-                <label class="col-md-3 form-control-label" for="tujuan_orang">Tujuan <span class="text-muted">(Orang)</span><span style="color:red;">*</span></label>
+                <label class="col-md-3 form-control-label" for="tujuan_orang">Tujuan <span class="text-muted">(Nama Staff)</span><span style="color:red;">*</span></label>
                 <div class="col-md-9">
                   <ng-select  [multiple]="true"
                               [items]="list_tujuan_orang"
                               formControlName="tujuan_orang"
-                              placeholder="   pilih tujuan orang">
+                              placeholder="Pilih berdasarkan nama staff">
                   </ng-select>
                 </div>
               </div>
@@ -186,6 +182,7 @@
                 <label class="col-md-3 form-control-label" for="tujuan_surat_keluar">Tujuan </label>
                 <div class="col-md-9">
                     <tag-input class="paksa" style="padding:-0.5rem 1" [placeholder]="'+nama'" [secondaryPlaceholder]="'Masukan nama tujuan'"  formControlName="tujuan_surat_keluar" ></tag-input>
+                    <small class="text-muted">Pisahkan penerima selanjutnya dengan menekan 'Enter'</small>
                 </div>
               </div>               
               <div class="form-group row">
@@ -194,30 +191,29 @@
                   <ng-select  [multiple]="true"
                               [items]="list_lampiran"
                               formControlName="lampiran"
-                              placeholder="   ketik / pilih lampiran">
+                              placeholder="Cari dan pilih lampiran">
                   </ng-select>
                 </div>
               </div>
               <div class="form-group row">
                 <label class="col-md-3 form-control-label" for="kepentingan_surat">Kepentingan <span style="color:red;">*</span> </label>
                 <div class="col-md-9">
-                  <ng-select 
-                  formControlName="kepentingan_surat"
-                  [items]="list_kepentingan_surat"
-                  placeholder="pilih tingkat kepentingan">
-                </ng-select>
+                  <ng-select  formControlName="kepentingan_surat"
+                              [items]="list_kepentingan_surat"
+                              placeholder="Pilih tingkat kepentingan surat">
+                  </ng-select>
                 </div>
               </div>
               <ng-container *ngIf = "tipe_surat==='Masuk' ">                                
                 <div class = "form-group row">
                   <div class="push-3 col-md-9"> 
-                    <input type="checkbox" (click)="clickCheckbox()" [checked]="checkbox"> Kirim ke email ke tujuan
+                    <input type="checkbox" (click)="clickCheckbox()" [checked]="checkbox"> Kirim ke email tujuan
                   </div>                
                 </div>  
                 <div class="form-group row" *ngIf = "checkbox">
                   <label class="col-md-3 form-control-label" for="keterangan_surat">Keterangan </label>
                   <div class="col-md-9">
-                    <input type="text" id="keterangan_surat" name="keterangan_surat" formControlName="keterangan_surat" class="form-control" placeholder="Keterangan untuk penerima">
+                    <input type="text" id="keterangan_surat" name="keterangan_surat" formControlName="keterangan_surat" class="form-control" placeholder="Keterangan untuk penerima email">
                   </div>
                 </div>                   
               </ng-container>
@@ -230,7 +226,7 @@
             </div>    
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="cek()">cek</button>            
+            <!-- <button type="button" class="btn btn-secondary" (click)="cek()">cek</button>    -->         
             <button type="button" class="btn btn-secondary" (click)="entrySuratModal.hide()">Tutup</button>
             <button type="button" class="btn btn-primary" [disabled]="!form.valid" (click)="entrySurat()" [hidden]="!loadingSubmit">Simpan</button>
             <button type="button" class="btn btn-primary" [hidden]="loadingSubmit" [disabled]="!loadingSubmit"><i class="fa fa-spinner fa-spin"></i>Simpan</button>            
@@ -336,7 +332,7 @@
                       {{data.surat_keluar_pengirim?.staff?.nama_staff}}
                     </div>
                     <div *ngIf="data.tipe_surat === 'Masuk' ">
-                      {{data.surat_masuk_pengirim?.nama_pengirim}}
+                      {{data.surat_masuk_pengirims?.nama_pengirim}}
                     </div>
                   </div>
                 </div>
@@ -437,7 +433,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="previewModal.hide()">Tutup</button>
-        <button type="button" class="btn btn-secondary" (click)="cek()">cek</button>
+        <!-- <button type="button" class="btn btn-secondary" (click)="cek()">cek</button> -->
         
       </div>
     </div><!-- /.modal-content -->
@@ -499,7 +495,7 @@
                   <ng-select 
                     formControlName="perihal"
                     [items]="list_perihal"
-                    placeholder="   pilih perihal">
+                    placeholder="Pilih perihal">
                   </ng-select>
                 </div>
               </div>
@@ -545,7 +541,7 @@
                   <ng-select  [multiple]="true"
                               [items]="list_lampiran"
                               formControlName="lampiran"
-                              placeholder="   ketik / pilih lampiran">
+                              placeholder="Cari dan pilih lampiran">
                   </ng-select>
                 </div>
               </div>                                         
@@ -563,7 +559,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="cek()">cek</button>            
+        <!-- <button type="button" class="btn btn-secondary" (click)="cek()">cek</button> -->            
         <button type="button" class="btn btn-secondary" (click)="initForm();;editSuratModal.hide()">Tutup</button>
         <button type="button" class="btn btn-primary" [disabled]="!form.valid" (click)="editSurat()">Simpan</button>
       </div>        

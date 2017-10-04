@@ -235,12 +235,12 @@ function UserControllers() {
 	}
 
 	this.confirmResetPassword = function(req, res) {
-		var nama = req.body.nama_user,
+		var email = req.body.email_user,
 			token = req.body.token_lupa_pass,
 			password = req.body.password_user,
 			password_konfirmasi = req.body.password_konfirmasi_user;
 
-		if (!nama || !token || !password || !password_konfirmasi) {
+		if (!email || !token || !password || !password_konfirmasi) {
 			res.json({status: false, message: "Request tidak lengkap!", err_code: 400});
 		} else if (password !== password_konfirmasi) {
 			res.json({status: false, message: "Password tidak sama dengan password konfirmasi!", err_code: 400});
@@ -252,7 +252,7 @@ function UserControllers() {
 			User
 				.findOne({
 					where: {
-						nama_user: nama,
+						email_user: email,
 						status_user: true
 					}
 				})
@@ -266,7 +266,7 @@ function UserControllers() {
 								lupa_pass_user: false
 							}, {
 								where: {
-									nama_user: nama,
+									email_user: email,
 									lupa_pass_user: true,
 									token_lupa_pass_user: token,
 									status_user: true

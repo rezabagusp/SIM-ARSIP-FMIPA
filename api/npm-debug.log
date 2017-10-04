@@ -9,7 +9,7 @@
 6 silly lifecycle new@0.0.0~prestart: no script for prestart, continuing
 7 info lifecycle new@0.0.0~start: new@0.0.0
 8 verbose lifecycle new@0.0.0~start: unsafe-perm in lifecycle true
-9 verbose lifecycle new@0.0.0~start: PATH: C:\Program Files\nodejs\node_modules\npm\bin\node-gyp-bin;D:\PKL\arsipmipa\api\node_modules\.bin;c:\program files\graphicsmagick-1.3.26-q8;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;C:\xampp\php;C:\ProgramData\ComposerSetup\bin;C:\Users\ASUS\AppData\Local\Microsoft\WindowsApps;C:\Users\ASUS\AppData\Roaming\npm;C:\Users\ASUS\AppData\Roaming\Composer\vendor\bin
+9 verbose lifecycle new@0.0.0~start: PATH: C:\Program Files\nodejs\node_modules\npm\bin\node-gyp-bin;D:\PKL\arsipmipa\api\node_modules\.bin;C:\ProgramData\Oracle\Java\javapath;c:\program files\graphicsmagick-1.3.26-q8;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;C:\xampp\php;C:\ProgramData\ComposerSetup\bin;C:\Program Files\PuTTY\;C:\Users\ASUS\AppData\Local\Programs\Python\Python36\Scripts\;C:\Users\ASUS\AppData\Local\Programs\Python\Python36\;C:\Users\ASUS\AppData\Local\Microsoft\WindowsApps;C:\Users\ASUS\AppData\Roaming\npm;C:\Users\ASUS\AppData\Roaming\Composer\vendor\bin
 10 verbose lifecycle new@0.0.0~start: CWD: D:\PKL\arsipmipa\api
 11 silly lifecycle new@0.0.0~start: Args: [ '/d /s /c', 'nodemon ./bin/www' ]
 12 verbose stack Error: kill ENOSYS
